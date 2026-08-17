@@ -37,14 +37,16 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .btn:active{opacity:0.7;}
 .summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
 .pill{font-size:12px;background:rgba(10,132,255,0.15);color:var(--blue);padding:5px 10px;border-radius:20px;}
-#itinerary-list{display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:10px;}
+#itinerary-list{display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:10px;}
 .itin-card{background:rgba(255,255,255,0.04);border-radius:12px;padding:9px 12px;cursor:grab;}
-.itin-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.itin-left{display:flex;align-items:center;gap:8px;overflow:hidden;}
-.dh{color:#48484a;font-size:14px;}
-.dl{font-size:13.5px;font-weight:600;white-space:nowrap;}
+.itin-card.departure{opacity:0.5;}
+.itin-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.itin-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto;}
+.dh{color:#48484a;font-size:14px;flex-shrink:0;}
+.dl{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .itin-icon{width:22px;height:22px;flex-shrink:0;}
-.itin-select{background:#2c2c2e;color:var(--ink);border:0.5px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 8px;font-size:13px;max-width:110px;}
+.plane-icon{width:22px;height:22px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:16px;line-height:1;}
+.itin-select{background:#2c2c2e;color:var(--ink);border:0.5px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 8px;font-size:13px;max-width:110px;flex-shrink:0;}
 .itin-cond{font-size:12.5px;color:var(--sub);margin-top:6px;padding-right:22px;line-height:1.4;}
 
 .section-title.typhoon{margin-top:34px;}
@@ -57,7 +59,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 <div class="header">
 <h1>הטיול של משפחת פוריש</h1>
 <p>15–29 בספטמבר 2026 · וייטנאם</p>
-<p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 14:15</p>
+<p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 14:25</p>
 </div>
 
 <div class="section-title">תחזית מזג האוויר לכל הימים</div>
@@ -150,14 +152,19 @@ function dateOf(dayStr){ const m = dayStr.match(/\((.*?)\)/); return m ? m[1] : 
 function render(){
   listContainer.innerHTML = '';
   itineraryData.forEach((item, i) => {
+    const isDeparture = i === itineraryData.length - 1;
     const dateStr = dateOf(item.day);
     const wd = (dateStr && weatherData[item.loc]) ? weatherData[item.loc][dateStr] : null;
-    const iconHtml = wd ? `<img class="itin-icon" src="${wd.src}" alt="${wd.cond}">` : '';
-    const condHtml = wd ? `<div class="itin-cond">${wd.cond}</div>` : '';
+    const iconHtml = isDeparture
+      ? '<span class="plane-icon">✈️</span>'
+      : (wd ? `<img class="itin-icon" src="${wd.src}" alt="${wd.cond}">` : '');
+    const condHtml = isDeparture
+      ? `<div class="itin-cond">טיסת חזרה ארצה</div>`
+      : (wd ? `<div class="itin-cond">${wd.cond}</div>` : '');
     let opts = '';
     locationsList.forEach(l => { opts += `<option value="${l}" ${l===item.loc?'selected':''}>${l}</option>`; });
     const el = document.createElement('div');
-    el.className = 'itin-card';
+    el.className = 'itin-card' + (isDeparture ? ' departure' : '');
     el.innerHTML = `
       <div class="itin-top">
         <div class="itin-left">
