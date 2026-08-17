@@ -49,6 +49,15 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .itin-select{background:#2c2c2e;color:var(--ink);border:0.5px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 8px;font-size:13px;max-width:110px;flex-shrink:0;}
 .itin-cond{font-size:12.5px;color:var(--sub);margin-top:6px;padding-right:22px;line-height:1.4;}
 
+.currency-card{max-width:900px;margin:0 auto 6px;background:var(--card);border-radius:16px;padding:16px;border:0.5px solid rgba(255,255,255,0.08);}
+.currency-rates{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.currency-converter{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;}
+.curr-field{display:flex;flex-direction:column;gap:6px;}
+.curr-field label{font-size:12px;color:var(--sub);}
+.curr-input{background:#2c2c2e;color:var(--ink);border:0.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 10px;font-size:16px;text-align:center;width:100%;}
+.curr-input:focus{outline:none;border-color:var(--blue);}
+.currency-updated{text-align:center;font-size:11px;color:#636366;margin-top:12px;}
+
 .section-title.typhoon{margin-top:34px;}
 .typhoon-card{max-width:480px;margin:0 auto;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
 .typhoon-card iframe{width:100%;height:340px;border:none;display:block;}
@@ -56,6 +65,50 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 </style>
 </head>
 <body>
+<div class="currency-card">
+<div class="currency-rates">
+<span class="pill">1 USD = 26,072 VND</span>
+<span class="pill">1 ILS = 8,817 VND</span>
+<span class="pill">1 USD = 2.96 ₪</span>
+</div>
+<div class="currency-converter">
+<div class="curr-field"><label>דונג וייטנאמי (VND)</label><input type="number" id="curr-vnd" class="curr-input" placeholder="0" inputmode="decimal"></div>
+<div class="curr-field"><label>דולר אמריקאי (USD)</label><input type="number" id="curr-usd" class="curr-input" placeholder="0" inputmode="decimal"></div>
+<div class="curr-field"><label>שקל חדש (ILS)</label><input type="number" id="curr-ils" class="curr-input" placeholder="0" inputmode="decimal"></div>
+</div>
+<div class="currency-updated">שער עודכן לאחרונה בשעה 19:30</div>
+</div>
+<script>
+(function(){
+var VND_PER_USD = 26072.465562;
+var ILS_PER_USD = 2.957027;
+var VND_PER_ILS = VND_PER_USD / ILS_PER_USD;
+var vnd = document.getElementById('curr-vnd');
+var usd = document.getElementById('curr-usd');
+var ils = document.getElementById('curr-ils');
+function r2(n){ return (Math.round(n*100)/100).toString(); }
+function clearOthers(exclude){ [vnd,usd,ils].forEach(function(el){ if(el!==exclude) el.value=''; }); }
+vnd.addEventListener('input', function(){
+  if(this.value===''){ clearOthers(this); return; }
+  var v = parseFloat(this.value); if(isNaN(v)){ return; }
+  usd.value = r2(v/VND_PER_USD);
+  ils.value = r2(v/VND_PER_ILS);
+});
+usd.addEventListener('input', function(){
+  if(this.value===''){ clearOthers(this); return; }
+  var v = parseFloat(this.value); if(isNaN(v)){ return; }
+  vnd.value = Math.round(v*VND_PER_USD);
+  ils.value = r2(v*ILS_PER_USD);
+});
+ils.addEventListener('input', function(){
+  if(this.value===''){ clearOthers(this); return; }
+  var v = parseFloat(this.value); if(isNaN(v)){ return; }
+  vnd.value = Math.round(v*VND_PER_ILS);
+  usd.value = r2(v/ILS_PER_USD);
+});
+})();
+</script>
+
 <div class="header">
 <h1>הטיול של משפחת פוריש</h1>
 <p>15–29 בספטמבר 2026 · וייטנאם</p>
