@@ -58,6 +58,34 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .curr-input:focus{outline:none;border-color:var(--blue);}
 .currency-updated{text-align:center;font-size:11px;color:#636366;margin-top:12px;}
 
+.checklist-card{max-width:900px;margin:0 auto;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
+.checklist-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;user-select:none;gap:10px;}
+.checklist-head-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.checklist-head-left h2{font-size:15px;font-weight:700;margin:0;}
+.checklist-chevron{display:inline-block;color:var(--blue);font-size:12px;transition:transform 0.25s ease;flex-shrink:0;}
+.checklist-card.collapsed .checklist-chevron{transform:rotate(-90deg);}
+.checklist-status-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.checklist-progress-text{font-size:12px;color:var(--sub);white-space:nowrap;}
+.checklist-status-dot{width:12px;height:12px;border-radius:50%;background:var(--red);flex-shrink:0;box-shadow:0 0 0 3px rgba(255,255,255,0.04);transition:background 0.2s;}
+.checklist-status-dot.done{background:var(--green);}
+.checklist-status-dot.partial{background:#ffd60a;}
+.checklist-body{padding:2px 4px 8px;}
+.checklist-card.collapsed .checklist-body{display:none;}
+.checklist-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);}
+.checklist-item:last-child{border-bottom:none;}
+.checklist-check{position:relative;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;margin-top:1px;cursor:pointer;}
+.checklist-check input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.checklist-checkmark{position:absolute;top:0;left:0;width:22px;height:22px;border-radius:7px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.03);transition:background 0.2s,border-color 0.2s;}
+.checklist-checkmark::after{content:"";position:absolute;left:7px;top:2px;width:6px;height:11px;border:solid #06210f;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) scale(0);transition:transform 0.15s ease;}
+.checklist-check input:checked + .checklist-checkmark{background:var(--green);border-color:var(--green);}
+.checklist-check input:checked + .checklist-checkmark::after{transform:rotate(45deg) scale(1);}
+.checklist-content{flex:1;min-width:0;}
+.checklist-label{font-size:14.5px;font-weight:600;transition:color 0.2s,opacity 0.2s;}
+.checklist-item.done .checklist-label{color:var(--green);text-decoration:line-through;text-decoration-color:rgba(48,209,88,0.6);opacity:0.7;}
+.checklist-note{margin-top:5px;width:100%;box-sizing:border-box;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.12);color:var(--sub);font-size:12.5px;padding:3px 0;font-family:inherit;}
+.checklist-note:focus{outline:none;border-bottom-color:var(--blue);color:var(--ink);}
+.checklist-note::placeholder{color:#48484a;}
+
 .section-title.typhoon{margin-top:34px;}
 .typhoon-card{max-width:480px;margin:0 auto;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
 .typhoon-card iframe{width:100%;height:340px;border:none;display:block;}
@@ -112,6 +140,101 @@ ils.addEventListener('input', function(){
   var v = parseFloat(this.value); if(isNaN(v)){ return; }
   vnd.value = Math.round(v*VND_PER_ILS);
   usd.value = r2(v/ILS_PER_USD);
+});
+})();
+</script>
+
+<div class="section-title">רשימת מטלות</div>
+<div class="checklist-card" id="checklist-card">
+<div class="checklist-head" id="checklist-toggle">
+<div class="checklist-head-left"><span class="checklist-chevron">▾</span><h2>רשימת מטלות</h2></div>
+<div class="checklist-status-wrap"><span class="checklist-progress-text" id="checklist-progress-text"></span><span class="checklist-status-dot" id="checklist-status-dot"></span></div>
+</div>
+<div class="checklist-body" id="checklist-body"></div>
+</div>
+<script>
+(function(){
+var CHECKLIST_ITEMS = [
+"ביטוח נסיעות",
+"מלון ראשון בהאנוי",
+"דרכון+אמצעי זיהוי נוסף (רשיון נהיגה)",
+"התנזרות מאוכל אסיאתי",
+"תספורת",
+"הדפסת ויזה לויאטנם",
+"מתאם לרשת החשמל",
+"סוללות חירום",
+"מטען לטלפון, תקע + כבלים",
+"כרטיסי אשראי",
+"בגדי החלפה בתיק גב",
+"כלי רחצה, מברשת שיניים",
+"שפתון",
+"דוחה יתושים",
+"כסף מזומן"
+];
+var STORAGE_STATE = 'purish_checklist_state_v1';
+var STORAGE_COLLAPSED = 'purish_checklist_collapsed_v1';
+
+var card = document.getElementById('checklist-card');
+var body = document.getElementById('checklist-body');
+var head = document.getElementById('checklist-toggle');
+var progressText = document.getElementById('checklist-progress-text');
+var statusDot = document.getElementById('checklist-status-dot');
+
+var state = {};
+try { state = JSON.parse(localStorage.getItem(STORAGE_STATE)) || {}; } catch(e){ state = {}; }
+
+function saveState(){ localStorage.setItem(STORAGE_STATE, JSON.stringify(state)); }
+
+function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+
+function updateSummary(){
+  var total = CHECKLIST_ITEMS.length;
+  var done = 0;
+  CHECKLIST_ITEMS.forEach(function(_, i){ if (state[i] && state[i].checked) done++; });
+  progressText.textContent = done + '/' + total + ' הושלמו';
+  statusDot.classList.remove('done','partial');
+  if (done === total) statusDot.classList.add('done');
+  else if (done > 0) statusDot.classList.add('partial');
+}
+
+CHECKLIST_ITEMS.forEach(function(label, i){
+  var saved = state[i] || { checked:false, note:'' };
+  var item = document.createElement('div');
+  item.className = 'checklist-item' + (saved.checked ? ' done' : '');
+  item.innerHTML =
+    '<label class="checklist-check">' +
+      '<input type="checkbox" ' + (saved.checked ? 'checked' : '') + '>' +
+      '<span class="checklist-checkmark"></span>' +
+    '</label>' +
+    '<div class="checklist-content">' +
+      '<div class="checklist-label">' + label + '</div>' +
+      '<input type="text" class="checklist-note" placeholder="הוסף הערה (לא חובה)" value="' + escapeAttr(saved.note || '') + '">' +
+    '</div>';
+  var checkbox = item.querySelector('input[type="checkbox"]');
+  var noteInput = item.querySelector('.checklist-note');
+  checkbox.addEventListener('change', function(){
+    state[i] = state[i] || {checked:false, note:''};
+    state[i].checked = checkbox.checked;
+    item.classList.toggle('done', checkbox.checked);
+    saveState();
+    updateSummary();
+  });
+  noteInput.addEventListener('input', function(){
+    state[i] = state[i] || {checked:false, note:''};
+    state[i].note = noteInput.value;
+    saveState();
+  });
+  body.appendChild(item);
+});
+
+updateSummary();
+
+var collapsed = localStorage.getItem(STORAGE_COLLAPSED) === 'true';
+if (collapsed) card.classList.add('collapsed');
+
+head.addEventListener('click', function(){
+  card.classList.toggle('collapsed');
+  localStorage.setItem(STORAGE_COLLAPSED, card.classList.contains('collapsed') ? 'true' : 'false');
 });
 })();
 </script>
