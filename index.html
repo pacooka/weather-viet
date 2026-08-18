@@ -115,6 +115,20 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .attr-item.done .attr-name{color:var(--green);text-decoration:line-through;text-decoration-color:rgba(48,209,88,.6);opacity:.7;}
 .attr-tag{display:inline-block;font-size:9.5px;color:var(--blue);background:rgba(10,132,255,.15);padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;}
 .dh2{color:#48484a;font-size:14px;flex-shrink:0;padding-top:2px;}
+.trainstreet-card{max-width:900px;margin:0 auto;background:var(--card);border-radius:16px;padding:16px;border:0.5px solid rgba(255,255,255,0.08);}
+.trainstreet-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.trainstreet-title{display:flex;align-items:center;gap:8px;}
+.trainstreet-title h2{font-size:15px;font-weight:700;margin:0;color:var(--ink);}
+.trainstreet-updated{font-size:10.5px;color:#636366;}
+.trainstreet-desc{font-size:12.5px;color:var(--sub);margin-bottom:12px;line-height:1.5;}
+.trainstreet-callout{background:rgba(255,159,10,0.15);color:var(--hi);font-size:12.5px;padding:9px 12px;border-radius:10px;line-height:1.5;margin-bottom:12px;}
+.trainstreet-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;}
+.trainstreet-col{background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 12px;}
+.trainstreet-col-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.trainstreet-times{font-size:12.5px;color:var(--sub);line-height:1.9;}
+.trainstreet-footer{margin-top:12px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+.trainstreet-note{font-size:11.5px;color:#636366;line-height:1.5;}
+.trainstreet-auto{font-size:10.5px;background:rgba(10,132,255,0.15);color:var(--blue);padding:3px 8px;border-radius:8px;white-space:nowrap;}
 .footer{text-align:center;font-size:12px;color:var(--sub);margin-top:22px;}
 </style>
 </head>
@@ -519,6 +533,24 @@ attrSelect.addEventListener('change', function(){ renderAttrRegion(attrSelect.va
 renderAttrRegion('');
 })();
 </script>
+
+<div class="section-title">רחוב הרכבת בהאנוי — לוח זמנים</div>
+<div class="trainstreet-card">
+<div class="trainstreet-head">
+<div class="trainstreet-title"><span style="font-size:20px;">🚆</span><h2>לוח זמנים לרכבות</h2></div>
+<span class="trainstreet-updated">עודכן לאחרונה: 18/08/2026</span>
+</div>
+<div class="trainstreet-desc">שני קטעים: הצפוני (מתויר, ליד Phùng Hưng) והדרומי (פחות מתויר). כניסה כרגע רק דרך ישיבה באחד מבתי הקפה המורשים לצד המסילה — לא לעמוד לצד הפסים.</div>
+<div class="trainstreet-callout">שני ימי השהות שלכם בהאנוי (15/09, 29/09) הם ימי שלישי — הלוח הרלוונטי הוא "ימי חול" למטה. חלון הצילום המומלץ: 17:00-18:00.</div>
+<div class="trainstreet-grid">
+<div class="trainstreet-col"><div class="trainstreet-col-title">ימי חול (שני-שישי)</div><div class="trainstreet-times" dir="ltr">08:30 · 09:30 · 11:50<br>15:15 · 19:50 · 21:15<br>21:30 · 22:00</div></div>
+<div class="trainstreet-col"><div class="trainstreet-col-title">סופ"ש (שבת-ראשון)</div><div class="trainstreet-times" dir="ltr">06:00 · 09:00 · 09:30<br>11:20 · 15:20 · 17:30<br>18:00 · 18:30 · 19:00<br>19:45 · 20:30 · 21:00</div></div>
+</div>
+<div class="trainstreet-footer">
+<div class="trainstreet-note">הזמנים עשויים לזוז 15-30 דקות. מומלץ לוודא עם בעל בית הקפה בהגעה.</div>
+<span class="trainstreet-auto">מתעדכן אוטומטית</span>
+</div>
+</div>
 
 <div class="section-title">תחזית מזג האוויר לכל הימים</div>
 <div class="section-hint">אפשר לגרור את הכרטיסיות (מהכותרת) כדי לסדר אותן מחדש</div>
