@@ -97,6 +97,24 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .app-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
 .app-name{font-size:12px;color:var(--ink);text-align:center;font-weight:600;line-height:1.25;}
 .app-badge{display:inline-block;font-size:9.5px;color:var(--blue);background:rgba(10,132,255,0.15);padding:1px 6px;border-radius:8px;margin-top:3px;}
+.attractions-card{max-width:900px;margin:0 auto;background:var(--card);border-radius:16px;padding:16px;border:0.5px solid rgba(255,255,255,0.08);}
+.attr-select{width:100%;background:#2c2c2e;color:var(--ink);border:0.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px 12px;font-size:14px;}
+.attr-callout{margin-top:12px;background:rgba(255,159,10,0.15);color:var(--hi);font-size:12.5px;padding:9px 12px;border-radius:10px;line-height:1.5;}
+.attr-callout.info{background:rgba(152,152,159,0.15);color:var(--sub);}
+.attr-list{display:none;flex-direction:column;gap:8px;margin-top:12px;}
+.attr-item{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 12px;cursor:grab;}
+.attr-check{position:relative;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;margin-top:2px;cursor:pointer;}
+.attr-check input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.attr-checkmark{position:absolute;top:0;left:0;width:22px;height:22px;border-radius:7px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.03);}
+.attr-checkmark::after{content:"";position:absolute;left:7px;top:2px;width:6px;height:11px;border:solid #06210f;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) scale(0);transition:transform .15s ease;}
+.attr-check input:checked + .attr-checkmark{background:var(--green);border-color:var(--green);}
+.attr-check input:checked + .attr-checkmark::after{transform:rotate(45deg) scale(1);}
+.attr-content{flex:1;min-width:0;}
+.attr-name{font-size:13.5px;font-weight:600;color:var(--ink);}
+.attr-desc{font-size:12px;color:var(--sub);margin-top:2px;line-height:1.4;}
+.attr-item.done .attr-name{color:var(--green);text-decoration:line-through;text-decoration-color:rgba(48,209,88,.6);opacity:.7;}
+.attr-tag{display:inline-block;font-size:9.5px;color:var(--blue);background:rgba(10,132,255,.15);padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;}
+.dh2{color:#48484a;font-size:14px;flex-shrink:0;padding-top:2px;}
 .footer{text-align:center;font-size:12px;color:var(--sub);margin-top:22px;}
 </style>
 </head>
@@ -307,6 +325,198 @@ APPS.forEach(function(app){
     '<div class="app-name">' + app.name + (app.badge ? '<span class="app-badge">' + app.badge + '</span>' : '') + '</div>';
   grid.appendChild(a);
 });
+})();
+</script>
+
+<div class="section-title">אטרקציות מומלצות לפי אזור</div>
+<div class="section-hint">בחרו אזור כדי לראות המלצות · אפשר לסמן ביקור ולגרור לסידור מחדש · תגית "My Maps" מציינת מקומות מהמפה האישית שלכם</div>
+<div class="attractions-card">
+<select id="attr-region-select" class="attr-select">
+<option value="" selected>בחר מיקום</option>
+<option value="hanoi">האנוי</option>
+<option value="puluong">פו-לונג</option>
+<option value="ninhbinh">נין-בין</option>
+<option value="sapa">סאפה</option>
+<option value="halong">מפרץ הא-לונג</option>
+<option value="hoian">הוי-אן</option>
+<option value="phuquoc">פו-קוק</option>
+</select>
+<div id="attr-callout" class="attr-callout" style="display:none;"></div>
+<div id="attr-list" class="attr-list"></div>
+</div>
+<script>
+(function(){
+var ATTRACTIONS = {
+  hanoi: {
+    callout: { type: 'info', text: 'השוק הלילי ברובע העתיק פועל רק בין שישי לראשון בערב; ה-15/09 וה-29/09 (ימי השהות שלכם) הם ימי שלישי, כך שכנראה תפספסו אותו. טיפ: בלוט הברווז (Trứng Vịt Lộn) נמכר ברחוב רק בין 6-8 בבוקר.' },
+    items: [
+      { id: 'oldquarter', name: 'הרובע העתיק', desc: '36 רחובות עתיקים עם שווקים, בתי קפה ואוכל רחוב — הלב הפועם של האנוי.', mymaps: false },
+      { id: 'hoankiem', name: 'אגם הא-קיים', desc: 'אגם שקט במרכז העיר עם מגדל הצב הקטן, נעים לטיול ערב.', mymaps: false },
+      { id: 'temple-literature', name: 'מקדש הספרות', desc: 'האוניברסיטה הראשונה בוייטנאם מהמאה ה-11, מתחם שקט ומרשים.', mymaps: false },
+      { id: 'trainstreet-north', name: 'רחוב הרכבת (קטע צפוני, מתויר)', desc: 'קטע מתויר שבו הרכבת עוברת ממש בין הבתים; ייתכנו הגבלות כניסה.', mymaps: true },
+      { id: 'trainstreet-south', name: 'רחוב הרכבת (קטע דרומי, פחות מתויר)', desc: 'אפשר לשבת בלי ליווי מסודר, פחות הומה מהקטע הצפוני.', mymaps: true },
+      { id: 'hoalo', name: 'כלא הילטון (Hoa Lo Prison)', desc: 'מוזיאון כלא היסטורי מרשים, כולל כניסה לצינוק — לא לפספס.', mymaps: true },
+      { id: 'oquanchuong', name: 'שער או-קוואן-צ\'ואונג ושוק בוקר', desc: 'שער עתיק עם שוק בוקר תוסס לידו, נחמד לשלב בטיול בוקר.', mymaps: true },
+      { id: 'tahien', name: 'רחוב הבירה טה-הין', desc: 'רחוב תוסס עם בארים ובירה מקומית זולה, אווירה מעולה בערב.', mymaps: true },
+      { id: 'puppetshow', name: 'מופע בובות מים', desc: 'מופע מסורתי וייטנאמי; אפשר גם לוותר אם הזמן קצר.', mymaps: true },
+      { id: 'onepillar', name: 'פגודת העמוד היחיד', desc: 'פגודה קטנה וייחודית הבנויה על עמוד בודד מעל בריכה.', mymaps: true },
+      { id: 'jademountain', name: 'מקדש הר הירקן (נגוק סון)', desc: 'מקדש קטן על אי באגם הא-קיים, מחובר בגשר אדום ציורי.', mymaps: true },
+      { id: 'dongxuan', name: 'שוק דונג שואן', desc: 'השוק המרכזי והמגוון ביותר בהאנוי — חובה לביקור.', mymaps: true },
+      { id: 'nightmarket', name: 'השוק הלילי ברובע העתיק', desc: 'שוק לילה תוסס בסופי שבוע (שישי-ראשון) עם קניות ואוכל רחוב.', mymaps: true },
+      { id: 'hangma', name: 'שוק חנג-מא', desc: 'רחוב חנויות קישוטים צבעוניות, שווה במיוחד לקראת חגים.', mymaps: true },
+      { id: 'incense-village', name: 'כפר הקטורת קוואנג פו קאו', desc: 'כפר פוטוגני להכנת מקלות קטורת בצבעים עזים, כשעה מהאנוי.', mymaps: true },
+      { id: 'phobo', name: 'פו בו (Phở bò)', desc: 'מרק אטריות אורז אייקוני עם ציר בקר עשיר, בדרך כלל נאכל בבוקר.', mymaps: true },
+      { id: 'buncha', name: 'בון צ\'ה (Bún chả)', desc: 'קציצות חזיר צלויות עם אטריות אורז ועשבי תיבול, מנת הדגל של האנוי.', mymaps: true },
+      { id: 'chaca', name: 'צ\'ה קה (Cha Ca)', desc: 'דג מתובל בכורכום וג\'ינג\'ר על מחבת, מוגש עם אטריות ובוטנים.', mymaps: true },
+      { id: 'eggcoffee', name: 'קפה ביצה בקפה ג\'יאנג', desc: 'המצאה מקומית מפורסמת — קפה מתוק וקצפתי עם ביצה מוקצפת.', mymaps: true },
+      { id: 'banhmi25', name: 'באן מי 25', desc: 'אחד מדוכני הבאן מי המומלצים ביותר בעיר.', mymaps: true },
+      { id: 'banhcuon', name: 'באן קואון', desc: 'דפי אורז מאודים במילוי בשר ופטריות — נהדר לארוחת בוקר קלה.', mymaps: true },
+      { id: 'trungvitlon', name: 'בלוט ברווז (Trứng Vịt Lộn)', desc: 'מנת רחוב נועזת שנמכרת רק בבוקר, 6-8 בלבד.', mymaps: true }
+    ]
+  },
+  puluong: {
+    callout: { type: 'hit', text: 'שוק פו-דואן פתוח בימי חמישי וראשון בלבד, 5-10 בבוקר — ה-17/09 (יום חמישי) נופל בדיוק בתקופת השהות שלכם באזור (16-18/09)!' },
+    items: [
+      { id: 'ricefields', name: 'טיילת בין שדות האורז', desc: 'מסלול הליכה בין מדרגות אורז ירוקות עם נוף פנורמי לעמק.', mymaps: false },
+      { id: 'phodoan', name: 'שוק פו-דואן (Pho Doan)', desc: 'שוק בוקר צבעוני של מיעוטים אתניים, פתוח בימי חמישי וראשון 5-10 בבוקר בלבד.', mymaps: true },
+      { id: 'hieu', name: 'מפל היו (Hieu Waterfall)', desc: 'מפל מים נעים לצד רכיבה ברפסודת במבוק על נהר צ\'אם.', mymaps: false },
+      { id: 'khomuong', name: 'מערת קו-מונג', desc: 'מערת גיר מרשימה בהליכה קלה מכפר קו-מונג.', mymaps: false },
+      { id: 'hilltop', name: 'הגבעה הגבוהה בכפר', desc: 'נקודת תצפית עם נוף לגבעות ירוקות וטרסות אורז.', mymaps: true }
+    ]
+  },
+  ninhbinh: {
+    callout: null,
+    items: [
+      { id: 'trangan', name: 'טראנג אן (Tràng An)', desc: 'אתר מורשת עולמית של אונסק"ו — שייט סמפאן בין צוקי גיר ומערות טבע.', mymaps: true },
+      { id: 'tamcoc', name: 'טאם קוק (Tam Coc)', desc: 'מכונה \'האלונג ביי היבשתי\', שייט ציורי בין שדות אורז וצוקי גיר.', mymaps: true },
+      { id: 'muacave', name: 'תצפית מערת מואה (Mua Cave)', desc: 'טיפוס של כ-500 מדרגות לנוף פנורמי מדהים, מומלץ בזריחה.', mymaps: true },
+      { id: 'baidinh', name: 'פגודת ביי דין (Bai Dinh)', desc: 'מתחם המקדש הבודהיסטי הגדול בוייטנאם, עם 500 פסלי ארהט.', mymaps: false },
+      { id: 'hoalu', name: 'הואה לו — הבירה העתיקה', desc: 'הבירה הראשונה של וייטנאם העצמאית (968-1010) לפני המעבר להאנוי.', mymaps: false },
+      { id: 'bearsanctuary', name: 'מקלט הדובים של נין-בין', desc: 'מקלט שיקום לדובי ירח שהוצלו מגידול למרה.', mymaps: true }
+    ]
+  },
+  sapa: {
+    callout: { type: 'info', text: 'שוק האהבה (Love Market) מתקיים בשבתות בערב בלבד — לא חופף לימי השהות שלכם באזור (21-23/09, שני-רביעי).' },
+    items: [
+      { id: 'catcat', name: 'כפר קאט קאט', desc: 'כפר מסורתי של שבט ההמונג השחור, עם מפל ומלאכת יד מקומית.', mymaps: true },
+      { id: 'fansipan', name: 'רכבל פנסיפן', desc: 'רכבל לפסגה הגבוהה בהודו-סין (3,147מ\') — רכבל השיא בעולם.', mymaps: true },
+      { id: 'taphin', name: 'טא-פין (Ta Phin)', desc: 'כפר אותנטי ופחות מתויר, כולל הליכה ביער במבוק יפהפה.', mymaps: true },
+      { id: 'matra', name: 'בית התרבות מא-טרה', desc: 'בית תרבות מקומי בשילוב עם ביקור בטא-פין, פחות מתויר.', mymaps: true },
+      { id: 'glassbridge', name: 'גשר הזכוכית (Rong May)', desc: 'הגשר עצמו פשוט אך הנוף מסביבו מרהיב, כולל נדנדה וגשר תלוי.', mymaps: true },
+      { id: 'coaster', name: 'רכבת ההרים האלפינית', desc: 'מסלול מהנה ולא אקסטרימי, מתאים גם לילדים.', mymaps: true },
+      { id: 'nightmarket', name: 'שוק הלילה של סאפה', desc: 'שוק ערב עם אוכל רחוב ומלאכת יד של המיעוטים ההרריים.', mymaps: true },
+      { id: 'lovemarket', name: 'שוק האהבה (Love Market)', desc: 'מסורת ייחודית של מיעוטי ההרים בשבתות בערב.', mymaps: false }
+    ]
+  },
+  halong: {
+    callout: null,
+    items: [
+      { id: 'sungsot', name: 'מערת סונג-סוט (Surprise Cave)', desc: 'המערה המפורסמת והמרשימה במפרץ, עם שני חללים ענקיים.', mymaps: false },
+      { id: 'titop', name: 'אי טי-טופ', desc: 'חוף קטן וטיפוס לפסגה עם נוף פנורמי מדהים על המפרץ.', mymaps: false },
+      { id: 'luoncave', name: 'מערת לואון', desc: 'מערה נמוכה שחוצים בקיאק, מובילה ללגונה סגורה.', mymaps: false },
+      { id: 'cuavan', name: 'כפר הדייגים קואה-ואן', desc: 'כפר דייגים צף מסורתי בתוך המפרץ.', mymaps: false },
+      { id: 'kayak', name: 'חתירת קיאק במפרץ', desc: 'דרך מצוינת לחוות את הצוקים מקרוב, במקומות שהספינות לא מגיעות אליהם.', mymaps: false }
+    ]
+  },
+  hoian: {
+    callout: { type: 'info', text: 'פסטיבל הפנסים החודשי חל ב-14 בחודש הירחי — החודש זה יוצא ב-24/09, יום לפני הגעתכם (26-27/09), כך שכנראה תפספסו אותו.' },
+    items: [
+      { id: 'oldtown', name: 'העיר העתיקה של הוי-אן', desc: 'אתר מורשת עולמית עם בתים צהובים, פנסים צבעוניים ורחובות ללא מכוניות בערב.', mymaps: false },
+      { id: 'japanesebridge', name: 'הגשר היפני המקורה', desc: 'סמל העיר מהמאה ה-16, מחבר בין שכונות הסוחרים היפנים והסינים לשעבר.', mymaps: false },
+      { id: 'lantern', name: 'פסטיבל הפנסים החודשי', desc: 'ליל ירח מלא עם כיבוי אורות והדלקת פנסים ברחבי העיר העתיקה.', mymaps: false },
+      { id: 'nightmarket', name: 'שוק הלילה של הוי-אן', desc: 'שוק ערב לאורך הנהר עם פנסים, אוכל רחוב ושייט בסירות עגולות.', mymaps: false },
+      { id: 'anbang', name: 'חוף אן-באנג', desc: 'חוף חולי רגוע במרחק קצר מהעיר העתיקה, נהדר לשקיעה.', mymaps: false },
+      { id: 'basketboat', name: 'שייט בסירת סל בכפר קאם-טאן', desc: 'חוויה ייחודית בין עצי קוקוס בסירות במבוק עגולות.', mymaps: false }
+    ]
+  },
+  phuquoc: {
+    callout: null,
+    items: [
+      { id: 'starfish', name: 'חוף הכוכבים (Starfish Beach)', desc: 'חוף שקט עם כוכבי ים בצבע כתום, ליד שווקים צפים.', mymaps: true },
+      { id: 'fishsauce', name: 'מפעל רוטב הדגים', desc: 'סיור במפעל מסורתי לייצור רוטב הדגים המפורסם של פו-קוק.', mymaps: true },
+      { id: 'pepperfarm', name: 'חוות פלפל', desc: 'חוות פלפל מקומית להתרשם מתהליך הגידול והייבוש.', mymaps: true },
+      { id: 'nationalpark', name: 'הפארק הלאומי של פו-קוק', desc: 'שמורת טבע וג\'ונגל בצפון האי, טיולים ומסלולי הליכה.', mymaps: true },
+      { id: 'cablecar', name: 'רכבל הון-טום (Sun World)', desc: 'אחד הרכבלים הארוכים בעולם מעל הים, לאי הון-טום.', mymaps: true },
+      { id: 'hamninh', name: 'כפר הדייגים האם-נין', desc: 'כפר דייגים אותנטי עם שווקים צפים בסמוך.', mymaps: true },
+      { id: 'dinhcau', name: 'שוק הלילה דין-קאו', desc: 'שוק אוכל ים וקניות תוסס במרכז דואונג דונג, פתוח כל ערב 17:00-22:00.', mymaps: true },
+      { id: 'saobeach', name: 'חוף סאו (Sao Beach)', desc: 'אחד החופים היפים באי, חול לבן ומים טורקיז, קרוב לרכבל הון-טום.', mymaps: false }
+    ]
+  }
+};
+var STORAGE_VISITED = 'purish_attr_visited_v1';
+var STORAGE_ORDER = 'purish_attr_order_v1';
+var attrVisited = {};
+try { attrVisited = JSON.parse(localStorage.getItem(STORAGE_VISITED)) || {}; } catch(e){ attrVisited = {}; }
+var attrOrder = {};
+try { attrOrder = JSON.parse(localStorage.getItem(STORAGE_ORDER)) || {}; } catch(e){ attrOrder = {}; }
+
+var attrSelect = document.getElementById('attr-region-select');
+var attrListEl = document.getElementById('attr-list');
+var attrCalloutEl = document.getElementById('attr-callout');
+var attrSortable = null;
+
+function saveAttrVisited(){ localStorage.setItem(STORAGE_VISITED, JSON.stringify(attrVisited)); }
+function saveAttrOrder(){ localStorage.setItem(STORAGE_ORDER, JSON.stringify(attrOrder)); }
+
+function renderAttrRegion(region){
+  if(!region){
+    attrListEl.style.display = 'none';
+    attrCalloutEl.style.display = 'none';
+    attrListEl.innerHTML = '';
+    return;
+  }
+  var data = ATTRACTIONS[region];
+  attrListEl.style.display = 'flex';
+  if(data.callout){
+    attrCalloutEl.style.display = 'block';
+    attrCalloutEl.className = 'attr-callout' + (data.callout.type === 'info' ? ' info' : '');
+    attrCalloutEl.textContent = data.callout.text;
+  } else {
+    attrCalloutEl.style.display = 'none';
+  }
+  var items = data.items.slice();
+  var savedOrder = attrOrder[region];
+  if(savedOrder){
+    var map = {};
+    items.forEach(function(it){ map[it.id] = it; });
+    var ordered = [];
+    savedOrder.forEach(function(id){ if(map[id]){ ordered.push(map[id]); delete map[id]; } });
+    Object.keys(map).forEach(function(id){ ordered.push(map[id]); });
+    items = ordered;
+  }
+  attrListEl.innerHTML = '';
+  items.forEach(function(item){
+    var key = region + '|' + item.id;
+    var isVisited = !!attrVisited[key];
+    var row = document.createElement('div');
+    row.className = 'attr-item' + (isVisited ? ' done' : '');
+    row.dataset.id = item.id;
+    row.innerHTML =
+      '<span class="dh2">⋮⋮</span>' +
+      '<label class="attr-check"><input type="checkbox" ' + (isVisited ? 'checked' : '') + '><span class="attr-checkmark"></span></label>' +
+      '<div class="attr-content">' +
+        '<div class="attr-name">' + (item.mymaps ? '<span class="attr-tag">My Maps</span>' : '') + item.name + '</div>' +
+        '<div class="attr-desc">' + item.desc + '</div>' +
+      '</div>';
+    var cb = row.querySelector('input');
+    cb.addEventListener('change', function(){
+      attrVisited[key] = cb.checked;
+      row.classList.toggle('done', cb.checked);
+      saveAttrVisited();
+    });
+    attrListEl.appendChild(row);
+  });
+  if(attrSortable){ attrSortable.destroy(); }
+  attrSortable = new Sortable(attrListEl, { animation: 180, handle: '.dh2', onEnd: function(){
+    var newOrder = [];
+    attrListEl.querySelectorAll('.attr-item').forEach(function(el){ newOrder.push(el.dataset.id); });
+    attrOrder[region] = newOrder;
+    saveAttrOrder();
+  }});
+}
+
+attrSelect.addEventListener('change', function(){ renderAttrRegion(attrSelect.value); });
+renderAttrRegion('');
 })();
 </script>
 
