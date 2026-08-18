@@ -90,6 +90,13 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .typhoon-card{background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
 .typhoon-card-title{padding:11px 16px;font-weight:700;font-size:14px;color:var(--blue);background:rgba(10,132,255,0.15);}
 .typhoon-card iframe{width:100%;height:340px;border:none;display:block;}
+.apps-card{max-width:1600px;margin:0 auto;background:var(--card);border-radius:16px;padding:16px;border:0.5px solid rgba(255,255,255,0.08);}
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(84px, 1fr));gap:14px;}
+.app-tile{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;cursor:pointer;padding:8px 2px;border-radius:12px;transition:background 0.15s;}
+.app-tile:active{background:rgba(255,255,255,0.06);}
+.app-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
+.app-name{font-size:12px;color:var(--ink);text-align:center;font-weight:600;line-height:1.25;}
+.app-badge{display:inline-block;font-size:9.5px;color:var(--blue);background:rgba(10,132,255,0.15);padding:1px 6px;border-radius:8px;margin-top:3px;}
 .footer{text-align:center;font-size:12px;color:var(--sub);margin-top:22px;}
 </style>
 </head>
@@ -265,6 +272,43 @@ head.addEventListener('click', function(){
 <iframe src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricWind=default&zoom=5&overlay=rain&product=ecmwf&level=surface&lat=16.000&lon=108.000"></iframe>
 </div>
 </div>
+
+<div class="section-title">אפליקציות מומלצות לטיול</div>
+<div class="section-hint">רוב האפליקציות כלליות לחו"ל · Grab ו-Vexere ייעודיות לוייטנאם · לחיצה פותחת את חנות האפליקציות המתאימה למכשיר שלך</div>
+<div class="apps-card">
+<div class="apps-grid" id="apps-grid"></div>
+</div>
+<script>
+(function(){
+var APPS = [
+{name:"Booking", emoji:"🏨", color:"#003580", ios:"https://apps.apple.com/us/app/booking-com-hotels-travel/id367003839", android:"https://play.google.com/store/apps/details?id=com.booking"},
+{name:"Google Maps", emoji:"🗺️", color:"#1a73e8", ios:"https://apps.apple.com/app/id585027354", android:"https://play.google.com/store/apps/details?id=com.google.android.apps.maps"},
+{name:"Google Translate", emoji:"🌐", color:"#4285f4", ios:"https://apps.apple.com/app/id414706506", android:"https://play.google.com/store/apps/details?id=com.google.android.apps.translate"},
+{name:"Ubigi", emoji:"📶", color:"#00b2a9", ios:"https://apps.apple.com/us/app/ubigi-travel-esim-data-plan/id1375857674", android:"https://play.google.com/store/apps/details?id=com.transatel.selfcare.ubigi"},
+{name:"Splitwise", emoji:"🧾", color:"#4b9c5f", ios:"https://apps.apple.com/us/app/splitwise/id458023433", android:"https://play.google.com/store/apps/details?id=com.Splitwise.SplitwiseMobile"},
+{name:"Hohem Joy", emoji:"🎥", color:"#2b2b2e", ios:"https://apps.apple.com/us/app/hohem-joy/id1574156865", android:"https://play.google.com/store/apps/details?id=com.hohem.hohemjoy"},
+{name:"Grab", emoji:"🚗", color:"#00b14f", ios:"https://apps.apple.com/my/app/grab-superapp/id647268330", android:"https://play.google.com/store/apps/details?id=com.grabtaxi.passenger", badge:"וייטנאם"},
+{name:"Gett", emoji:"🚕", color:"#1c1c1e", ios:"https://apps.apple.com/us/app/gett-book-black-taxis/id449655162", android:"https://play.google.com/store/apps/details?id=com.gettaxi.android"},
+{name:"Wizz Air", emoji:"✈️", color:"#c6007e", ios:"https://apps.apple.com/us/app/wizz-air-book-flights/id583348801", android:"https://play.google.com/store/apps/details?id=com.wizzair.WizzAirApp"},
+{name:"Vexere", emoji:"🚌", color:"#f47920", ios:"https://apps.apple.com/us/app/vexere-book-bus-flight-train/id1183279479", android:"https://play.google.com/store/apps/details?id=com.vexere.vexere", badge:"וייטנאם"},
+{name:"El Al", emoji:"✈️", color:"#003da5", ios:"https://apps.apple.com/us/app/el-al/id424006807", android:"https://play.google.com/store/apps/details?id=il.co.elal.mobile"},
+{name:"AIG", emoji:"🛡️", color:"#002d5c", ios:"https://apps.apple.com/us/app/aig-travel-protect/id6758394928", android:"https://play.google.com/store/apps/details?id=com.safeture.aig"}
+];
+function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+var grid = document.getElementById('apps-grid');
+APPS.forEach(function(app){
+  var a = document.createElement('a');
+  a.className = 'app-tile';
+  a.href = isIOS() ? app.ios : app.android;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.innerHTML =
+    '<div class="app-icon" style="background:' + app.color + '">' + app.emoji + '</div>' +
+    '<div class="app-name">' + app.name + (app.badge ? '<span class="app-badge">' + app.badge + '</span>' : '') + '</div>';
+  grid.appendChild(a);
+});
+})();
+</script>
 
 <div class="section-title">תחזית מזג האוויר לכל הימים</div>
 <div class="section-hint">אפשר לגרור את הכרטיסיות (מהכותרת) כדי לסדר אותן מחדש</div>
