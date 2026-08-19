@@ -129,6 +129,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .trainstreet-footer{margin-top:12px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
 .trainstreet-note{font-size:11.5px;color:#636366;line-height:1.5;}
 .trainstreet-auto{font-size:10.5px;background:rgba(10,132,255,0.15);color:var(--blue);padding:3px 8px;border-radius:8px;white-space:nowrap;}
+.trainstreet-col.relevant{border:1px solid var(--blue);}
 .footer{text-align:center;font-size:12px;color:var(--sub);margin-top:22px;}
 </style>
 </head>
@@ -350,7 +351,7 @@ APPS.forEach(function(app){
 <option value="hanoi">האנוי</option>
 <option value="puluong">פו-לונג</option>
 <option value="ninhbinh">נין-בין</option>
-<option value="sapa">סאפה</option>
+<option value="sapa">סאפא</option>
 <option value="halong">מפרץ הא-לונג</option>
 <option value="hoian">הוי-אן</option>
 <option value="phuquoc">פו-קוק</option>
@@ -360,9 +361,48 @@ APPS.forEach(function(app){
 </div>
 <script>
 (function(){
+var DOW_NAMES = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+function formatAttrDates(dates){
+  return dates.map(function(d){ return d.label + ' (' + DOW_NAMES[d.dow] + ')'; }).join(', ');
+}
+function weeklyEventCallout(locHebrew, eventDows, hitTpl, missTpl){
+  var dates = window.getItineraryDatesForLoc ? window.getItineraryDatesForLoc(locHebrew) : [];
+  if(!dates.length) return null;
+  var hits = dates.filter(function(d){ return eventDows.indexOf(d.dow) !== -1; });
+  var range = formatAttrDates(dates);
+  if(hits.length) return { type: 'hit', text: hitTpl.replace('{hits}', formatAttrDates(hits)).replace('{range}', range) };
+  return { type: 'info', text: missTpl.replace('{range}', range) };
+}
+function puluongCallout(){
+  return weeklyEventCallout('פו-לונג', [4,0],
+    'שוק פו-דואן פתוח בימי חמישי וראשון בלבד, 5-10 בבוקר — {hits} נופל בדיוק בתקופת השהות שלכם באזור ({range})!',
+    'שוק פו-דואן פתוח בימי חמישי וראשון בלבד, 5-10 בבוקר — לא חופף לימי השהות שלכם באזור כרגע ({range}).');
+}
+function sapaCallout(){
+  return weeklyEventCallout('סאפא', [6],
+    'שוק האהבה (Love Market) מתקיים בשבתות בערב — {hits} נופל בדיוק בתקופת השהות שלכם באזור, לא לפספס!',
+    'שוק האהבה (Love Market) מתקיים בשבתות בערב בלבד — לא חופף לימי השהות שלכם באזור כרגע ({range}).');
+}
+function hoianCallout(){
+  var dates = window.getItineraryDatesForLoc ? window.getItineraryDatesForLoc('הוי-אן') : [];
+  if(!dates.length) return null;
+  var range = formatAttrDates(dates);
+  var hit = dates.some(function(d){ return d.label === '24/09'; });
+  if(hit) return { type: 'hit', text: 'פסטיבל הפנסים החודשי (ליל 14 בחודש הירחי) חל השנה ב-24/09 — זה בדיוק בתוך השהות שלכם בהוי-אן (' + range + ')! לא לפספס.' };
+  return { type: 'info', text: 'פסטיבל הפנסים החודשי חל השנה ב-24/09 (14 בחודש הירחי) — מחוץ לימי השהות שלכם בהוי-אן כרגע (' + range + ').' };
+}
+function hanoiCallout(){
+  var tip = ' טיפ: בלוט הברווז (Trứng Vịt Lộn) נמכר ברחוב רק בין 6-8 בבוקר.';
+  var dates = window.getItineraryDatesForLoc ? window.getItineraryDatesForLoc('האנוי') : [];
+  if(!dates.length) return { type: 'info', text: 'השוק הלילי ברובע העתיק פועל רק בין שישי לראשון בערב.' + tip };
+  var range = formatAttrDates(dates);
+  var hits = dates.filter(function(d){ return [5,6,0].indexOf(d.dow) !== -1; });
+  if(hits.length) return { type: 'hit', text: 'השוק הלילי ברובע העתיק פועל בין שישי לראשון בערב — ' + formatAttrDates(hits) + ' נופל/ים בדיוק בשהות שלכם בהאנוי (' + range + ')!' + tip };
+  return { type: 'info', text: 'השוק הלילי ברובע העתיק פועל רק בין שישי לראשון בערב — ימי השהות שלכם בהאנוי (' + range + ') לא חופפים, כנראה תפספסו אותו.' + tip };
+}
 var ATTRACTIONS = {
   hanoi: {
-    callout: { type: 'info', text: 'השוק הלילי ברובע העתיק פועל רק בין שישי לראשון בערב; ה-15/09 וה-29/09 (ימי השהות שלכם) הם ימי שלישי, כך שכנראה תפספסו אותו. טיפ: בלוט הברווז (Trứng Vịt Lộn) נמכר ברחוב רק בין 6-8 בבוקר.' },
+    callout: hanoiCallout,
     items: [
       { id: 'oldquarter', name: 'הרובע העתיק', desc: '36 רחובות עתיקים עם שווקים, בתי קפה ואוכל רחוב — הלב הפועם של האנוי.', mymaps: false },
       { id: 'hoankiem', name: 'אגם הא-קיים', desc: 'אגם שקט במרכז העיר עם מגדל הצב הקטן, נעים לטיול ערב.', mymaps: false },
@@ -389,7 +429,7 @@ var ATTRACTIONS = {
     ]
   },
   puluong: {
-    callout: { type: 'hit', text: 'שוק פו-דואן פתוח בימי חמישי וראשון בלבד, 5-10 בבוקר — ה-17/09 (יום חמישי) נופל בדיוק בתקופת השהות שלכם באזור (16-18/09)!' },
+    callout: puluongCallout,
     items: [
       { id: 'ricefields', name: 'טיילת בין שדות האורז', desc: 'מסלול הליכה בין מדרגות אורז ירוקות עם נוף פנורמי לעמק.', mymaps: false },
       { id: 'phodoan', name: 'שוק פו-דואן (Pho Doan)', desc: 'שוק בוקר צבעוני של מיעוטים אתניים, פתוח בימי חמישי וראשון 5-10 בבוקר בלבד.', mymaps: true },
@@ -410,7 +450,7 @@ var ATTRACTIONS = {
     ]
   },
   sapa: {
-    callout: { type: 'info', text: 'שוק האהבה (Love Market) מתקיים בשבתות בערב בלבד — לא חופף לימי השהות שלכם באזור (21-23/09, שני-רביעי).' },
+    callout: sapaCallout,
     items: [
       { id: 'catcat', name: 'כפר קאט קאט', desc: 'כפר מסורתי של שבט ההמונג השחור, עם מפל ומלאכת יד מקומית.', mymaps: true },
       { id: 'fansipan', name: 'רכבל פנסיפן', desc: 'רכבל לפסגה הגבוהה בהודו-סין (3,147מ\') — רכבל השיא בעולם.', mymaps: true },
@@ -418,7 +458,7 @@ var ATTRACTIONS = {
       { id: 'matra', name: 'בית התרבות מא-טרה', desc: 'בית תרבות מקומי בשילוב עם ביקור בטא-פין, פחות מתויר.', mymaps: true },
       { id: 'glassbridge', name: 'גשר הזכוכית (Rong May)', desc: 'הגשר עצמו פשוט אך הנוף מסביבו מרהיב, כולל נדנדה וגשר תלוי.', mymaps: true },
       { id: 'coaster', name: 'רכבת ההרים האלפינית', desc: 'מסלול מהנה ולא אקסטרימי, מתאים גם לילדים.', mymaps: true },
-      { id: 'nightmarket', name: 'שוק הלילה של סאפה', desc: 'שוק ערב עם אוכל רחוב ומלאכת יד של המיעוטים ההרריים.', mymaps: true },
+      { id: 'nightmarket', name: 'שוק הלילה של סאפא', desc: 'שוק ערב עם אוכל רחוב ומלאכת יד של המיעוטים ההרריים.', mymaps: true },
       { id: 'lovemarket', name: 'שוק האהבה (Love Market)', desc: 'מסורת ייחודית של מיעוטי ההרים בשבתות בערב.', mymaps: false }
     ]
   },
@@ -433,7 +473,7 @@ var ATTRACTIONS = {
     ]
   },
   hoian: {
-    callout: { type: 'info', text: 'פסטיבל הפנסים החודשי חל ב-14 בחודש הירחי — החודש זה יוצא ב-24/09, יום לפני הגעתכם (26-27/09), כך שכנראה תפספסו אותו.' },
+    callout: hoianCallout,
     items: [
       { id: 'oldtown', name: 'העיר העתיקה של הוי-אן', desc: 'אתר מורשת עולמית עם בתים צהובים, פנסים צבעוניים ורחובות ללא מכוניות בערב.', mymaps: false },
       { id: 'japanesebridge', name: 'הגשר היפני המקורה', desc: 'סמל העיר מהמאה ה-16, מחבר בין שכונות הסוחרים היפנים והסינים לשעבר.', mymaps: false },
@@ -481,10 +521,11 @@ function renderAttrRegion(region){
   }
   var data = ATTRACTIONS[region];
   attrListEl.style.display = 'flex';
-  if(data.callout){
+  var calloutData = (typeof data.callout === 'function') ? data.callout() : data.callout;
+  if(calloutData){
     attrCalloutEl.style.display = 'block';
-    attrCalloutEl.className = 'attr-callout' + (data.callout.type === 'info' ? ' info' : '');
-    attrCalloutEl.textContent = data.callout.text;
+    attrCalloutEl.className = 'attr-callout' + (calloutData.type === 'info' ? ' info' : '');
+    attrCalloutEl.textContent = calloutData.text;
   } else {
     attrCalloutEl.style.display = 'none';
   }
@@ -531,6 +572,8 @@ function renderAttrRegion(region){
 
 attrSelect.addEventListener('change', function(){ renderAttrRegion(attrSelect.value); });
 renderAttrRegion('');
+window.itineraryChangeListeners = window.itineraryChangeListeners || [];
+window.itineraryChangeListeners.push(function(){ if(attrSelect.value) renderAttrRegion(attrSelect.value); });
 })();
 </script>
 
@@ -541,16 +584,43 @@ renderAttrRegion('');
 <span class="trainstreet-updated">עודכן לאחרונה: 19/08/2026</span>
 </div>
 <div class="trainstreet-desc">שני קטעים: הצפוני (מתויר, ליד Phùng Hưng) והדרומי (פחות מתויר). כניסה כרגע רק דרך ישיבה באחד מבתי הקפה המורשים לצד המסילה — לא לעמוד לצד הפסים.</div>
-<div class="trainstreet-callout">שני ימי השהות שלכם בהאנוי (15/09, 29/09) הם ימי שלישי — הלוח הרלוונטי הוא "ימי חול" למטה. חלון הצילום המומלץ: 17:00-18:00.</div>
+<div class="trainstreet-callout" id="trainstreet-callout">חלון הצילום המומלץ: 17:00-18:00. הלוח הרלוונטי לימי השהות שלכם בהאנוי מחושב למטה.</div>
 <div class="trainstreet-grid">
-<div class="trainstreet-col"><div class="trainstreet-col-title">ימי חול (שני-שישי)</div><div class="trainstreet-times" dir="ltr">08:30 · 09:30 · 11:50<br>15:15 · 19:50 · 21:15<br>21:30 · 22:00</div></div>
-<div class="trainstreet-col"><div class="trainstreet-col-title">סופ"ש (שבת-ראשון)</div><div class="trainstreet-times" dir="ltr">06:00 · 09:00 · 09:30<br>11:20 · 15:20 · 17:30<br>18:00 · 18:30 · 19:00<br>19:45 · 20:30 · 21:00</div></div>
+<div class="trainstreet-col" data-kind="weekday"><div class="trainstreet-col-title">ימי חול (שני-שישי)</div><div class="trainstreet-times" dir="ltr">08:30 · 09:30 · 11:50<br>15:15 · 19:50 · 21:15<br>21:30 · 22:00</div></div>
+<div class="trainstreet-col" data-kind="weekend"><div class="trainstreet-col-title">סופ"ש (שבת-ראשון)</div><div class="trainstreet-times" dir="ltr">06:00 · 09:00 · 09:30<br>11:20 · 15:20 · 17:30<br>18:00 · 18:30 · 19:00<br>19:45 · 20:30 · 21:00</div></div>
 </div>
 <div class="trainstreet-footer">
 <div class="trainstreet-note">הזמנים עשויים לזוז 15-30 דקות. מומלץ לוודא עם בעל בית הקפה בהגעה.</div>
 <span class="trainstreet-auto">מתעדכן אוטומטית</span>
 </div>
 </div>
+<script>
+(function(){
+var DOW_NAMES2 = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+function computeTrainCallout(){
+  var calloutEl = document.getElementById('trainstreet-callout');
+  if(!calloutEl) return;
+  var dates = window.getItineraryDatesForLoc ? window.getItineraryDatesForLoc('האנוי') : [];
+  var weekdayCol = document.querySelector('.trainstreet-col[data-kind="weekday"]');
+  var weekendCol = document.querySelector('.trainstreet-col[data-kind="weekend"]');
+  if(weekdayCol) weekdayCol.classList.remove('relevant');
+  if(weekendCol) weekendCol.classList.remove('relevant');
+  if(!dates.length){
+    calloutEl.textContent = 'לוח הזמנים הרלוונטי תלוי באיזה יום תבקרו — בדקו למטה לפי יום בשבוע. חלון הצילום המומלץ: 17:00-18:00.';
+    return;
+  }
+  var weekdayDates = dates.filter(function(d){ return d.dow>=1 && d.dow<=5; });
+  var weekendDates = dates.filter(function(d){ return d.dow===0 || d.dow===6; });
+  var range = dates.map(function(d){ return d.label+' ('+DOW_NAMES2[d.dow]+')'; }).join(', ');
+  var parts = [];
+  if(weekdayDates.length){ parts.push('ימי חול'); if(weekdayCol) weekdayCol.classList.add('relevant'); }
+  if(weekendDates.length){ parts.push('סופ"ש'); if(weekendCol) weekendCol.classList.add('relevant'); }
+  calloutEl.textContent = 'ימי השהות שלכם בהאנוי כרגע: ' + range + ' — הלוח הרלוונטי: ' + parts.join(' וגם ') + '. חלון הצילום המומלץ: 17:00-18:00.';
+}
+window.itineraryChangeListeners = window.itineraryChangeListeners || [];
+window.itineraryChangeListeners.push(computeTrainCallout);
+})();
+</script>
 
 <div class="section-title">תחזית מזג האוויר לכל הימים</div>
 <div class="section-hint">אפשר לגרור את הכרטיסיות (מהכותרת) כדי לסדר אותן מחדש</div>
@@ -628,6 +698,23 @@ itineraryData = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(defaultIti
 
 function dateOf(dayStr){ const m = dayStr.match(/\((.*?)\)/); return m ? m[1] : null; }
 
+window.getItineraryDatesForLoc = function(locName){
+  var list = (itineraryData && itineraryData.length) ? itineraryData : defaultItinerary;
+  var out = [];
+  list.forEach(function(item){
+    if(item.loc === locName){
+      var m = item.day.match(/\((\d{2})\/(\d{2})\)/);
+      if(m){
+        var dayNum = parseInt(m[1],10), monthNum = parseInt(m[2],10);
+        var dow = new Date(2026, monthNum-1, dayNum).getDay();
+        out.push({ label: m[1]+'/'+m[2], dow: dow, dayNum: dayNum, monthNum: monthNum });
+      }
+    }
+  });
+  out.sort(function(a,b){ return (a.monthNum-b.monthNum) || (a.dayNum-b.dayNum); });
+  return out;
+};
+
 function render(){
   listContainer.innerHTML = '';
   itineraryData.forEach((item, i) => {
@@ -657,6 +744,7 @@ function render(){
     listContainer.appendChild(el);
   });
   summary();
+  (window.itineraryChangeListeners || []).forEach(function(fn){ try{ fn(); }catch(e){} });
 }
 
 function summary(){
