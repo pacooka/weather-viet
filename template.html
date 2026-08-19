@@ -314,7 +314,7 @@ head.addEventListener('click', function(){
 </div>
 
 <div class="section-title">המסלול המומלץ שלנו לפי תחזית מזג האוויר</div>
-<div class="section-hint">כרטיסייה זו לתצוגה בלבד בהתאם לתחזית הנוכחית — לשינוי המסלול שלכם עצמכם השתמשו ב"תכנון מסלול הטיול לפי ימים" למעלה</div>
+<div class="section-hint">כרטיסייה זו לתצוגה בלבד, מחושבת מחדש בכל עדכון תחזית — לפי מזג אוויר וגם לפי מגבלות טיסות/נסיעות מציאותיות (מינימום 2 לילות בכל יעד, ללא לילות בודדים אחרי טיסה). לשינוי המסלול שלכם עצמכם השתמשו ב"תכנון מסלול הטיול לפי ימים" למעלה</div>
 <div class="reco-card">
 <div class="reco-head">
 <h2>הצעה אופטימלית: 15/09 - 29/09</h2>
@@ -806,16 +806,20 @@ render();
 </script>
 <script>
 (function(){
-var RECO_PLAN = [
-  { loc: "האנוי", days: ["15/09"], label: "יום נחיתה" },
-  { loc: "סאפא", days: ["16/09","17/09","18/09"] },
-  { loc: "הוי-אן", days: ["19/09","20/09"] },
-  { loc: "פו-קוק", days: ["21/09"] },
-  { loc: "נין-בין", days: ["22/09","23/09"] },
-  { loc: "פו-לונג", days: ["24/09","25/09","26/09"] },
-  { loc: "מפרץ הא-לונג", days: ["27/09","28/09"] },
-  { loc: "האנוי", days: ["29/09"], label: "טיסת חזרה ארצה" }
-];
+// כללי מציאות: פו-לונג+נין-בין נגישים בכביש ורצף אחד (סדר גמיש), סאפא ומפרץ הא-לונג כל אחד נסיעה/יציאה נפרדת
+// מהאנוי, והוי-אן+פו-קוק הם תמיד בלוק טיסות אחד מהאנוי (יש טיסה ישירה גם דה-נאנג-פו-קוק, כך שאין צורך
+// לחזור להאנוי ביניהם). לכל יעד מינימום 2 לילות כדי לא "לשרוף" יום שלם על נסיעה עבור לילה בודד.
+var BADNESS = { ts:3.0, sh:2.0, cl:1.0, pa:0.4, su:0.0 };
+var WEIGHT = { "האנוי":1.0, "נין-בין":1.2, "סאפא":1.2, "פו-לונג":1.0, "מפרץ הא-לונג":1.6, "הוי-אן":0.9, "פו-קוק":1.3 };
+var MIN_NIGHTS = { "פו-לונג":2, "נין-בין":2, "סאפא":2, "מפרץ הא-לונג":2, "הוי-אן":2, "פו-קוק":2 };
+
+function parseDDMM(dayLabel){
+  var m = dayLabel.match(/\((\d{2})\/(\d{2})\)/);
+  return m ? { d: parseInt(m[1],10), m: parseInt(m[2],10) } : null;
+}
+function toDate(dm){ return new Date(2026, dm.m-1, dm.d); }
+function fmt(dt){ return ('0'+dt.getDate()).slice(-2) + '/' + ('0'+(dt.getMonth()+1)).slice(-2); }
+function addDays(dt, n){ var r = new Date(dt); r.setDate(r.getDate()+n); return r; }
 
 function getWeatherFor(loc, dateStr){
   var cards = document.querySelectorAll('#cards-container .wcard');
@@ -830,12 +834,87 @@ function getWeatherFor(loc, dateStr){
           var icon = rows[j].querySelector('.wicon');
           var hi = rows[j].querySelector('.hi');
           var lo = rows[j].querySelector('.lo');
-          return { src: icon ? icon.src : '', hi: hi ? hi.textContent : '', lo: lo ? lo.textContent : '' };
+          return { src: icon ? icon.src : '', code: icon ? icon.dataset.icon : null, hi: hi ? hi.textContent : '', lo: lo ? lo.textContent : '' };
         }
       }
+      break;
     }
   }
   return null;
+}
+
+function scoreRange(loc, startDate, nights){
+  var total = 0;
+  for (var k=0; k<nights; k++){
+    var w = getWeatherFor(loc, fmt(addDays(startDate, k)));
+    var b = (w && w.code && BADNESS.hasOwnProperty(w.code)) ? BADNESS[w.code] : 1.5;
+    var mult = (k === 0) ? 0.5 : 1.0; // יום ראשון בכל יעד - חלקו הולך על הנסיעה/טיסה
+    total += b * (WEIGHT[loc] || 1.0) * mult;
+  }
+  return total;
+}
+
+function permute(arr){
+  if (arr.length <= 1) return [arr];
+  var result = [];
+  for (var i=0; i<arr.length; i++){
+    var rest = arr.slice(0,i).concat(arr.slice(i+1));
+    permute(rest).forEach(function(p){ result.push([arr[i]].concat(p)); });
+  }
+  return result;
+}
+
+function computeRecommendedPlan(){
+  if (typeof defaultItinerary === 'undefined' || !defaultItinerary.length) return null;
+  var firstDM = parseDDMM(defaultItinerary[0].day);
+  var lastDM = parseDDMM(defaultItinerary[defaultItinerary.length-1].day);
+  if (!firstDM || !lastDM) return null;
+  var tripStart = toDate(firstDM);
+  var tripEnd = toDate(lastDM);
+  var arrivalLoc = defaultItinerary[0].loc;
+  var departureLoc = defaultItinerary[defaultItinerary.length-1].loc;
+  var middleStart = addDays(tripStart, 1);
+  var middleNights = Math.round((tripEnd - middleStart) / 86400000);
+
+  var minTotal = 0;
+  Object.keys(MIN_NIGHTS).forEach(function(k){ minTotal += MIN_NIGHTS[k]; });
+  var extra = middleNights - minTotal;
+  if (extra < 0) extra = 0;
+
+  var flightOrders = [ ["הוי-אן","פו-קוק"], ["פו-קוק","הוי-אן"] ];
+  var pnOrders = [ ["פו-לונג","נין-בין"], ["נין-בין","פו-לונג"] ];
+  var extraTargets = Object.keys(MIN_NIGHTS);
+
+  var best = null;
+  flightOrders.forEach(function(fb){
+    pnOrders.forEach(function(pn){
+      var macro = { flight: fb, pn: pn, sapa: ["סאפא"], halong: ["מפרץ הא-לונג"] };
+      permute(["flight","pn","sapa","halong"]).forEach(function(order){
+        var seq = [];
+        order.forEach(function(key){ macro[key].forEach(function(loc){ seq.push(loc); }); });
+        extraTargets.forEach(function(extraLoc){
+          var nightsMap = {};
+          Object.keys(MIN_NIGHTS).forEach(function(k){ nightsMap[k] = MIN_NIGHTS[k]; });
+          nightsMap[extraLoc] += extra;
+          var cur = middleStart, total = 0, plan = [];
+          seq.forEach(function(loc){
+            var n = nightsMap[loc];
+            total += scoreRange(loc, cur, n);
+            plan.push({ loc: loc, start: new Date(cur), nights: n });
+            cur = addDays(cur, n);
+          });
+          if (cur.getTime() !== tripEnd.getTime()) return;
+          if (!best || total < best.score) best = { score: total, plan: plan };
+        });
+      });
+    });
+  });
+
+  if (!best) return null;
+  var fullPlan = [{ loc: arrivalLoc, start: tripStart, nights: 1, isArrival: true }]
+    .concat(best.plan)
+    .concat([{ loc: departureLoc, start: tripEnd, nights: 0, isDeparture: true }]);
+  return { plan: fullPlan, score: best.score, extra: extra };
 }
 
 function renderRecoPlan(){
@@ -843,14 +922,21 @@ function renderRecoPlan(){
   var noteEl = document.getElementById('reco-note');
   var statEl = document.getElementById('reco-stat');
   if (!legsEl) return;
+  var result = computeRecommendedPlan();
+  if (!result){ legsEl.innerHTML = ''; if (noteEl) noteEl.textContent = 'לא ניתן לחשב המלצה כרגע.'; return; }
+
   var html = '';
-  RECO_PLAN.forEach(function(leg, idx){
-    var isLast = idx === RECO_PLAN.length - 1;
-    var nights = isLast ? 0 : leg.days.length;
-    var dateRange = leg.days.length > 1 ? (leg.days[0] + ' - ' + leg.days[leg.days.length-1]) : leg.days[0];
-    var nightsLabel = leg.label ? leg.label : (nights + (nights === 1 ? ' לילה' : ' לילות'));
+  result.plan.forEach(function(leg){
+    var days, dateRange, nightsLabel;
+    if (leg.isDeparture){ days = [fmt(leg.start)]; dateRange = fmt(leg.start); nightsLabel = 'טיסת חזרה ארצה'; }
+    else if (leg.isArrival){ days = [fmt(leg.start)]; dateRange = fmt(leg.start); nightsLabel = 'יום נחיתה'; }
+    else {
+      days = []; for (var k=0; k<leg.nights; k++) days.push(fmt(addDays(leg.start,k)));
+      dateRange = leg.nights > 1 ? (fmt(leg.start) + ' - ' + fmt(addDays(leg.start, leg.nights-1))) : fmt(leg.start);
+      nightsLabel = leg.nights + (leg.nights === 1 ? ' לילה' : ' לילות');
+    }
     var chips = '';
-    leg.days.forEach(function(d){
+    days.forEach(function(d){
       var w = getWeatherFor(leg.loc, d);
       chips += '<div class="reco-day-chip"><span class="rdc-date">' + d + '</span>' +
         (w && w.src ? '<img src="' + w.src + '" alt="">' : '') +
@@ -859,11 +945,26 @@ function renderRecoPlan(){
     html += '<div class="reco-leg"><div class="reco-leg-top"><span class="reco-leg-loc">' + leg.loc + '</span><span class="reco-leg-dates">' + dateRange + ' · ' + nightsLabel + '</span></div><div class="reco-days-row">' + chips + '</div></div>';
   });
   legsEl.innerHTML = html;
-  noteEl.textContent = 'הסידור דוחה את שייט מפרץ הא-לונג, פו-לונג ונין-בין לשבוע האחרון של הטיול (27-28/9, 24-26/9, 22-23/9) בדיוק כשעננות המונסון מתפזרת והשמש חוזרת לצפון וייטנאם, ומקדים את סאפא, הוי-אן ופו-קוק לתחילת הטיול שבה ממילא צפויות סופות רעמים כמעט בכל אזור - כך שהפעילויות התלויות ביותר במזג האוויר (שייט, טרקים ותצפיות הרים) מקבלות את הימים הבהירים ביותר שיש.';
-  statEl.textContent = 'החישוב מבוסס על ציון חשיפה משוקלל לגשם וסופות לכל תאריך ואזור (משוקלל לפי רגישות הפעילות למזג אוויר): 27.2 בסידור המומלץ לעומת 36.6 בסידור הכרונולוגי המקורי - שיפור של כ-26%. מבוסס על תחזית AccuWeather שנבדקה ב-19/08/2026.';
+
+  var flexLegs = result.plan.filter(function(l){ return !l.isArrival && !l.isDeparture; });
+  var baseText = 'החישוב מתבצע מחדש בכל עדכון תחזית ומביא בחשבון גם נסיעות: כל יעד מקבל מינימום 2 לילות (בלי לילות בודדים מיד אחרי טיסה או נסיעה ארוכה), הוי-אן ופו-קוק נשארים רצף טיסות אחד מהאנוי בלי לחזור להאנוי ביניהם, וליום הראשון בכל יעד יש משקל נמוך יותר בחישוב כי חלקו הולך על הדרך.';
+  if (noteEl){
+    if (result.extra > 0){
+      var bonusLeg = flexLegs.reduce(function(a,b){ return (b.nights > a.nights) ? b : a; }, flexLegs[0]);
+      var bonusRange = fmt(bonusLeg.start) + '-' + fmt(addDays(bonusLeg.start, bonusLeg.nights-1));
+      noteEl.textContent = baseText + ' הלילה הנוסף היחיד מעבר למינימום הוצמד ל' + bonusLeg.loc + ' (' + bonusRange + ') כי זה חלון התחזית הכי טוב שנמצא בין כל האזורים.';
+    } else {
+      noteEl.textContent = baseText;
+    }
+  }
+  if (statEl){
+    statEl.textContent = 'ציון חשיפה משוקלל לגשם/סופות למסלול הזה (כולל ניכוי ליום הנסיעה): ' + result.score.toFixed(1) + ' — ככל שנמוך יותר כך טוב יותר. הסידור למעלה ("תכנון מסלול הטיול לפי ימים") הוא זה שבאמת קובע את הטיול שלכם, זו רק המלצה לתצוגה.';
+  }
 }
 
-document.addEventListener('DOMContentLoaded', renderRecoPlan);
+document.addEventListener('DOMContentLoaded', function(){
+  try { renderRecoPlan(); } catch(e){ console.error('reco plan error', e); }
+});
 })();
 </script>
 </body>
