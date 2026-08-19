@@ -811,7 +811,10 @@ render();
 // לחזור להאנוי ביניהם). לכל יעד מינימום 2 לילות כדי לא "לשרוף" יום שלם על נסיעה עבור לילה בודד.
 var BADNESS = { ts:3.0, sh:2.0, cl:1.0, pa:0.4, su:0.0 };
 var WEIGHT = { "האנוי":1.0, "נין-בין":1.2, "סאפא":1.2, "פו-לונג":1.0, "מפרץ הא-לונג":1.6, "הוי-אן":0.9, "פו-קוק":1.3 };
-var MIN_NIGHTS = { "פו-לונג":2, "נין-בין":2, "סאפא":2, "מפרץ הא-לונג":2, "הוי-אן":2, "פו-קוק":2 };
+// מפרץ הא-לונג מוגבל ללילה אחד בלבד (שייט יום-לילה סטנדרטי, אין עוד מה לעשות שם) - קבוע, לא גמיש.
+// כל שאר היעדים ללא הגבלת מקסימום, רק מינימום 2 לילות (בלי לשרוף יום נסיעה שלם על לילה בודד).
+var FIXED_NIGHTS = { "מפרץ הא-לונג": 1 };
+var MIN_NIGHTS = { "פו-לונג":2, "נין-בין":2, "סאפא":2, "הוי-אן":2, "פו-קוק":2 };
 
 function parseDDMM(dayLabel){
   var m = dayLabel.match(/\((\d{2})\/(\d{2})\)/);
@@ -864,6 +867,16 @@ function permute(arr){
   return result;
 }
 
+function distribute(n, k){
+  // כל האופנים לחלק n לילות "בונוס" בין k יעדים גמישים (כל שילוב מספרים אי-שליליים שסכומם n)
+  if (k === 1) return [[n]];
+  var result = [];
+  for (var i=0; i<=n; i++){
+    distribute(n-i, k-1).forEach(function(rest){ result.push([i].concat(rest)); });
+  }
+  return result;
+}
+
 function computeRecommendedPlan(){
   if (typeof defaultItinerary === 'undefined' || !defaultItinerary.length) return null;
   var firstDM = parseDDMM(defaultItinerary[0].day);
@@ -876,14 +889,17 @@ function computeRecommendedPlan(){
   var middleStart = addDays(tripStart, 1);
   var middleNights = Math.round((tripEnd - middleStart) / 86400000);
 
-  var minTotal = 0;
-  Object.keys(MIN_NIGHTS).forEach(function(k){ minTotal += MIN_NIGHTS[k]; });
-  var extra = middleNights - minTotal;
+  var flexKeys = Object.keys(MIN_NIGHTS);
+  var fixedTotal = 0;
+  Object.keys(FIXED_NIGHTS).forEach(function(k){ fixedTotal += FIXED_NIGHTS[k]; });
+  var minFlexTotal = 0;
+  flexKeys.forEach(function(k){ minFlexTotal += MIN_NIGHTS[k]; });
+  var extra = middleNights - fixedTotal - minFlexTotal;
   if (extra < 0) extra = 0;
+  var distributions = distribute(extra, flexKeys.length);
 
   var flightOrders = [ ["הוי-אן","פו-קוק"], ["פו-קוק","הוי-אן"] ];
   var pnOrders = [ ["פו-לונג","נין-בין"], ["נין-בין","פו-לונג"] ];
-  var extraTargets = Object.keys(MIN_NIGHTS);
 
   var best = null;
   flightOrders.forEach(function(fb){
@@ -892,10 +908,10 @@ function computeRecommendedPlan(){
       permute(["flight","pn","sapa","halong"]).forEach(function(order){
         var seq = [];
         order.forEach(function(key){ macro[key].forEach(function(loc){ seq.push(loc); }); });
-        extraTargets.forEach(function(extraLoc){
+        distributions.forEach(function(dist){
           var nightsMap = {};
-          Object.keys(MIN_NIGHTS).forEach(function(k){ nightsMap[k] = MIN_NIGHTS[k]; });
-          nightsMap[extraLoc] += extra;
+          Object.keys(FIXED_NIGHTS).forEach(function(k){ nightsMap[k] = FIXED_NIGHTS[k]; });
+          flexKeys.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
           var cur = middleStart, total = 0, plan = [];
           seq.forEach(function(loc){
             var n = nightsMap[loc];
@@ -946,13 +962,15 @@ function renderRecoPlan(){
   });
   legsEl.innerHTML = html;
 
-  var flexLegs = result.plan.filter(function(l){ return !l.isArrival && !l.isDeparture; });
-  var baseText = 'החישוב מתבצע מחדש בכל עדכון תחזית ומביא בחשבון גם נסיעות: כל יעד מקבל מינימום 2 לילות (בלי לילות בודדים מיד אחרי טיסה או נסיעה ארוכה), הוי-אן ופו-קוק נשארים רצף טיסות אחד מהאנוי בלי לחזור להאנוי ביניהם, וליום הראשון בכל יעד יש משקל נמוך יותר בחישוב כי חלקו הולך על הדרך.';
+  var flexLegs = result.plan.filter(function(l){ return !l.isArrival && !l.isDeparture && l.loc !== "מפרץ הא-לונג"; });
+  var baseText = 'החישוב מתבצע מחדש בכל עדכון תחזית ומביא בחשבון גם נסיעות: מפרץ הא-לונג קבוע ללילה אחד בלבד (שייט יום-לילה סטנדרטי, אין עוד מה לעשות שם), כל שאר היעדים מקבלים מינימום 2 לילות (בלי לילות בודדים מיד אחרי טיסה או נסיעה ארוכה) בלי הגבלת מקסימום, הוי-אן ופו-קוק נשארים רצף טיסות אחד מהאנוי בלי לחזור להאנוי ביניהם, וליום הראשון בכל יעד יש משקל נמוך יותר בחישוב כי חלקו הולך על הדרך.';
   if (noteEl){
-    if (result.extra > 0){
-      var bonusLeg = flexLegs.reduce(function(a,b){ return (b.nights > a.nights) ? b : a; }, flexLegs[0]);
-      var bonusRange = fmt(bonusLeg.start) + '-' + fmt(addDays(bonusLeg.start, bonusLeg.nights-1));
-      noteEl.textContent = baseText + ' הלילה הנוסף היחיד מעבר למינימום הוצמד ל' + bonusLeg.loc + ' (' + bonusRange + ') כי זה חלון התחזית הכי טוב שנמצא בין כל האזורים.';
+    var bonusLegs = flexLegs.filter(function(l){ return l.nights > MIN_NIGHTS[l.loc]; });
+    if (bonusLegs.length){
+      var bonusDesc = bonusLegs.map(function(l){
+        return l.loc + ' (' + fmt(l.start) + '-' + fmt(addDays(l.start, l.nights-1)) + ')';
+      }).join(' ו-');
+      noteEl.textContent = baseText + ' הלילות הנוספות מעבר למינימום (' + result.extra + ' בסה"כ) הוצמדו ל' + bonusDesc + ' כי אלה חלונות התחזית הכי טובים שנמצאו.';
     } else {
       noteEl.textContent = baseText;
     }
