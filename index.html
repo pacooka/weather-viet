@@ -104,6 +104,20 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .checklist-note:focus{outline:none;border-bottom-color:var(--blue);color:var(--ink);}
 .checklist-note::placeholder{color:#48484a;}
 
+.hourly-now-card{max-width:1100px;margin:0 auto 14px;background:var(--card);border-radius:16px;padding:12px 14px;border:0.5px solid rgba(255,255,255,0.08);}
+.hourly-now-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.hourly-now-head h2{font-size:14px;font-weight:700;margin:0;color:var(--ink);}
+.hourly-now-nav{display:flex;align-items:center;gap:8px;}
+.hourly-now-label{font-size:12px;color:var(--sub);min-width:60px;text-align:center;}
+.hourly-now-btn{width:26px;height:26px;border-radius:50%;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:var(--blue);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+.hourly-now-btn:disabled{opacity:0.3;cursor:default;}
+.hourly-now-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.hn-chip{flex:1 1 100px;min-width:88px;background:rgba(255,255,255,0.04);border-radius:10px;padding:8px 6px;text-align:center;}
+.hn-loc{font-size:11px;color:var(--sub);font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hn-icon{width:20px;height:20px;margin:0 auto 2px;display:block;}
+.hn-temp{font-size:14px;font-weight:700;color:var(--ink);}
+.hn-cond{font-size:10.5px;color:var(--sub);margin-top:2px;line-height:1.3;}
+.hn-rain{font-size:10px;color:var(--lo);margin-top:1px;}
 .section-title.typhoon{margin-top:34px;}
 .weather-maps-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:14px;}
 .typhoon-card{background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
@@ -326,6 +340,68 @@ head.addEventListener('click', function(){
 </div>
 
 <div class="section-title typhoon">מעקב מזג אוויר בזמן אמת</div>
+<div class="hourly-now-card">
+<div class="hourly-now-head">
+<h2>תחזית שעתית נוכחית</h2>
+<div class="hourly-now-nav">
+<span class="hourly-now-label" id="hn-label">עכשיו</span>
+<button class="hourly-now-btn" id="hn-next" title="שעה הבאה">›</button>
+</div>
+</div>
+<div class="hourly-now-grid" id="hn-grid"></div>
+</div>
+<script>
+(function(){
+var HN_ICONS = {
+ts: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxwYXRoIGQ9Ik0xNSAzOGMtNi42IDAtMTItNS40LTEyLTEyIDAtNS45IDQuMy0xMC44IDEwLTExLjhDMTQgNyAyMC42IDEgMjguNSAxYzguOCAwIDE2LjEgNi41IDE3LjIgMTUuMUM1Mi4xIDE3IDU3IDIyLjUgNTcgMjljMCA3LjItNS45IDEzLTEzLjEgMTNIMTV6IiBmaWxsPSIjNjM2NmYxIi8+Cjxwb2x5Z29uIHBvaW50cz0iMzQsNDIgMjQsNTggMzEsNTggMjcsNjMgNDEsNDYgMzMsNDYiIGZpbGw9IiNmYmJmMjQiLz4KPC9zdmc+",
+sh: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxwYXRoIGQ9Ik0xNSA0MGMtNi42IDAtMTItNS40LTEyLTEyIDAtNS45IDQuMy0xMC44IDEwLTExLjhDMTQgOSAyMC42IDMgMjguNSAzYzguOCAwIDE2LjEgNi41IDE3LjIgMTUuMUM1Mi4xIDE5IDU3IDI0LjUgNTcgMzFjMCA3LjItNS45IDEzLTEzLjEgMTNIMTV6IiBmaWxsPSIjOTRhM2I4Ii8+CjxnIHN0cm9rZT0iIzM4YmRmOCIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CjxsaW5lIHgxPSIyMCIgeTE9IjQ4IiB4Mj0iMTYiIHkyPSI1OCIvPgo8bGluZSB4MT0iMzIiIHkxPSI0OCIgeDI9IjI4IiB5Mj0iNTgiLz4KPGxpbmUgeDE9IjQ0IiB5MT0iNDgiIHgyPSI0MCIgeTI9IjU4Ii8+CjwvZz4KPC9zdmc+",
+cl: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxwYXRoIGQ9Ik0xNiA0OGMtNyAwLTEzLTUuNy0xMy0xMi43IDAtNi4zIDQuNy0xMS41IDEwLjgtMTIuNUMxNS40IDE0LjIgMjIuNSA4IDMxIDhjOS40IDAgMTcuMiA3IDE4LjQgMTYuMUM1Ni40IDI1IDYyIDMwLjkgNjIgMzhjMCA3LjctNi4zIDE0LTE0IDE0SDE2eiIgZmlsbD0iIzk0YTNiOCIvPgo8L3N2Zz4=",
+su: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjE0IiBmaWxsPSIjZmJiZjI0Ii8+CjxnIHN0cm9rZT0iI2ZiYmYyNCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiPgo8bGluZSB4MT0iMzIiIHkxPSI0IiB4Mj0iMzIiIHkyPSIxMiIvPgo8bGluZSB4MT0iMzIiIHkxPSI1MiIgeDI9IjMyIiB5Mj0iNjAiLz4KPGxpbmUgeDE9IjQiIHkxPSIzMiIgeDI9IjEyIiB5Mj0iMzIiLz4KPGxpbmUgeDE9IjUyIiB5MT0iMzIiIHgyPSI2MCIgeTI9IjMyIi8+CjxsaW5lIHgxPSIxMiIgeTE9IjEyIiB4Mj0iMTgiIHkyPSIxOCIvPgo8bGluZSB4MT0iNDYiIHkxPSI0NiIgeDI9IjUyIiB5Mj0iNTIiLz4KPGxpbmUgeDE9IjEyIiB5MT0iNTIiIHgyPSIxOCIgeTI9IjQ2Ii8+CjxsaW5lIHgxPSI0NiIgeTE9IjE4IiB4Mj0iNTIiIHkyPSIxMiIvPgo8L2c+Cjwvc3ZnPg==",
+pa: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxjaXJjbGUgY3g9IjM4IiBjeT0iMjAiIHI9IjExIiBmaWxsPSIjZmJiZjI0Ii8+CjxnIHN0cm9rZT0iI2ZiYmYyNCIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiPgo8bGluZSB4MT0iMzgiIHkxPSIyIiB4Mj0iMzgiIHkyPSI3Ii8+CjxsaW5lIHgxPSI1NiIgeTE9IjIwIiB4Mj0iNjEiIHkyPSIyMCIvPgo8bGluZSB4MT0iNTEiIHkxPSI3IiB4Mj0iNTQiIHkyPSI0Ii8+CjwvZz4KPHBhdGggZD0iTTE0IDQ2Yy02IDAtMTEtNS0xMS0xMSAwLTUuNSA0LTEwIDkuMy0xMC45QzE0IDE4LjcgMjAgMTQgMjcgMTRjOCAwIDE0LjUgNiAxNS42IDEzLjYgNS45LjcgMTAuNCA1LjcgMTAuNCAxMS43IDAgNi41LTUuMyAxMS43LTExLjggMTEuN0gxNHoiIGZpbGw9IiM5NGEzYjgiLz4KPC9zdmc+"
+};
+var HOURLY_DATA = {"האנוי": [{"t": 36, "c": "גשם", "r": 53, "i": "sh"}, {"t": 37, "c": "מעונן ברובו עם ממטרים", "r": 49, "i": "sh"}, {"t": 36, "c": "מעונן ברובו", "r": 45, "i": "cl"}, {"t": 34, "c": "גשם", "r": 56, "i": "sh"}, {"t": 33, "c": "מעונן ברובו", "r": 49, "i": "cl"}, {"t": 32, "c": "מעונן", "r": 44, "i": "cl"}], "פו-לונג": [{"t": 34, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 33, "c": "מעונן", "r": 44, "i": "cl"}, {"t": 32, "c": "גשם", "r": 52, "i": "sh"}, {"t": 30, "c": "מעונן", "r": 48, "i": "cl"}, {"t": 30, "c": "מעונן", "r": 20, "i": "cl"}, {"t": 28, "c": "מעונן", "r": 20, "i": "cl"}], "נין-בין": [{"t": 28, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 28, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 29, "c": "ממטרים", "r": 52, "i": "sh"}, {"t": 29, "c": "גשם", "r": 61, "i": "sh"}, {"t": 31, "c": "מעונן", "r": 45, "i": "cl"}, {"t": 32, "c": "גשם", "r": 53, "i": "sh"}], "סאפא": [{"t": 23, "c": "ממטרים", "r": 52, "i": "sh"}, {"t": 22, "c": "מעונן ברובו", "r": 48, "i": "cl"}, {"t": 21, "c": "מעונן ברובו", "r": 45, "i": "cl"}, {"t": 19, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 18, "c": "סופות רעמים", "r": 54, "i": "ts"}, {"t": 19, "c": "סופות רעמים", "r": 47, "i": "ts"}], "מפרץ הא-לונג": [{"t": 32, "c": "עננות משתנה", "r": 19, "i": "pa"}, {"t": 31, "c": "ממטרים", "r": 40, "i": "sh"}, {"t": 31, "c": "מעונן", "r": 37, "i": "cl"}, {"t": 30, "c": "מעונן", "r": 40, "i": "cl"}, {"t": 29, "c": "גשם", "r": 54, "i": "sh"}, {"t": 28, "c": "מעונן", "r": 49, "i": "cl"}], "הוי-אן": [{"t": 28, "c": "מעונן חלקית", "r": 1, "i": "pa"}, {"t": 27, "c": "מעונן חלקית", "r": 1, "i": "pa"}, {"t": 27, "c": "עננות משתנה", "r": 1, "i": "pa"}, {"t": 26, "c": "עננות משתנה", "r": 2, "i": "pa"}, {"t": 26, "c": "מעונן ברובו", "r": 2, "i": "cl"}, {"t": 27, "c": "מעונן ברובו", "r": 5, "i": "cl"}], "פו-קוק": [{"t": 28, "c": "ממטרים", "r": 46, "i": "sh"}, {"t": 28, "c": "ממטרים", "r": 47, "i": "sh"}, {"t": 28, "c": "מעונן", "r": 43, "i": "cl"}, {"t": 29, "c": "מעונן", "r": 38, "i": "cl"}, {"t": 28, "c": "מעונן", "r": 34, "i": "cl"}, {"t": 28, "c": "מעונן", "r": 34, "i": "cl"}]};
+var LOCS_ORDER = ["האנוי","פו-לונג","נין-בין","סאפא","מפרץ הא-לונג","הוי-אן","פו-קוק"];
+var idx = 0;
+var maxIdx = 0;
+LOCS_ORDER.forEach(function(loc){ if(HOURLY_DATA[loc]) maxIdx = Math.max(maxIdx, HOURLY_DATA[loc].length-1); });
+
+var hnGrid = document.getElementById('hn-grid');
+var hnLabel = document.getElementById('hn-label');
+var hnBtn = document.getElementById('hn-next');
+
+function hnLabelFor(i){
+  if (i===0) return 'עכשיו';
+  if (i===1) return 'בעוד שעה';
+  return 'בעוד ' + i + ' שעות';
+}
+
+function hnRender(){
+  hnGrid.innerHTML = '';
+  LOCS_ORDER.forEach(function(loc){
+    var arr = HOURLY_DATA[loc];
+    if(!arr || !arr.length) return;
+    var item = arr[Math.min(idx, arr.length-1)];
+    var chip = document.createElement('div');
+    chip.className = 'hn-chip';
+    chip.innerHTML =
+      '<div class="hn-loc">' + loc + '</div>' +
+      '<img class="hn-icon" src="' + (HN_ICONS[item.i] || HN_ICONS.pa) + '" alt="' + item.c + '">' +
+      '<div class="hn-temp">' + item.t + '°</div>' +
+      '<div class="hn-cond">' + item.c + '</div>' +
+      '<div class="hn-rain">' + item.r + '% גשם</div>';
+    hnGrid.appendChild(chip);
+  });
+  hnLabel.textContent = hnLabelFor(idx);
+  hnBtn.disabled = (idx >= maxIdx);
+}
+
+hnBtn.addEventListener('click', function(){
+  if (idx < maxIdx){ idx++; hnRender(); }
+});
+
+hnRender();
+})();
+</script>
 <div class="weather-maps-grid">
 <div class="typhoon-card">
 <div class="typhoon-card-title">מעקב טייפונים ורוחות בזמן אמת</div>
