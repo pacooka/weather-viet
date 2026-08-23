@@ -587,7 +587,17 @@ var ATTRACTIONS = {
       { id: 'glassbridge', name: 'גשר הזכוכית (Rong May)', desc: 'הגשר עצמו פשוט אך הנוף מסביבו מרהיב, כולל נדנדה וגשר תלוי.', mymaps: true },
       { id: 'coaster', name: 'רכבת ההרים האלפינית', desc: 'מסלול מהנה ולא אקסטרימי, מתאים גם לילדים.', mymaps: true },
       { id: 'nightmarket', name: 'שוק הלילה של סאפא', desc: 'שוק ערב עם אוכל רחוב ומלאכת יד של המיעוטים ההרריים.', mymaps: true },
-      { id: 'lovemarket', name: 'שוק האהבה (Love Market)', desc: 'מסורת ייחודית של מיעוטי ההרים בשבתות בערב.', mymaps: false }
+      { id: 'lovemarket', name: 'שוק האהבה (Love Market)', desc: 'מסורת ייחודית של מיעוטי ההרים בשבתות בערב.', mymaps: false },
+      { id: 'stonechurch', name: 'כנסיית האבן של סאפא', desc: 'כנסייה קתולית מהתקופה הצרפתית במרכז העיר, אחד הסימנים המוכרים ביותר של סאפא ונקודת מפגש מרכזית.', mymaps: false },
+      { id: 'lakesquare', name: 'כיכר האגם של סאפא', desc: 'הכיכר המרכזית לצד אגם קטן בלב העיר, נעימה לטיול ערב וצפייה בתאורה.', mymaps: false },
+      { id: 'hamrong', name: 'אזור האקו-טוריזם הר רונג (Ham Rong)', desc: 'הר עם גני פרחים, מבנים בסלע ותצפית פנורמית על העיר, הליכה קלה ממרכז סאפא.', mymaps: false },
+      { id: 'muonghoa', name: 'עמק מיאונג הואה (Muong Hoa Valley)', desc: 'עמק שדות אורז מדורגים עתיק עם אבני חרט פרהיסטוריות, יעד טרק פופולרי.', mymaps: false },
+      { id: 'thacbac', name: 'מפל תאק-באק (Thac Bac / Silver Falls)', desc: 'מפל מים גבוה כ-12 ק"מ מהעיר, נקודת עצירה נוחה בדרך למעבר או-קוואי-הו.', mymaps: false },
+      { id: 'lovewaterfall', name: 'מפל האהבה (Love Waterfall)', desc: 'מפל יפהפה בתוך יער, נקודת פתיחה למסלולי טרק לכיוון פנסיפן.', mymaps: false },
+      { id: 'oquyho', name: 'תצפית מעבר או-קוואי-הו (O Quy Ho Pass)', desc: 'אחד ממעברי ההרים המרשימים בוייטנאם, נוף עוצר נשימה על ההרים שבין סאפא ללאי צ\'או.', mymaps: false },
+      { id: 'sapapark', name: 'פארק סאפא', desc: 'פארק עירוני קטן ונעים לטיול רגלי בלב העיר.', mymaps: false },
+      { id: 'moanasapa', name: 'Moana Sapa - "שער גן העדן"', desc: 'נקודת תצפית ואטרקציית צילום עם נוף פתוח לעמק ולהרים.', mymaps: false },
+      { id: 'matpetfarm', name: 'חוות בעלי החיים הקטנה (Mat Pet Farm)', desc: 'חוות חיות קטנה בקרבת מרכז העיר, מתאימה למשפחות עם ילדים.', mymaps: false }
     ]
   },
   halong: {
@@ -940,14 +950,16 @@ var BADNESS = { ts:3.0, sh:2.0, cl:1.0, pa:0.4, su:0.0 };
 // סאפא והוי-אן הם ברירה הדדית (EXCLUSIVE_PAIR) ומקבלים משקל זהה כדי שהבחירה בין השניים תוכרע רק לפי מזג האוויר.
 // פו-קוק ממשיך לקבל משקל גבוה יותר מכל יעד אחר (עדיפות נמוכה יותר לביקור, מצטרף רק אם התחזית שם ממש טובה).
 var WEIGHT = { "האנוי":1.0, "נין-בין":1.2, "סאפא":1.7, "פו-לונג":1.0, "מפרץ הא-לונג":1.6, "הוי-אן":1.7, "פו-קוק":3.0 };
-// מפרץ הא-לונג מוגבל ללילה אחד בלבד (שייט יום-לילה סטנדרטי, אין עוד מה לעשות שם) - קבוע, לא גמיש.
-// פו-לונג/נין-בין: ללא הגבלת מקסימום, רק מינימום 2 לילות (תמיד נכללים). סאפא/הוי-אן/פו-קוק אופציונליים - ראו למטה.
-var FIXED_NIGHTS = { "מפרץ הא-לונג": 1 };
+// מפרץ הא-לונג אינו יעד חובה בטיול - הוא אופציונלי לחלוטין (ייתכן מסלול בלעדיו), ואם נבחר הוא מוגבל
+// ללילה אחד בדיוק (שייט יום-לילה סטנדרטי, אין עוד מה לעשות שם), לעולם לא יותר. ראו HALONG_LOC למטה.
+// פו-לונג/נין-בין: ללא הגבלת מקסימום, רק מינימום 2 לילות (תמיד נכללים). סאפא/הוי-אן/פו-קוק/מפרץ הא-לונג אופציונליים.
 var MIN_NIGHTS = { "פו-לונג":2, "נין-בין":2 };
 // סאפא והוי-אן הם ברירה הדדית: לכל היותר אחד מהשניים נכנס למסלול, לעולם לא שניהם יחד.
-// פו-קוק עצמאי ויכול להצטרף לכל אחד מהשניים (או לבוא בלעדיהם).
+// פו-קוק ומפרץ הא-לונג עצמאיים ויכולים להצטרף לכל אחד מהשניים, לשניהם גם יחד, או לבוא בלעדיהם.
 var EXCLUSIVE_PAIR = ["סאפא", "הוי-אן"];
 var PHUQUOC_LOC = "פו-קוק";
+var HALONG_LOC = "מפרץ הא-לונג";
+var HALONG_NIGHTS = 1; // אם מפרץ הא-לונג נכלל במסלול, זה תמיד לילה אחד בדיוק
 // תנאי חוסם: יום עם קוד שלא ברשימה פוסל לחלוטין את החלון הזה ליעד - האלגוריתם ידלג עליו כליל.
 // הוי-אן: מעונן חלקית ומעלה, וגם ממטרים - אבל בשום אופן לא סופות רעמים (ts).
 // פו-קוק: מעונן חלקית ומעלה בלבד - אי של בריכה וחוף, אין טעם להיות בו בגשם/סופה (sh/ts).
@@ -1075,32 +1087,39 @@ function computeRecommendedPlan(){
   var middleNights = Math.round((tripEnd - middleStart) / 86400000);
 
   var northKeys = Object.keys(MIN_NIGHTS); // פו-לונג / נין-בין (מינימום קבוע, תמיד נכללים)
-  var fixedTotal = 0;
-  Object.keys(FIXED_NIGHTS).forEach(function(k){ fixedTotal += FIXED_NIGHTS[k]; });
   var minNorthTotal = 0;
   northKeys.forEach(function(k){ minNorthTotal += MIN_NIGHTS[k]; });
-  var mandatoryTotal = fixedTotal + minNorthTotal + FINAL_HANOI_NIGHTS;
-  var flexBudget = middleNights - mandatoryTotal; // לילות גמישים לחלוקה בין בונוס בצפון לבין סאפא/הוי-אן/פו-קוק (אופציונליים)
+  var mandatoryTotal = minNorthTotal + FINAL_HANOI_NIGHTS; // מפרץ הא-לונג אינו חובה - הוא אופציונלי, ראו למטה
+  var flexBudget = middleNights - mandatoryTotal; // לילות גמישים לחלוקה בין בונוס בצפון לבין סאפא/הוי-אן/פו-קוק/מפרץ הא-לונג (כולם אופציונליים)
   if (flexBudget < 0) flexBudget = 0;
   var hanoiReturnStart = addDays(tripEnd, -FINAL_HANOI_NIGHTS);
 
-  // כל אפשרויות הבלוק האופציונלי: לדלג, יעד בודד (סאפא/הוי-אן/פו-קוק), או פו-קוק בשילוב עם סאפא-או-הוי-אן
-  // (בכל סדר) - תלוי בתקציב הגמיש. EXCLUSIVE_PAIR (סאפא, הוי-אן) לעולם לא מופיעים שניהם יחד באותו שילוב.
-  var extraPlans = [ { seq: [], leftover: flexBudget } ];
+  // כל אפשרויות הבלוק האופציונלי: כל שילוב של לכל היותר אחד מ-EXCLUSIVE_PAIR (סאפא/הוי-אן, 2+ לילות),
+  // פו-קוק (2+ לילות), ומפרץ הא-לונג (אם נבחר - בדיוק לילה 1, לעולם לא חובה) - בכל סדר אפשרי, תלוי בתקציב
+  // הגמיש. EXCLUSIVE_PAIR לעולם לא מופיעים שניהם יחד; פו-קוק ומפרץ הא-לונג עצמאיים ויכולים להצטרף לכל שילוב.
   var maxEach = Math.min(flexBudget, 6);
-  [EXCLUSIVE_PAIR[0], EXCLUSIVE_PAIR[1], PHUQUOC_LOC].forEach(function(loc){
-    for (var n = 2; n <= maxEach; n++){
-      extraPlans.push({ seq: [{ loc: loc, nights: n }], leftover: flexBudget - n });
-    }
+  var exclusiveChoices = [ null ];
+  [EXCLUSIVE_PAIR[0], EXCLUSIVE_PAIR[1]].forEach(function(loc){
+    for (var n = 2; n <= maxEach; n++) exclusiveChoices.push({ loc: loc, nights: n });
   });
-  var compatiblePairs = [ [EXCLUSIVE_PAIR[0], PHUQUOC_LOC], [EXCLUSIVE_PAIR[1], PHUQUOC_LOC] ]; // לא כולל את שני חברי EXCLUSIVE_PAIR יחד
-  compatiblePairs.forEach(function(pair){
-    for (var a = 2; a + 2 <= flexBudget; a++){
-      for (var b = 2; a + b <= flexBudget; b++){
-        extraPlans.push({ seq: [{ loc: pair[0], nights: a }, { loc: pair[1], nights: b }], leftover: flexBudget - a - b });
-        extraPlans.push({ seq: [{ loc: pair[1], nights: b }, { loc: pair[0], nights: a }], leftover: flexBudget - a - b });
-      }
-    }
+  var phuquocChoices = [ null ];
+  for (var pqn = 2; pqn <= maxEach; pqn++) phuquocChoices.push({ loc: PHUQUOC_LOC, nights: pqn });
+  var halongChoices = [ null, { loc: HALONG_LOC, nights: HALONG_NIGHTS } ];
+
+  var extraPlans = [];
+  exclusiveChoices.forEach(function(exc){
+    phuquocChoices.forEach(function(pq){
+      halongChoices.forEach(function(hl){
+        var used = (exc ? exc.nights : 0) + (pq ? pq.nights : 0) + (hl ? hl.nights : 0);
+        var leftover = flexBudget - used;
+        if (leftover < 0) return;
+        var seq = [];
+        if (exc) seq.push(exc);
+        if (pq) seq.push(pq);
+        if (hl) seq.push(hl);
+        extraPlans.push({ seq: seq, leftover: leftover });
+      });
+    });
   });
 
   var pnOrders = [ ["פו-לונג","נין-בין"], ["נין-בין","פו-לונג"] ];
@@ -1112,14 +1131,18 @@ function computeRecommendedPlan(){
     if (ep.leftover < 0) return;
     var distributions = distribute(ep.leftover, northKeys.length);
     pnOrders.forEach(function(pn){
-      var macro = { extra: ep.seq.map(function(x){ return x.loc; }), pn: pn, halong: ["מפרץ הא-לונג"] };
-      var macroKeys = ep.seq.length ? ["extra","pn","halong"] : ["pn","halong"];
+      var macro = { pn: pn };
+      var macroKeys = ["pn"];
+      ep.seq.forEach(function(item, i){
+        var key = "opt" + i;
+        macro[key] = [item.loc];
+        macroKeys.push(key);
+      });
       permute(macroKeys).forEach(function(order){
         var seqLocs = [];
         order.forEach(function(key){ macro[key].forEach(function(loc){ seqLocs.push(loc); }); });
         distributions.forEach(function(dist){
           var nightsMap = {};
-          Object.keys(FIXED_NIGHTS).forEach(function(k){ nightsMap[k] = FIXED_NIGHTS[k]; });
           northKeys.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
           ep.seq.forEach(function(x){ nightsMap[x.loc] = x.nights; });
           var cur = middleStart, total = 0, plan = [], valid = true;
@@ -1191,23 +1214,33 @@ function computeHoiAnForcedPlan(){
   var HOIAN_LOC = "הוי-אן";
   var HOIAN_MIN_NIGHTS = 2;
   var northKeysHA = Object.keys(MIN_NIGHTS); // פו-לונג / נין-בין
-  var fixedTotal = 0;
-  Object.keys(FIXED_NIGHTS).forEach(function(k){ fixedTotal += FIXED_NIGHTS[k]; });
   var minNorthTotal = 0;
   northKeysHA.forEach(function(k){ minNorthTotal += MIN_NIGHTS[k]; });
-  var mandatoryTotal = fixedTotal + minNorthTotal + FINAL_HANOI_NIGHTS + HOIAN_MIN_NIGHTS;
+  var mandatoryTotal = minNorthTotal + FINAL_HANOI_NIGHTS + HOIAN_MIN_NIGHTS; // מפרץ הא-לונג אינו חובה גם כאן
   var flexBudget = middleNights - mandatoryTotal;
   if (flexBudget < 0) flexBudget = 0;
   var hanoiReturnStart = addDays(tripEnd, -FINAL_HANOI_NIGHTS);
   var maxEach = Math.min(flexBudget, 6);
 
-  // בונוס לילות אפשרי: להוי-אן עצמו, ו/או לפו-קוק (אופציונלי, אם יש תקציב אחרי הבונוס להוי-אן).
+  // בונוס לילות אפשרי: להוי-אן עצמו (מעל המינימום), ו/או פו-קוק, ו/או מפרץ הא-לונג (בדיוק לילה 1, אופציונלי) -
+  // כל אחד מהשניים האחרונים יכול להצטרף באופן עצמאי אם יש תקציב.
+  var phuquocChoicesHA = [ null ];
+  for (var pqn2 = 2; pqn2 <= maxEach; pqn2++) phuquocChoicesHA.push({ loc: PHUQUOC_LOC, nights: pqn2 });
+  var halongChoicesHA = [ null, { loc: HALONG_LOC, nights: HALONG_NIGHTS } ];
+
   var extraPlans = [];
   for (var hb = 0; hb <= maxEach; hb++){
-    extraPlans.push({ hoianBonus: hb, phuquocSeq: [], leftover: flexBudget - hb });
-    for (var pn2 = 2; pn2 + hb <= flexBudget; pn2++){
-      extraPlans.push({ hoianBonus: hb, phuquocSeq: [{ loc: PHUQUOC_LOC, nights: pn2 }], leftover: flexBudget - hb - pn2 });
-    }
+    phuquocChoicesHA.forEach(function(pq){
+      halongChoicesHA.forEach(function(hl){
+        var used = hb + (pq ? pq.nights : 0) + (hl ? hl.nights : 0);
+        var leftover = flexBudget - used;
+        if (leftover < 0) return;
+        var seq = [];
+        if (pq) seq.push(pq);
+        if (hl) seq.push(hl);
+        extraPlans.push({ hoianBonus: hb, seq: seq, leftover: leftover });
+      });
+    });
   }
 
   var pnOrders = [ ["פו-לונג","נין-בין"], ["נין-בין","פו-לונג"] ];
@@ -1216,39 +1249,40 @@ function computeHoiAnForcedPlan(){
   extraPlans.forEach(function(ep){
     if (ep.leftover < 0) return;
     var distributions = distribute(ep.leftover, northKeysHA.length);
-    var extraOrders = ep.phuquocSeq.length ? [ [HOIAN_LOC, PHUQUOC_LOC], [PHUQUOC_LOC, HOIAN_LOC] ] : [ [HOIAN_LOC] ];
     pnOrders.forEach(function(pn){
-      extraOrders.forEach(function(extraOrder){
-        var macro = { extra: extraOrder, pn: pn, halong: ["מפרץ הא-לונג"] };
-        var macroKeys = ["extra","pn","halong"];
-        permute(macroKeys).forEach(function(order){
-          var seqLocs = [];
-          order.forEach(function(key){ macro[key].forEach(function(loc){ seqLocs.push(loc); }); });
-          distributions.forEach(function(dist){
-            var nightsMap = {};
-            Object.keys(FIXED_NIGHTS).forEach(function(k){ nightsMap[k] = FIXED_NIGHTS[k]; });
-            northKeysHA.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
-            nightsMap[HOIAN_LOC] = HOIAN_MIN_NIGHTS + ep.hoianBonus;
-            ep.phuquocSeq.forEach(function(x){ nightsMap[x.loc] = x.nights; });
-            var cur = middleStart, total = 0, plan = [], valid = true, hadBlockedDay = false;
-            seqLocs.forEach(function(loc){
-              var n = nightsMap[loc];
-              if (loc === HOIAN_LOC){
-                var r = scoreRangeEx(loc, cur, n, true); // עוקפים את תנאי הסף - הוי-אן נכנס גם עם סופות רעמים
-                if (r.hadBlockedDay) hadBlockedDay = true;
-                total += r.score;
-              } else {
-                var s = scoreRange(loc, cur, n);
-                if (s === Infinity) valid = false;
-                total += s;
-              }
-              plan.push({ loc: loc, start: new Date(cur), nights: n });
-              cur = addDays(cur, n);
-            });
-            if (!valid) return;
-            if (cur.getTime() !== hanoiReturnStart.getTime()) return;
-            if (!best || total < best.score) best = { score: total, plan: plan, hadBlockedDay: hadBlockedDay };
+      var macro = { pn: pn, hoian: [HOIAN_LOC] };
+      var macroKeys = ["pn", "hoian"];
+      ep.seq.forEach(function(item, i){
+        var key = "opt" + i;
+        macro[key] = [item.loc];
+        macroKeys.push(key);
+      });
+      permute(macroKeys).forEach(function(order){
+        var seqLocs = [];
+        order.forEach(function(key){ macro[key].forEach(function(loc){ seqLocs.push(loc); }); });
+        distributions.forEach(function(dist){
+          var nightsMap = {};
+          northKeysHA.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
+          nightsMap[HOIAN_LOC] = HOIAN_MIN_NIGHTS + ep.hoianBonus;
+          ep.seq.forEach(function(x){ nightsMap[x.loc] = x.nights; });
+          var cur = middleStart, total = 0, plan = [], valid = true, hadBlockedDay = false;
+          seqLocs.forEach(function(loc){
+            var n = nightsMap[loc];
+            if (loc === HOIAN_LOC){
+              var r = scoreRangeEx(loc, cur, n, true); // עוקפים את תנאי הסף - הוי-אן נכנס גם עם סופות רעמים
+              if (r.hadBlockedDay) hadBlockedDay = true;
+              total += r.score;
+            } else {
+              var s = scoreRange(loc, cur, n);
+              if (s === Infinity) valid = false;
+              total += s;
+            }
+            plan.push({ loc: loc, start: new Date(cur), nights: n });
+            cur = addDays(cur, n);
           });
+          if (!valid) return;
+          if (cur.getTime() !== hanoiReturnStart.getTime()) return;
+          if (!best || total < best.score) best = { score: total, plan: plan, hadBlockedDay: hadBlockedDay };
         });
       });
     });
@@ -1309,7 +1343,7 @@ function renderRecoOption(idx){
   var flexLegs = result.plan.filter(function(l){ return !l.isArrival && !l.isDeparture && !l.isReturn && l.loc !== "מפרץ הא-לונג"; });
   if (result.forced){
     if (noteEl){
-      var forcedNote = 'הצעה זו כוללת בכוונה את הוי-אן במקום סאפא (הוי-אן מקבל כאן יתרון קבוע על סאפא ולא מתחרה איתה), כדי לתת חלופה שתמיד משלבת את הוי-אן בטיול - גם אם יש בו ימים עם סופות רעמים. שאר הכללים זהים: מפרץ הא-לונג לילה אחד קבוע, פו-לונג/נין-בין מינימום 2 לילות, ליל ה-' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי, ופו-קוק יכול להצטרף אם יש תקציב לילות גמיש ומזג האוויר שם תומך.';
+      var forcedNote = 'הצעה זו כוללת בכוונה את הוי-אן במקום סאפא (הוי-אן מקבל כאן יתרון קבוע על סאפא ולא מתחרה איתה), כדי לתת חלופה שתמיד משלבת את הוי-אן בטיול - גם אם יש בו ימים עם סופות רעמים. שאר הכללים זהים: פו-לונג/נין-בין מינימום 2 לילות, ליל ה-' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי, ופו-קוק ומפרץ הא-לונג (אינו חובה, לכל היותר לילה אחד) יכולים להצטרף אם יש תקציב לילות גמיש ומזג האוויר תומך.';
       if (result.notOptimal) forcedNote += ' שימו לב: יש בטווח הוי-אן ימים עם סופות רעמים בפועל, ולכן ההצעה מסומנת כלא אופטימלית - היא מוצגת בכל זאת לפי הבקשה להעדיף הוי-אן.';
       noteEl.textContent = forcedNote;
     }
@@ -1318,10 +1352,10 @@ function renderRecoOption(idx){
     }
     return;
   }
-  var baseText = 'החישוב מתבצע מחדש בכל עדכון תחזית: מפרץ הא-לונג קבוע ללילה אחד בלבד, פו-לונג/נין-בין מקבלים מינימום 2 לילות בלי הגבלת מקסימום ותמיד נכללים, ליל ה-' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי לקראת הטיסה בצהריים ב-29/09, וליום הראשון בכל יעד יש משקל נמוך יותר כי חלקו הולך על הדרך. סאפא, הוי-אן ופו-קוק כולם אופציונליים ומשולבים בהמלצה רק אם התחזית תומכת ויש תקציב לילות גמיש: הוי-אן מתאפשר עם עננות/שמש/ממטרים אך לא סופות רעמים, פו-קוק מתאפשר רק עם עננות חלקית ומעלה בלי שום גשם (אי של בריכה וחוף), וסאפא ללא תנאי חוסם. סאפא והוי-אן הם ברירה הדדית - לכל היותר אחד מהשניים נכלל במסלול, לעולם לא שניהם יחד; פו-קוק יכול להצטרף לכל אחד מהם. אזהרת טייפון גוברת על כל שיקול אחר ותדחוף את המסלול להתרחק, כולל טיסה דרומה גם במזג אוויר לא אידאלי אם זה מרחיק מהטייפון.';
+  var baseText = 'החישוב מתבצע מחדש בכל עדכון תחזית: פו-לונג/נין-בין מקבלים מינימום 2 לילות בלי הגבלת מקסימום ותמיד נכללים, ליל ה-' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי לקראת הטיסה בצהריים ב-29/09, וליום הראשון בכל יעד יש משקל נמוך יותר כי חלקו הולך על הדרך. סאפא, הוי-אן, פו-קוק ומפרץ הא-לונג כולם אופציונליים לחלוטין (המסלול יכול לצאת גם בלעדיהם) ומשולבים בהמלצה רק אם התחזית תומכת ויש תקציב לילות גמיש: הוי-אן מתאפשר עם עננות/שמש/ממטרים אך לא סופות רעמים, פו-קוק מתאפשר רק עם עננות חלקית ומעלה בלי שום גשם (אי של בריכה וחוף), סאפא ללא תנאי חוסם, ומפרץ הא-לונג (אם נבחר) מוגבל ללילה אחד בדיוק. סאפא והוי-אן הם ברירה הדדית - לכל היותר אחד מהשניים נכלל במסלול, לעולם לא שניהם יחד; פו-קוק ומפרץ הא-לונג יכולים להצטרף לכל אחד מהם, לשניהם יחד, או לא להיכלל כלל. אזהרת טייפון גוברת על כל שיקול אחר ותדחוף את המסלול להתרחק, כולל טיסה דרומה גם במזג אוויר לא אידאלי אם זה מרחיק מהטייפון.';
   if (noteEl){
     var southNote = !result.southIncluded.length
-      ? ' כרגע לא נמצא בטווח הטיול חלון תחזית מתאים לסאפא, להוי-אן או לפו-קוק, כך שההמלצה משאירה את כל הזמן הגמיש בצפון (פו-לונג/נין-בין).'
+      ? ' כרגע לא נמצא בטווח הטיול חלון תחזית מתאים לסאפא, להוי-אן, לפו-קוק או למפרץ הא-לונג, כך שההמלצה משאירה את כל הזמן הגמיש בצפון (פו-לונג/נין-בין).'
       : ' בהתאם לתחזית שולבו בהמלצה: ' + result.southIncluded.join(' ו-') + '.';
     var bonusLegs = flexLegs.filter(function(l){ return (MIN_NIGHTS[l.loc] || 2) < l.nights; });
     var extraNote = '';
