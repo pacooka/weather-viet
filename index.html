@@ -53,8 +53,9 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .reco-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
 .reco-head h2{font-size:15px;font-weight:700;margin:0;}
 .reco-lock{font-size:11px;color:var(--sub);background:rgba(255,255,255,0.06);padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;flex-shrink:0;}
-.reco-opt-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;}
+.reco-opt-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;}
 .reco-opt-label{font-size:12.5px;color:var(--ink);font-weight:600;white-space:nowrap;min-width:90px;text-align:center;}
+.reco-suboptimal-badge{display:none;text-align:center;font-size:12px;font-weight:700;color:var(--hi);background:rgba(255,159,10,0.15);padding:6px 12px;border-radius:20px;margin:0 auto 14px;max-width:fit-content;}
 .reco-note{background:rgba(10,132,255,0.15);color:var(--blue);font-size:12.5px;padding:9px 12px;border-radius:10px;line-height:1.6;margin-bottom:8px;}
 .reco-stat{font-size:11.5px;color:var(--sub);margin-bottom:14px;line-height:1.5;}
 .reco-legs{display:grid;grid-template-columns:repeat(auto-fit, minmax(270px, 1fr));gap:10px;}
@@ -345,6 +346,9 @@ head.addEventListener('click', function(){
 <button class="hourly-now-btn" id="reco-opt-prev" title="ההצעה הקודמת">‹</button>
 <span class="reco-opt-label" id="reco-opt-label">הצעה ראשונה</span>
 <button class="hourly-now-btn" id="reco-opt-next" title="ההצעה הבאה">›</button>
+</div>
+<div style="text-align:center;">
+<span class="reco-suboptimal-badge" id="reco-suboptimal-badge">⚠️ מסלול לא אופטימלי</span>
 </div>
 <div class="reco-legs" id="reco-legs"></div>
 </div>
@@ -1015,18 +1019,27 @@ function renderTyphoonBanner(){
   banner.style.display = 'block';
 }
 
-function scoreRange(loc, startDate, nights){
-  var total = 0;
+function scoreRangeEx(loc, startDate, nights, bypassAllowedFilter){
+  // גרסה מורחבת של scoreRange: אם bypassAllowedFilter=true, לא חוסמים (Infinity) על תנאי הסף
+  // (הוי-אן/פו-קוק) אלא רק מסמנים hadBlockedDay - שימושי כשרוצים להציג יעד "בכוח" גם במזג אוויר לא אידאלי.
+  var total = 0, hadBlockedDay = false;
   for (var k=0; k<nights; k++){
     var w = getWeatherFor(loc, fmt(addDays(startDate, k)));
     var code = w && w.code;
-    if (SOUTH_ALLOWED_CODES[loc] && !isSouthDayAllowed(loc, code)) return Infinity; // תנאי סף חוסם ליעד הזה
+    if (SOUTH_ALLOWED_CODES[loc] && !isSouthDayAllowed(loc, code)){
+      hadBlockedDay = true;
+      if (!bypassAllowedFilter) return { score: Infinity, hadBlockedDay: true };
+    }
     var b = (code && BADNESS.hasOwnProperty(code)) ? BADNESS[code] : 1.5;
     if (w && w.typhoon) b += TYPHOON_BADNESS; // התרחקות מטייפון גוברת על כל שיקול אחר
     var mult = (k === 0) ? 0.5 : 1.0; // יום ראשון בכל יעד - חלקו הולך על הנסיעה/טיסה
     total += b * (WEIGHT[loc] || 1.0) * mult;
   }
-  return total;
+  return { score: total, hadBlockedDay: hadBlockedDay };
+}
+
+function scoreRange(loc, startDate, nights){
+  return scoreRangeEx(loc, startDate, nights, false).score;
 }
 
 function permute(arr){
@@ -1156,6 +1169,99 @@ function computeRecommendedPlan(){
   return { options: options };
 }
 
+function planSignature(fullPlan){
+  return fullPlan.map(function(l){ return l.loc + ':' + fmt(l.start) + ':' + l.nights; }).join('|');
+}
+
+// "הצעה שלישית": גרסה שבה הוי-אן מקבל יתרון מובנה על סאפא - הוא נכנס למסלול תמיד (במקום סאפא, לא
+// מתחרה איתה כלל בהצעה הזו) גם אם יש בו ימי סופות רעמים, כדי לתת חלופה קבועה שמציגה את הוי-אן.
+// אם יש ימים שנופלים בתנאי הסף הרגיל (למשל סופות רעמים) הפלט מסומן notOptimal=true כדי להציג אזהרה.
+function computeHoiAnForcedPlan(){
+  if (typeof defaultItinerary === 'undefined' || !defaultItinerary.length) return null;
+  var firstDM = parseDDMM(defaultItinerary[0].day);
+  var lastDM = parseDDMM(defaultItinerary[defaultItinerary.length-1].day);
+  if (!firstDM || !lastDM) return null;
+  var tripStart = toDate(firstDM);
+  var tripEnd = toDate(lastDM);
+  var arrivalLoc = defaultItinerary[0].loc;
+  var departureLoc = "האנוי";
+  var middleStart = addDays(tripStart, 1);
+  var middleNights = Math.round((tripEnd - middleStart) / 86400000);
+
+  var HOIAN_LOC = "הוי-אן";
+  var HOIAN_MIN_NIGHTS = 2;
+  var northKeysHA = Object.keys(MIN_NIGHTS); // פו-לונג / נין-בין
+  var fixedTotal = 0;
+  Object.keys(FIXED_NIGHTS).forEach(function(k){ fixedTotal += FIXED_NIGHTS[k]; });
+  var minNorthTotal = 0;
+  northKeysHA.forEach(function(k){ minNorthTotal += MIN_NIGHTS[k]; });
+  var mandatoryTotal = fixedTotal + minNorthTotal + FINAL_HANOI_NIGHTS + HOIAN_MIN_NIGHTS;
+  var flexBudget = middleNights - mandatoryTotal;
+  if (flexBudget < 0) flexBudget = 0;
+  var hanoiReturnStart = addDays(tripEnd, -FINAL_HANOI_NIGHTS);
+  var maxEach = Math.min(flexBudget, 6);
+
+  // בונוס לילות אפשרי: להוי-אן עצמו, ו/או לפו-קוק (אופציונלי, אם יש תקציב אחרי הבונוס להוי-אן).
+  var extraPlans = [];
+  for (var hb = 0; hb <= maxEach; hb++){
+    extraPlans.push({ hoianBonus: hb, phuquocSeq: [], leftover: flexBudget - hb });
+    for (var pn2 = 2; pn2 + hb <= flexBudget; pn2++){
+      extraPlans.push({ hoianBonus: hb, phuquocSeq: [{ loc: PHUQUOC_LOC, nights: pn2 }], leftover: flexBudget - hb - pn2 });
+    }
+  }
+
+  var pnOrders = [ ["פו-לונג","נין-בין"], ["נין-בין","פו-לונג"] ];
+  var best = null;
+
+  extraPlans.forEach(function(ep){
+    if (ep.leftover < 0) return;
+    var distributions = distribute(ep.leftover, northKeysHA.length);
+    var extraOrders = ep.phuquocSeq.length ? [ [HOIAN_LOC, PHUQUOC_LOC], [PHUQUOC_LOC, HOIAN_LOC] ] : [ [HOIAN_LOC] ];
+    pnOrders.forEach(function(pn){
+      extraOrders.forEach(function(extraOrder){
+        var macro = { extra: extraOrder, pn: pn, halong: ["מפרץ הא-לונג"] };
+        var macroKeys = ["extra","pn","halong"];
+        permute(macroKeys).forEach(function(order){
+          var seqLocs = [];
+          order.forEach(function(key){ macro[key].forEach(function(loc){ seqLocs.push(loc); }); });
+          distributions.forEach(function(dist){
+            var nightsMap = {};
+            Object.keys(FIXED_NIGHTS).forEach(function(k){ nightsMap[k] = FIXED_NIGHTS[k]; });
+            northKeysHA.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
+            nightsMap[HOIAN_LOC] = HOIAN_MIN_NIGHTS + ep.hoianBonus;
+            ep.phuquocSeq.forEach(function(x){ nightsMap[x.loc] = x.nights; });
+            var cur = middleStart, total = 0, plan = [], valid = true, hadBlockedDay = false;
+            seqLocs.forEach(function(loc){
+              var n = nightsMap[loc];
+              if (loc === HOIAN_LOC){
+                var r = scoreRangeEx(loc, cur, n, true); // עוקפים את תנאי הסף - הוי-אן נכנס גם עם סופות רעמים
+                if (r.hadBlockedDay) hadBlockedDay = true;
+                total += r.score;
+              } else {
+                var s = scoreRange(loc, cur, n);
+                if (s === Infinity) valid = false;
+                total += s;
+              }
+              plan.push({ loc: loc, start: new Date(cur), nights: n });
+              cur = addDays(cur, n);
+            });
+            if (!valid) return;
+            if (cur.getTime() !== hanoiReturnStart.getTime()) return;
+            if (!best || total < best.score) best = { score: total, plan: plan, hadBlockedDay: hadBlockedDay };
+          });
+        });
+      });
+    });
+  });
+
+  if (!best) return null;
+  var fullPlan = [{ loc: arrivalLoc, start: tripStart, nights: 1, isArrival: true }]
+    .concat(best.plan)
+    .concat([{ loc: "האנוי", start: hanoiReturnStart, nights: FINAL_HANOI_NIGHTS, isReturn: true }])
+    .concat([{ loc: departureLoc, start: tripEnd, nights: 0, isDeparture: true }]);
+  return { plan: fullPlan, score: best.score, southIncluded: [HOIAN_LOC], notOptimal: best.hadBlockedDay, forced: true };
+}
+
 var recoOptions = [];
 var recoOptionIndex = 0;
 
@@ -1169,12 +1275,14 @@ function renderRecoOption(idx){
   var labelEl = document.getElementById('reco-opt-label');
   var prevBtn = document.getElementById('reco-opt-prev');
   var nextBtn = document.getElementById('reco-opt-next');
+  var badgeEl = document.getElementById('reco-suboptimal-badge');
   if (!legsEl || !recoOptions.length) return;
   var result = recoOptions[idx];
   if (labelEl) labelEl.textContent = RECO_OPTION_NAMES[idx] || ('הצעה ' + (idx + 1));
   if (navEl) navEl.style.display = recoOptions.length > 1 ? 'flex' : 'none';
   if (prevBtn) prevBtn.disabled = (idx <= 0);
   if (nextBtn) nextBtn.disabled = (idx >= recoOptions.length - 1);
+  if (badgeEl) badgeEl.style.display = result.notOptimal ? 'inline-block' : 'none';
 
   var html = '';
   result.plan.forEach(function(leg){
@@ -1199,6 +1307,17 @@ function renderRecoOption(idx){
   legsEl.innerHTML = html;
 
   var flexLegs = result.plan.filter(function(l){ return !l.isArrival && !l.isDeparture && !l.isReturn && l.loc !== "מפרץ הא-לונג"; });
+  if (result.forced){
+    if (noteEl){
+      var forcedNote = 'הצעה זו כוללת בכוונה את הוי-אן במקום סאפא (הוי-אן מקבל כאן יתרון קבוע על סאפא ולא מתחרה איתה), כדי לתת חלופה שתמיד משלבת את הוי-אן בטיול - גם אם יש בו ימים עם סופות רעמים. שאר הכללים זהים: מפרץ הא-לונג לילה אחד קבוע, פו-לונג/נין-בין מינימום 2 לילות, ליל ה-' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי, ופו-קוק יכול להצטרף אם יש תקציב לילות גמיש ומזג האוויר שם תומך.';
+      if (result.notOptimal) forcedNote += ' שימו לב: יש בטווח הוי-אן ימים עם סופות רעמים בפועל, ולכן ההצעה מסומנת כלא אופטימלית - היא מוצגת בכל זאת לפי הבקשה להעדיף הוי-אן.';
+      noteEl.textContent = forcedNote;
+    }
+    if (statEl){
+      statEl.textContent = 'ציון חשיפה משוקלל לגשם/סופות/טייפון למסלול הזה: ' + result.score.toFixed(1) + ' — ככל שנמוך יותר כך טוב יותר (לא נחסם על ימי סופות רעמים בהוי-אן, בשונה משתי ההצעות האחרות). הסידור למעלה ("תכנון מסלול הטיול לפי ימים") הוא זה שבאמת קובע את הטיול שלכם, זו רק המלצה לתצוגה.';
+    }
+    return;
+  }
   var baseText = 'החישוב מתבצע מחדש בכל עדכון תחזית: מפרץ הא-לונג קבוע ללילה אחד בלבד, פו-לונג/נין-בין מקבלים מינימום 2 לילות בלי הגבלת מקסימום ותמיד נכללים, ליל ה-' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי לקראת הטיסה בצהריים ב-29/09, וליום הראשון בכל יעד יש משקל נמוך יותר כי חלקו הולך על הדרך. סאפא, הוי-אן ופו-קוק כולם אופציונליים ומשולבים בהמלצה רק אם התחזית תומכת ויש תקציב לילות גמיש: הוי-אן מתאפשר עם עננות/שמש/ממטרים אך לא סופות רעמים, פו-קוק מתאפשר רק עם עננות חלקית ומעלה בלי שום גשם (אי של בריכה וחוף), וסאפא ללא תנאי חוסם. סאפא והוי-אן הם ברירה הדדית - לכל היותר אחד מהשניים נכלל במסלול, לעולם לא שניהם יחד; פו-קוק יכול להצטרף לכל אחד מהם. אזהרת טייפון גוברת על כל שיקול אחר ותדחוף את המסלול להתרחק, כולל טיסה דרומה גם במזג אוויר לא אידאלי אם זה מרחיק מהטייפון.';
   if (noteEl){
     var southNote = !result.southIncluded.length
@@ -1225,14 +1344,21 @@ function renderRecoPlan(){
   if (!legsEl) return;
   renderTyphoonBanner();
   var computed = computeRecommendedPlan();
-  if (!computed || !computed.options || !computed.options.length){
+  var options = (computed && computed.options) ? computed.options.slice() : [];
+  var existingSigs = options.map(function(o){ return planSignature(o.plan); });
+  var hoianForced = null;
+  try { hoianForced = computeHoiAnForcedPlan(); } catch(e){ console.error('hoian forced plan error', e); }
+  if (hoianForced && existingSigs.indexOf(planSignature(hoianForced.plan)) === -1){
+    options.push(hoianForced);
+  }
+  if (!options.length){
     legsEl.innerHTML = '';
     if (noteEl) noteEl.textContent = 'לא ניתן לחשב המלצה כרגע.';
     var navEl = document.getElementById('reco-opt-nav');
     if (navEl) navEl.style.display = 'none';
     return;
   }
-  recoOptions = computed.options;
+  recoOptions = options;
   recoOptionIndex = 0;
   renderRecoOption(0);
 }
