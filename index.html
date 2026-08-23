@@ -56,7 +56,10 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .reco-opt-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;}
 .reco-opt-label{font-size:12.5px;color:var(--ink);font-weight:600;white-space:nowrap;min-width:90px;text-align:center;}
 .reco-suboptimal-badge{display:none;text-align:center;font-size:12px;font-weight:700;color:var(--hi);background:rgba(255,159,10,0.15);padding:6px 12px;border-radius:20px;margin:0 auto 14px;max-width:fit-content;}
-.reco-note{background:rgba(10,132,255,0.15);color:var(--blue);font-size:12.5px;padding:9px 12px;border-radius:10px;line-height:1.6;margin-bottom:8px;}
+.reco-note-wrap{margin-bottom:8px;}
+.reco-note{background:rgba(10,132,255,0.15);color:var(--blue);font-size:12.5px;padding:9px 12px;border-radius:10px 10px 0 0;line-height:1.6;margin-bottom:0;overflow:hidden;transition:max-height 0.25s ease;}
+.reco-note-toggle{display:none;font-size:11.5px;font-weight:700;color:var(--blue);background:rgba(10,132,255,0.15);padding:5px 12px;border-radius:0 0 10px 10px;cursor:pointer;text-align:center;user-select:none;}
+.reco-note-toggle:active{opacity:0.7;}
 .reco-stat{font-size:11.5px;color:var(--sub);margin-bottom:14px;line-height:1.5;}
 .reco-legs{display:grid;grid-template-columns:repeat(auto-fit, minmax(270px, 1fr));gap:10px;}
 .reco-leg{background:rgba(255,255,255,0.04);border-radius:12px;padding:9px 12px;}
@@ -340,7 +343,10 @@ head.addEventListener('click', function(){
 <span class="reco-lock">🔒 לתצוגה בלבד</span>
 </div>
 <div id="typhoon-banner" style="display:none;background:rgba(255,69,58,0.18);color:var(--red);font-size:12.5px;padding:9px 12px;border-radius:10px;line-height:1.6;margin-bottom:8px;font-weight:600;"></div>
+<div class="reco-note-wrap">
 <div class="reco-note" id="reco-note"></div>
+<div class="reco-note-toggle" id="reco-note-toggle">עוד...</div>
+</div>
 <div class="reco-stat" id="reco-stat"></div>
 <div class="reco-opt-nav" id="reco-opt-nav" style="display:none;">
 <button class="hourly-now-btn" id="reco-opt-prev" title="ההצעה הקודמת">‹</button>
@@ -1473,6 +1479,34 @@ var recoOptionIndex = 0;
 
 var RECO_OPTION_NAMES = ['הצעה ראשונה', 'הצעה שנייה', 'הצעה שלישית', 'הצעה רביעית'];
 
+// עוטף את קופסת ההסבר הכחולה (reco-note) לגובה קבוע של 2 שורות, מחושב דינמית לפי
+// גובה השורה בפועל בדפדפן הנוכחי (לא ערך פיקסלים קבוע), כדי שהקופסה תישאר יציבה
+// ולא "תדחוף" תוכן למטה כשעוברים בין ההצעות - הקריאה מאפסת תמיד למצב מכווץ.
+function updateRecoNoteClamp(){
+  var note = document.getElementById('reco-note');
+  var toggle = document.getElementById('reco-note-toggle');
+  if (!note || !toggle) return;
+  note.classList.remove('expanded');
+  note.style.overflow = 'hidden';
+  note.style.maxHeight = 'none';
+  toggle.style.display = 'none';
+  toggle.textContent = 'עוד...';
+  var cs = window.getComputedStyle(note);
+  var lineHeight = parseFloat(cs.lineHeight);
+  if (isNaN(lineHeight)) lineHeight = parseFloat(cs.fontSize) * 1.4;
+  var paddingTop = parseFloat(cs.paddingTop) || 0;
+  var paddingBottom = parseFloat(cs.paddingBottom) || 0;
+  var collapsedHeight = Math.ceil(lineHeight * 2 + paddingTop + paddingBottom);
+  var fullHeight = note.scrollHeight;
+  if (fullHeight > collapsedHeight + 1){
+    note.style.maxHeight = collapsedHeight + 'px';
+    toggle.dataset.collapsedHeight = collapsedHeight;
+    toggle.style.display = 'block';
+  } else {
+    note.style.maxHeight = 'none';
+  }
+}
+
 function renderRecoOption(idx){
   var legsEl = document.getElementById('reco-legs');
   var noteEl = document.getElementById('reco-note');
@@ -1522,6 +1556,7 @@ function renderRecoOption(idx){
     if (statEl){
       statEl.textContent = 'ציון חשיפה משוקלל לגשם/סופות/טייפון למסלול הזה: ' + result.score.toFixed(1) + ' — ככל שנמוך יותר כך טוב יותר (לא נחסם על ימי סופות רעמים בהוי-אן, בשונה משתי ההצעות האחרות). הסידור למעלה ("תכנון מסלול הטיול לפי ימים") הוא זה שבאמת קובע את הטיול שלכם, זו רק המלצה לתצוגה.';
     }
+    updateRecoNoteClamp();
     return;
   }
   var baseText = 'החישוב מתבצע מחדש בכל עדכון תחזית: פו-לונג/נין-בין מקבלים מינימום 2 לילות בלי הגבלת מקסימום ותמיד נכללים, ליל ה-' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי לקראת הטיסה בצהריים ב-29/09, וליום הראשון בכל יעד יש משקל נמוך יותר כי חלקו הולך על הדרך. סאפא, הוי-אן, פו-קוק ומפרץ הא-לונג כולם אופציונליים לחלוטין (המסלול יכול לצאת גם בלעדיהם) ומשולבים בהמלצה רק אם התחזית תומכת ויש תקציב לילות גמיש: הוי-אן מתאפשר עם עננות/שמש/ממטרים אך לא סופות רעמים, פו-קוק מתאפשר רק עם עננות חלקית ומעלה בלי שום גשם (אי של בריכה וחוף), סאפא ללא תנאי חוסם, ומפרץ הא-לונג (אם נבחר) מוגבל ללילה אחד בדיוק. סאפא והוי-אן הם ברירה הדדית - לכל היותר אחד מהשניים נכלל במסלול, לעולם לא שניהם יחד; פו-קוק ומפרץ הא-לונג יכולים להצטרף לכל אחד מהם, לשניהם יחד, או לא להיכלל כלל. אזהרת טייפון גוברת על כל שיקול אחר ותדחוף את המסלול להתרחק, כולל טיסה דרומה גם במזג אוויר לא אידאלי אם זה מרחיק מהטייפון.';
@@ -1542,6 +1577,7 @@ function renderRecoOption(idx){
   if (statEl){
     statEl.textContent = 'ציון חשיפה משוקלל לגשם/סופות/טייפון למסלול הזה: ' + result.score.toFixed(1) + ' — ככל שנמוך יותר כך טוב יותר. הסידור למעלה ("תכנון מסלול הטיול לפי ימים") הוא זה שבאמת קובע את הטיול שלכם, זו רק המלצה לתצוגה.';
   }
+  updateRecoNoteClamp();
 }
 
 function renderRecoPlan(){
@@ -1589,6 +1625,37 @@ document.addEventListener('DOMContentLoaded', function(){
         if (recoOptionIndex < recoOptions.length - 1){ recoOptionIndex++; renderRecoOption(recoOptionIndex); }
       });
     }
+    var recoNoteToggle = document.getElementById('reco-note-toggle');
+    if (recoNoteToggle){
+      recoNoteToggle.addEventListener('click', function(){
+        var note = document.getElementById('reco-note');
+        if (!note) return;
+        var isExpanded = note.classList.contains('expanded');
+        if (!isExpanded){
+          note.classList.add('expanded');
+          note.style.maxHeight = note.scrollHeight + 'px';
+          recoNoteToggle.textContent = 'פחות';
+        } else {
+          note.classList.remove('expanded');
+          note.style.maxHeight = (recoNoteToggle.dataset.collapsedHeight || '40') + 'px';
+          recoNoteToggle.textContent = 'עוד...';
+        }
+      });
+    }
+    var recoNoteResizeTimer = null;
+    window.addEventListener('resize', function(){
+      clearTimeout(recoNoteResizeTimer);
+      recoNoteResizeTimer = setTimeout(function(){
+        var note = document.getElementById('reco-note');
+        if (!note) return;
+        if (note.classList.contains('expanded')){
+          note.style.maxHeight = 'none';
+          note.style.maxHeight = note.scrollHeight + 'px';
+        } else {
+          updateRecoNoteClamp();
+        }
+      }, 150);
+    });
   } catch(e){ console.error('reco plan error', e); }
 });
 })();
