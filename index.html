@@ -1233,6 +1233,10 @@ var PHUQUOC_LOC = "פו-קוק";
 var HALONG_LOC = "מפרץ הא-לונג";
 var HALONG_NIGHTS = 1; // אם מפרץ הא-לונג נכלל במסלול, זה תמיד לילה אחד בדיוק
 var NHATRANG_LOC = "נה-טראנג"; // יעד גמיש עצמאי כמו פו-קוק - לא חלק מה-EXCLUSIVE_PAIR, יכול להצטרף לכל שילוב
+// יעדי "דרום" דורשים טיסה מהאנוי (הוי-אן, פו-קוק, נה-טראנג) - כשכמה מהם נבחרים הם נשארים תמיד רצף אחד
+// יחד בסוף המסלול, אחרי כל יעדי ה"צפון" (פו-לונג/נין-בין/סאפא/מפרץ הא-לונג, נגישים בדרך יבשה/שייט מהאנוי
+// בלי טיסה) - לעולם לא מתפצלים סביב יעד צפוני, כדי לא "לבזבז" טיסות הלוך-חזור ללא צורך.
+var SOUTH_GROUP = { "הוי-אן": 1, "פו-קוק": 1, "נה-טראנג": 1 };
 // תנאי חוסם: יום עם קוד שלא ברשימה פוסל לחלוטין את החלון הזה ליעד - האלגוריתם ידלג עליו כליל.
 // הוי-אן: מעונן חלקית ומעלה, וגם ממטרים - אבל בשום אופן לא סופות רעמים (ts).
 // פו-קוק: מעונן חלקית ומעלה בלבד - אי של בריכה וחוף, אין טעם להיות בו בגשם/סופה (sh/ts).
@@ -1248,26 +1252,26 @@ function toDate(dm){ return new Date(2026, dm.m-1, dm.d); }
 function fmt(dt){ return ('0'+dt.getDate()).slice(-2) + '/' + ('0'+(dt.getMonth()+1)).slice(-2); }
 function addDays(dt, n){ var r = new Date(dt); r.setDate(r.getDate()+n); return r; }
 
+var _weatherForCache = null;
 function getWeatherFor(loc, dateStr){
-  var cards = document.querySelectorAll('#cards-container .wcard');
-  for (var i=0; i<cards.length; i++){
-    var head = cards[i].querySelector('.wcard-head');
-    var name = head ? head.textContent.replace('⋮⋮','').trim() : '';
-    if (name === loc){
+  if (!_weatherForCache){
+    _weatherForCache = {};
+    var cards = document.querySelectorAll('#cards-container .wcard');
+    for (var i=0; i<cards.length; i++){
+      var head = cards[i].querySelector('.wcard-head');
+      var name = head ? head.textContent.replace('⋮⋮','').trim() : '';
       var rows = cards[i].querySelectorAll('.wrow');
       for (var j=0; j<rows.length; j++){
         var d = rows[j].querySelector('.wdate').textContent.trim();
-        if (d === dateStr){
-          var icon = rows[j].querySelector('.wicon');
-          var hi = rows[j].querySelector('.hi');
-          var lo = rows[j].querySelector('.lo');
-          return { src: icon ? icon.src : '', code: icon ? icon.dataset.icon : null, hi: hi ? hi.textContent : '', lo: lo ? lo.textContent : '', cond: icon ? icon.alt : '', typhoon: rows[j].dataset.typhoon === 'true' };
-        }
+        var icon = rows[j].querySelector('.wicon');
+        var hi = rows[j].querySelector('.hi');
+        var lo = rows[j].querySelector('.lo');
+        _weatherForCache[name + '|' + d] = { src: icon ? icon.src : '', code: icon ? icon.dataset.icon : null, hi: hi ? hi.textContent : '', lo: lo ? lo.textContent : '', cond: icon ? icon.alt : '', typhoon: rows[j].dataset.typhoon === 'true' };
       }
-      break;
     }
   }
-  return null;
+  var key = loc + '|' + dateStr;
+  return Object.prototype.hasOwnProperty.call(_weatherForCache, key) ? _weatherForCache[key] : null;
 }
 
 function isSouthDayAllowed(loc, code){
@@ -1409,35 +1413,44 @@ function computeRecommendedPlan(){
     if (ep.leftover < 0) return;
     var distributions = distribute(ep.leftover, northKeys.length);
     pnOrders.forEach(function(pn){
-      var macro = { pn: pn };
-      var macroKeys = ["pn"];
+      var northMacro = { pn: pn };
+      var northKeysList = ["pn"];
+      var southMacro = {};
+      var southKeysList = [];
       ep.seq.forEach(function(item, i){
         var key = "opt" + i;
-        macro[key] = [item.loc];
-        macroKeys.push(key);
+        if (SOUTH_GROUP[item.loc]) { southMacro[key] = [item.loc]; southKeysList.push(key); }
+        else { northMacro[key] = [item.loc]; northKeysList.push(key); }
       });
-      permute(macroKeys).forEach(function(order){
-        var seqLocs = [];
-        order.forEach(function(key){ macro[key].forEach(function(loc){ seqLocs.push(loc); }); });
-        distributions.forEach(function(dist){
-          var nightsMap = {};
-          northKeys.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
-          ep.seq.forEach(function(x){ nightsMap[x.loc] = x.nights; });
-          var cur = middleStart, total = 0, plan = [], valid = true;
-          seqLocs.forEach(function(loc){
-            var n = nightsMap[loc];
-            var s = scoreRange(loc, cur, n);
-            if (s === Infinity) valid = false;
-            total += s;
-            plan.push({ loc: loc, start: new Date(cur), nights: n });
-            cur = addDays(cur, n);
+      // הצפון (pn + סאפא/מפרץ הא-לונג אם נבחרו) מגיע תמיד לפני הדרום (הוי-אן/פו-קוק/נה-טראנג אם נבחרו) -
+      // לעולם לא מתערבבים, כדי למנוע רצף לא הגיוני של טיסות (ראו SOUTH_GROUP למעלה).
+      permute(northKeysList).forEach(function(northOrder){
+        var northSeqLocs = [];
+        northOrder.forEach(function(key){ northMacro[key].forEach(function(loc){ northSeqLocs.push(loc); }); });
+        permute(southKeysList).forEach(function(southOrder){
+          var southSeqLocs = [];
+          southOrder.forEach(function(key){ southMacro[key].forEach(function(loc){ southSeqLocs.push(loc); }); });
+          var seqLocs = northSeqLocs.concat(southSeqLocs);
+          distributions.forEach(function(dist){
+            var nightsMap = {};
+            northKeys.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
+            ep.seq.forEach(function(x){ nightsMap[x.loc] = x.nights; });
+            var cur = middleStart, total = 0, plan = [], valid = true;
+            seqLocs.forEach(function(loc){
+              var n = nightsMap[loc];
+              var s = scoreRange(loc, cur, n);
+              if (s === Infinity) valid = false;
+              total += s;
+              plan.push({ loc: loc, start: new Date(cur), nights: n });
+              cur = addDays(cur, n);
+            });
+            if (!valid) return;
+            if (cur.getTime() !== hanoiReturnStart.getTime()) return;
+            var sig = plan.map(function(l){ return l.loc + ':' + fmt(l.start) + ':' + l.nights; }).join('|');
+            if (!bySignature[sig] || total < bySignature[sig].score){
+              bySignature[sig] = { score: total, plan: plan, southIncluded: ep.seq.map(function(x){ return x.loc; }) };
+            }
           });
-          if (!valid) return;
-          if (cur.getTime() !== hanoiReturnStart.getTime()) return;
-          var sig = plan.map(function(l){ return l.loc + ':' + fmt(l.start) + ':' + l.nights; }).join('|');
-          if (!bySignature[sig] || total < bySignature[sig].score){
-            bySignature[sig] = { score: total, plan: plan, southIncluded: ep.seq.map(function(x){ return x.loc; }) };
-          }
         });
       });
     });
@@ -1533,39 +1546,48 @@ function computeHoiAnForcedPlan(){
     if (ep.leftover < 0) return;
     var distributions = distribute(ep.leftover, northKeysHA.length);
     pnOrders.forEach(function(pn){
-      var macro = { pn: pn, hoian: [HOIAN_LOC] };
-      var macroKeys = ["pn", "hoian"];
+      var northMacro = { pn: pn };
+      var northKeysList = ["pn"];
+      var southMacro = { hoian: [HOIAN_LOC] };
+      var southKeysList = ["hoian"];
       ep.seq.forEach(function(item, i){
         var key = "opt" + i;
-        macro[key] = [item.loc];
-        macroKeys.push(key);
+        if (SOUTH_GROUP[item.loc]) { southMacro[key] = [item.loc]; southKeysList.push(key); }
+        else { northMacro[key] = [item.loc]; northKeysList.push(key); }
       });
-      permute(macroKeys).forEach(function(order){
-        var seqLocs = [];
-        order.forEach(function(key){ macro[key].forEach(function(loc){ seqLocs.push(loc); }); });
-        distributions.forEach(function(dist){
-          var nightsMap = {};
-          northKeysHA.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
-          nightsMap[HOIAN_LOC] = HOIAN_MIN_NIGHTS + ep.hoianBonus;
-          ep.seq.forEach(function(x){ nightsMap[x.loc] = x.nights; });
-          var cur = middleStart, total = 0, plan = [], valid = true, hadBlockedDay = false;
-          seqLocs.forEach(function(loc){
-            var n = nightsMap[loc];
-            if (loc === HOIAN_LOC){
-              var r = scoreRangeEx(loc, cur, n, true); // עוקפים את תנאי הסף - הוי-אן נכנס גם עם סופות רעמים
-              if (r.hadBlockedDay) hadBlockedDay = true;
-              total += r.score;
-            } else {
-              var s = scoreRange(loc, cur, n);
-              if (s === Infinity) valid = false;
-              total += s;
-            }
-            plan.push({ loc: loc, start: new Date(cur), nights: n });
-            cur = addDays(cur, n);
+      // הוי-אן שייך תמיד לבלוק ה"דרום" (עם פו-קוק/נה-טראנג אם נבחרו) שמגיע כרצף אחד אחרי כל הצפון,
+      // לעולם לא מתערבב עם מפרץ הא-לונג/סאפא (ראו SOUTH_GROUP למעלה).
+      permute(northKeysList).forEach(function(northOrder){
+        var northSeqLocs = [];
+        northOrder.forEach(function(key){ northMacro[key].forEach(function(loc){ northSeqLocs.push(loc); }); });
+        permute(southKeysList).forEach(function(southOrder){
+          var southSeqLocs = [];
+          southOrder.forEach(function(key){ southMacro[key].forEach(function(loc){ southSeqLocs.push(loc); }); });
+          var seqLocs = northSeqLocs.concat(southSeqLocs);
+          distributions.forEach(function(dist){
+            var nightsMap = {};
+            northKeysHA.forEach(function(k, idx){ nightsMap[k] = MIN_NIGHTS[k] + dist[idx]; });
+            nightsMap[HOIAN_LOC] = HOIAN_MIN_NIGHTS + ep.hoianBonus;
+            ep.seq.forEach(function(x){ nightsMap[x.loc] = x.nights; });
+            var cur = middleStart, total = 0, plan = [], valid = true, hadBlockedDay = false;
+            seqLocs.forEach(function(loc){
+              var n = nightsMap[loc];
+              if (loc === HOIAN_LOC){
+                var r = scoreRangeEx(loc, cur, n, true); // עוקפים את תנאי הסף - הוי-אן נכנס גם עם סופות רעמים
+                if (r.hadBlockedDay) hadBlockedDay = true;
+                total += r.score;
+              } else {
+                var s = scoreRange(loc, cur, n);
+                if (s === Infinity) valid = false;
+                total += s;
+              }
+              plan.push({ loc: loc, start: new Date(cur), nights: n });
+              cur = addDays(cur, n);
+            });
+            if (!valid) return;
+            if (cur.getTime() !== hanoiReturnStart.getTime()) return;
+            if (!best || total < best.score) best = { score: total, plan: plan, hadBlockedDay: hadBlockedDay };
           });
-          if (!valid) return;
-          if (cur.getTime() !== hanoiReturnStart.getTime()) return;
-          if (!best || total < best.score) best = { score: total, plan: plan, hadBlockedDay: hadBlockedDay };
         });
       });
     });
