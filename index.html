@@ -57,6 +57,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .wtemps{white-space:nowrap;font-size:13.5px;text-align:left;}
 .wtemps .hi{font-weight:700;color:var(--hi);}
 .wtemps .lo{color:var(--lo);margin-right:6px;}
+.wtemps .wrain{display:block;font-size:9.5px;color:var(--sub);margin-top:1px;font-weight:400;}
 
 .planner{max-width:1600px;margin:0 auto;background:var(--card);border-radius:16px;padding:16px;border:0.5px solid rgba(255,255,255,0.08);}
 .planner-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
@@ -147,7 +148,10 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .hourly-now-btn{width:26px;height:26px;border-radius:50%;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:var(--blue);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
 .hourly-now-btn:disabled{opacity:0.3;cursor:default;}
 .hourly-now-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.hourly-now-outlook{font-size:11.5px;color:var(--sub);margin:-4px 0 10px;line-height:1.5;}
 .hn-chip{flex:1 1 100px;min-width:88px;background:rgba(255,255,255,0.04);border-radius:10px;padding:8px 6px;text-align:center;}
+.hn-chip.current{border:1px solid var(--blue);background:rgba(10,132,255,0.12);}
+.hn-badge-here{display:inline-block;font-size:8.5px;font-weight:700;color:var(--blue);background:rgba(10,132,255,0.2);padding:1px 5px;border-radius:6px;margin-left:3px;vertical-align:middle;}
 .hn-loc{font-size:11px;color:var(--sub);font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hn-icon{width:20px;height:20px;margin:0 auto 2px;display:block;}
 .hn-temp{font-size:14px;font-weight:700;color:var(--ink);}
@@ -241,8 +245,27 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 <div class="header">
 <h1>הטיול של משפחת פוריש</h1>
 <p>15–29 בספטמבר 2026 · וייטנאם</p>
-<p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 07:16 (שעון ויאטנם)</p>
+<p id="trip-day-indicator" style="font-size:13px;color:var(--blue);font-weight:700;margin:4px 0 2px;"></p>
+<p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 08:20 (שעון ויאטנם)</p>
 </div>
+<script>
+(function(){
+var TRIP_START = new Date(2026,8,15);
+var TRIP_END = new Date(2026,8,29);
+var el = document.getElementById('trip-day-indicator');
+if(!el) return;
+function dayDiff(a,b){ return Math.round((b-a)/86400000); }
+var today = new Date();
+today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+if (today < TRIP_START){
+  el.textContent = 'עוד ' + dayDiff(today, TRIP_START) + ' ימים לטיול';
+} else if (today > TRIP_END){
+  el.textContent = 'הטיול הסתיים — מקווים שנהניתם!';
+} else {
+  el.textContent = 'יום ' + (dayDiff(TRIP_START, today) + 1) + ' מתוך 15 בטיול';
+}
+})();
+</script>
 
 
 
@@ -257,7 +280,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 <div class="curr-field"><label>דולר אמריקאי (USD)</label><input type="number" id="curr-usd" class="curr-input" placeholder="0" inputmode="decimal"></div>
 <div class="curr-field"><label>שקל חדש (ILS)</label><input type="number" id="curr-ils" class="curr-input" placeholder="0" inputmode="decimal"></div>
 </div>
-<div class="currency-updated">שער עודכן לאחרונה בשעה 07:16 (שעון ויאטנם)</div>
+<div class="currency-updated">שער עודכן לאחרונה בשעה 08:20 (שעון ויאטנם)</div>
 </div>
 <script>
 (function(){
@@ -432,6 +455,7 @@ head.addEventListener('click', function(){
 <button class="hourly-now-btn" id="hn-next" title="שעה הבאה">›</button>
 </div>
 </div>
+<div class="hourly-now-outlook" id="hn-outlook" style="display:none;"></div>
 <div class="hourly-now-grid" id="hn-grid"></div>
 </div>
 <script>
@@ -444,6 +468,8 @@ su: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zd
 pa: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxjaXJjbGUgY3g9IjM4IiBjeT0iMjAiIHI9IjExIiBmaWxsPSIjZmJiZjI0Ii8+CjxnIHN0cm9rZT0iI2ZiYmYyNCIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiPgo8bGluZSB4MT0iMzgiIHkxPSIyIiB4Mj0iMzgiIHkyPSI3Ii8+CjxsaW5lIHgxPSI1NiIgeTE9IjIwIiB4Mj0iNjEiIHkyPSIyMCIvPgo8bGluZSB4MT0iNTEiIHkxPSI3IiB4Mj0iNTQiIHkyPSI0Ii8+CjwvZz4KPHBhdGggZD0iTTE0IDQ2Yy02IDAtMTEtNS0xMS0xMSAwLTUuNSA0LTEwIDkuMy0xMC45QzE0IDE4LjcgMjAgMTQgMjcgMTRjOCAwIDE0LjUgNiAxNS42IDEzLjYgNS45LjcgMTAuNCA1LjcgMTAuNCAxMS43IDAgNi41LTUuMyAxMS43LTExLjggMTEuN0gxNHoiIGZpbGw9IiM5NGEzYjgiLz4KPC9zdmc+"
 };
 var HOURLY_DATA = {"האנוי": [{"t": 29, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 30, "c": "ממטרים", "r": 55, "i": "sh"}, {"t": 29, "c": "גשם", "r": 64, "i": "sh"}, {"t": 31, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 33, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 32, "c": "גשם", "r": 58, "i": "sh"}], "פו-לונג": [{"t": 29, "c": "מעונן", "r": 28, "i": "cl"}, {"t": 29, "c": "מעונן", "r": 16, "i": "cl"}, {"t": 29, "c": "מעונן", "r": 16, "i": "cl"}, {"t": 29, "c": "מעונן", "r": 16, "i": "cl"}, {"t": 31, "c": "מעונן", "r": 16, "i": "cl"}, {"t": 29, "c": "מעונן", "r": 16, "i": "cl"}], "נין-בין": [{"t": 28, "c": "גשם", "r": 58, "i": "sh"}, {"t": 30, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 31, "c": "ממטרים", "r": 48, "i": "sh"}, {"t": 32, "c": "מעונן", "r": 44, "i": "cl"}, {"t": 33, "c": "מעונן", "r": 42, "i": "cl"}, {"t": 34, "c": "מעונן", "r": 47, "i": "cl"}], "סאפא": [{"t": 24, "c": "עננות משתנה", "r": 49, "i": "cl"}, {"t": 23, "c": "עננות משתנה", "r": 32, "i": "cl"}, {"t": 23, "c": "עננות משתנה", "r": 32, "i": "cl"}, {"t": 21, "c": "מעונן ברובו", "r": 28, "i": "cl"}, {"t": 21, "c": "מעונן", "r": 20, "i": "cl"}, {"t": 20, "c": "מעונן", "r": 20, "i": "cl"}], "מפרץ הא-לונג": [{"t": 28, "c": "מעונן", "r": 37, "i": "cl"}, {"t": 28, "c": "מעונן", "r": 32, "i": "cl"}, {"t": 29, "c": "מעונן", "r": 28, "i": "cl"}, {"t": 31, "c": "מעונן", "r": 28, "i": "cl"}, {"t": 31, "c": "מעונן", "r": 34, "i": "cl"}, {"t": 32, "c": "גשם", "r": 58, "i": "sh"}], "הוי-אן": [{"t": 31, "c": "מעונן", "r": 3, "i": "cl"}, {"t": 32, "c": "מעונן ברובו", "r": 3, "i": "cl"}, {"t": 32, "c": "מעונן ברובו", "r": 3, "i": "cl"}, {"t": 34, "c": "מעונן ברובו", "r": 3, "i": "cl"}, {"t": 35, "c": "מעונן ברובו", "r": 4, "i": "cl"}, {"t": 36, "c": "מעונן ברובו", "r": 6, "i": "cl"}], "פו-קוק": [{"t": 28, "c": "ממטרים", "r": 52, "i": "sh"}, {"t": 28, "c": "גשם", "r": 56, "i": "sh"}, {"t": 28, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 28, "c": "מעונן", "r": 49, "i": "cl"}, {"t": 28, "c": "גשם", "r": 66, "i": "sh"}, {"t": 28, "c": "מעונן", "r": 49, "i": "cl"}], "נה-טראנג": [{"t": 32, "c": "בהיר ברובו", "r": 24, "i": "pa"}, {"t": 31, "c": "עננות משתנה", "r": 5, "i": "cl"}, {"t": 30, "c": "מעונן ברובו", "r": 5, "i": "cl"}, {"t": 29, "c": "מעונן ברובו", "r": 5, "i": "cl"}, {"t": 29, "c": "מעונן", "r": 5, "i": "cl"}, {"t": 28, "c": "מעונן", "r": 5, "i": "cl"}]};
+var HOURLY_TODAY_LOC = null;
+var HOURLY_TODAY_OUTLOOK = "";
 var LOCS_ORDER = ["האנוי","פו-לונג","נין-בין","סאפא","מפרץ הא-לונג","הוי-אן","פו-קוק","נה-טראנג"];
 var idx = 0;
 var maxIdx = 0;
@@ -453,6 +479,11 @@ var hnGrid = document.getElementById('hn-grid');
 var hnLabel = document.getElementById('hn-label');
 var hnBtn = document.getElementById('hn-next');
 var hnPrevBtn = document.getElementById('hn-prev');
+var hnOutlookEl = document.getElementById('hn-outlook');
+if (HOURLY_TODAY_OUTLOOK && hnOutlookEl){
+  hnOutlookEl.textContent = HOURLY_TODAY_OUTLOOK;
+  hnOutlookEl.style.display = 'block';
+}
 
 function hnLabelFor(i){
   if (i===0) return 'עכשיו';
@@ -466,10 +497,12 @@ function hnRender(){
     var arr = HOURLY_DATA[loc];
     if(!arr || !arr.length) return;
     var item = arr[Math.min(idx, arr.length-1)];
+    var isCurrent = (loc === HOURLY_TODAY_LOC);
     var chip = document.createElement('div');
-    chip.className = 'hn-chip';
+    chip.className = 'hn-chip' + (isCurrent ? ' current' : '');
+    var hereBadge = isCurrent ? '<span class="hn-badge-here">כאן עכשיו</span>' : '';
     chip.innerHTML =
-      '<div class="hn-loc">' + loc + '</div>' +
+      '<div class="hn-loc">' + hereBadge + loc + '</div>' +
       '<img class="hn-icon" src="' + (HN_ICONS[item.i] || HN_ICONS.pa) + '" alt="' + item.c + '">' +
       '<div class="hn-temp">' + item.t + '°</div>' +
       '<div class="hn-cond">' + item.c + '</div>' +
@@ -500,6 +533,10 @@ hnRender();
 <div class="typhoon-card">
 <div class="typhoon-card-title">מעקב גשם וסופות רעמים</div>
 <iframe src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricWind=default&zoom=5&overlay=rain&product=ecmwf&level=surface&lat=16.000&lon=108.000"></iframe>
+</div>
+<div class="typhoon-card">
+<div class="typhoon-card-title">מעקב סופות וטייפונים · Zoom Earth</div>
+<iframe src="https://zoom.earth/storms/" loading="lazy"></iframe>
 </div>
 </div>
 
