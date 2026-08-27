@@ -24,6 +24,7 @@
 </script>
 <title>הטיול של משפחת פוריש - וייטנאם</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
 :root{--blue:#0a84ff;--ink:#f2f2f7;--sub:#98989f;--line:#2c2c2e;--bg:#000000;--card:#1c1c1e;--hi:#ff9f0a;--lo:#64d2ff;--green:#30d158;--red:#ff453a;}
 *{box-sizing:border-box;}
@@ -42,6 +43,11 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .storm-alert-desc{color:var(--ink);opacity:0.92;}
 .storm-alert-meta{font-size:11px;color:var(--sub);margin-top:5px;}
 .storm-alert-meta a{color:inherit;text-decoration:underline;}
+.storm-alert-change-worse{background:rgba(255,159,10,0.14);color:var(--hi);border:0.5px solid rgba(255,159,10,0.35);}
+.storm-alert-change-better{background:rgba(48,209,88,0.14);color:var(--green);border:0.5px solid rgba(48,209,88,0.35);}
+.storm-alert-title .badge-change-worse{font-size:10px;font-weight:700;background:rgba(255,159,10,0.22);color:var(--hi);padding:2px 7px;border-radius:8px;margin-right:6px;vertical-align:middle;}
+.storm-alert-title .badge-change-better{font-size:10px;font-weight:700;background:rgba(48,209,88,0.22);color:var(--green);padding:2px 7px;border-radius:8px;margin-right:6px;vertical-align:middle;}
+.storm-alert-change-worse .storm-alert-desc,.storm-alert-change-better .storm-alert-desc{color:var(--ink);}
 .section-title{max-width:900px;margin:30px auto 12px;padding:0 4px;font-size:17px;font-weight:700;}
 .section-hint{max-width:900px;margin:-8px auto 12px;padding:0 4px;font-size:12.5px;color:var(--sub);}
 .wgrid{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;}
@@ -104,6 +110,16 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .reco-day-chip .rdc-temp .hi{color:var(--hi);font-weight:700;}
 .reco-day-chip .rdc-temp .lo{color:var(--lo);margin-right:3px;}
 
+.packing-card{max-width:900px;margin:0 auto 12px;background:var(--card);border-radius:16px;padding:14px 16px;border:0.5px solid rgba(255,255,255,0.08);}
+.packing-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;margin-bottom:4px;}
+.packing-sub{font-size:12px;color:var(--sub);margin-bottom:10px;line-height:1.5;}
+.packing-tags{display:flex;flex-wrap:wrap;gap:8px;}
+.packing-tag{font-size:12.5px;background:rgba(255,255,255,0.06);color:var(--ink);padding:6px 12px;border-radius:20px;display:flex;align-items:center;gap:5px;}
+.trend-card{max-width:1600px;margin:0 auto;background:var(--card);border-radius:16px;padding:16px;border:0.5px solid rgba(255,255,255,0.08);}
+.trend-card canvas{max-height:280px;}
+.trend-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11.5px;color:var(--sub);}
+.trend-legend span{display:inline-flex;align-items:center;gap:5px;}
+.trend-dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
 .currency-card{max-width:900px;margin:0 auto 6px;background:var(--card);border-radius:16px;padding:16px;border:0.5px solid rgba(255,255,255,0.08);}
 .currency-rates{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
 .currency-converter{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;}
@@ -272,6 +288,12 @@ if (today < TRIP_START){
 </script>
 
 
+
+<div class="packing-card" id="packing-card" style="display:none;">
+<div class="packing-head">🎒 <span id="packing-title">מה ללבוש ולקחת</span></div>
+<div class="packing-sub" id="packing-sub"></div>
+<div class="packing-tags" id="packing-tags"></div>
+</div>
 
 <div class="currency-card">
 <div class="currency-rates">
@@ -529,6 +551,17 @@ hnPrevBtn.addEventListener('click', function(){
 hnRender();
 })();
 </script>
+<div class="section-title">מגמת טמפרטורות לאורך הטיול</div>
+<div class="section-hint">מבוסס על המסלול שבחרתם ב"תכנון מסלול הטיול" למעלה — מתעדכן אוטומטית אם תשנו יעדים</div>
+<div class="trend-card">
+<canvas id="trend-chart" style="width:100%;height:280px;"></canvas>
+<div class="trend-legend">
+<span><span class="trend-dot" style="background:var(--hi);"></span>מקסימום יומי</span>
+<span><span class="trend-dot" style="background:var(--lo);"></span>מינימום יומי</span>
+<span><span class="trend-dot" style="background:#ff453a;"></span>נקודה מסביב לגשם/סופה</span>
+</div>
+</div>
+
 <div class="weather-maps-grid">
 <div class="typhoon-card">
 <div class="typhoon-card-title">מעקב טייפונים ורוחות בזמן אמת</div>
@@ -1112,7 +1145,6 @@ renderSfList();
 <div class="section-title">תחזית מזג האוויר לכל הימים</div>
 <div class="section-hint">אפשר לגרור את הכרטיסיות (מהכותרת) כדי לסדר אותן מחדש</div>
 <div class="wgrid" id="cards-container"><div class="wcard"><div class="wcard-head">⋮⋮ האנוי</div><div class="wcard-body"><div class="wrow"><div class="wdate">13/09</div><img class="wicon" data-icon="ts" alt="לח; סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">33°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">14/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">32°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">15/09</div><img class="wicon" data-icon="ts" alt="מעונן עם סופת רעמים"><div class="wtemps"><span class="hi">32°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">16/09</div><img class="wicon" data-icon="pa" alt="שילוב של שמש ועננים"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">17/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש"><div class="wtemps"><span class="hi">32°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">18/09</div><img class="wicon" data-icon="pa" alt="קצת שמש"><div class="wtemps"><span class="hi">32°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">19/09</div><img class="wicon" data-icon="sh" alt="ממטר אחר הצהריים"><div class="wtemps"><span class="hi">32°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">20/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש לסירוגין"><div class="wtemps"><span class="hi">32°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">21/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">22/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש לסירוגין"><div class="wtemps"><span class="hi">32°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">23/09</div><img class="wicon" data-icon="pa" alt="לח עם מעט שמש"><div class="wtemps"><span class="hi">32°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">24/09</div><img class="wicon" data-icon="pa" alt="לח עם עננים ושמש"><div class="wtemps"><span class="hi">32°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">25/09</div><img class="wicon" data-icon="pa" alt="לח עם עננים ושמש"><div class="wtemps"><span class="hi">32°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">26/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">27/09</div><img class="wicon" data-icon="sh" alt="מעט גשם אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">28/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">29/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">30/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div></div></div><div class="wcard"><div class="wcard-head">⋮⋮ פו-לונג</div><div class="wcard-body"><div class="wrow"><div class="wdate">13/09</div><img class="wicon" data-icon="cl" alt="מעונן ברובו"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">14/09</div><img class="wicon" data-icon="sh" alt="מעט גשם בבוקר; עננים"><div class="wtemps"><span class="hi">32°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">15/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">32°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">16/09</div><img class="wicon" data-icon="ts" alt="מעונן, סופת רעמים מקומית"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">17/09</div><img class="wicon" data-icon="cl" alt="מעונן ברובו"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">18/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש לסירוגין"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">19/09</div><img class="wicon" data-icon="sh" alt="מעט גשם אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">20/09</div><img class="wicon" data-icon="cl" alt="מעונן רוב הזמן"><div class="wtemps"><span class="hi">30°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">21/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש לסירוגין"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">22/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש לסירוגין"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">23/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש לסירוגין"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">24/09</div><img class="wicon" data-icon="cl" alt="מעונן ברובו"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">25/09</div><img class="wicon" data-icon="cl" alt="מעונן ברובו"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">26/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">27/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">28/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">30°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">29/09</div><img class="wicon" data-icon="cl" alt="עננות ניכרת"><div class="wtemps"><span class="hi">29°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">30/09</div><img class="wicon" data-icon="sh" alt="מעט גשם אחר הצהריים"><div class="wtemps"><span class="hi">30°</span><span class="lo">24°</span></div></div></div></div><div class="wcard"><div class="wcard-head">⋮⋮ נין-בין</div><div class="wcard-body"><div class="wrow"><div class="wdate">13/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">14/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">15/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">16/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">17/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">18/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">19/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">32°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">20/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">21/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">22/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">23/09</div><img class="wicon" data-icon="ts" alt="מעונן עם סופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">24/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">25/09</div><img class="wicon" data-icon="cl" alt="מעונן ברובו"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">26/09</div><img class="wicon" data-icon="su" alt="בהיר ברובו"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">27/09</div><img class="wicon" data-icon="pa" alt="שמש ומעט עננים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">28/09</div><img class="wicon" data-icon="pa" alt="מעונן חלקית"><div class="wtemps"><span class="hi">30°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">29/09</div><img class="wicon" data-icon="sh" alt="ממטר בודד אחר הצהריים"><div class="wtemps"><span class="hi">30°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">30/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים אחר הצהריים"><div class="wtemps"><span class="hi">29°</span><span class="lo">26°</span></div></div></div></div><div class="wcard"><div class="wcard-head">⋮⋮ סאפא</div><div class="wcard-body"><div class="wrow"><div class="wdate">13/09</div><img class="wicon" data-icon="sh" alt="מעט גשם בבוקר"><div class="wtemps"><span class="hi">23°</span><span class="lo">16°</span></div></div><div class="wrow"><div class="wdate">14/09</div><img class="wicon" data-icon="sh" alt="גשם בבוקר; מעונן ולח"><div class="wtemps"><span class="hi">23°</span><span class="lo">16°</span></div></div><div class="wrow"><div class="wdate">15/09</div><img class="wicon" data-icon="sh" alt="גשם בבוקר; מעונן ולח"><div class="wtemps"><span class="hi">23°</span><span class="lo">16°</span></div></div><div class="wrow"><div class="wdate">16/09</div><img class="wicon" data-icon="sh" alt="לח עם גשם הולך ופוחת"><div class="wtemps"><span class="hi">23°</span><span class="lo">16°</span></div></div><div class="wrow"><div class="wdate">17/09</div><img class="wicon" data-icon="cl" alt="נשאר מעונן"><div class="wtemps"><span class="hi">23°</span><span class="lo">14°</span></div></div><div class="wrow"><div class="wdate">18/09</div><img class="wicon" data-icon="cl" alt="מעונן ברובו"><div class="wtemps"><span class="hi">23°</span><span class="lo">14°</span></div></div><div class="wrow"><div class="wdate">19/09</div><img class="wicon" data-icon="pa" alt="תערובת שמש ועננים"><div class="wtemps"><span class="hi">23°</span><span class="lo">14°</span></div></div><div class="wrow"><div class="wdate">20/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש לסירוגין"><div class="wtemps"><span class="hi">23°</span><span class="lo">14°</span></div></div><div class="wrow"><div class="wdate">21/09</div><img class="wicon" data-icon="sh" alt="נגיעה של גשם בבוקר"><div class="wtemps"><span class="hi">22°</span><span class="lo">15°</span></div></div><div class="wrow"><div class="wdate">22/09</div><img class="wicon" data-icon="pa" alt="עננים ושמש לסירוגין"><div class="wtemps"><span class="hi">23°</span><span class="lo">14°</span></div></div><div class="wrow"><div class="wdate">23/09</div><img class="wicon" data-icon="su" alt="פרקי שמש"><div class="wtemps"><span class="hi">23°</span><span class="lo">14°</span></div></div><div class="wrow"><div class="wdate">24/09</div><img class="wicon" data-icon="pa" alt="מעונן חלקית ולח"><div class="wtemps"><span class="hi">23°</span><span class="lo">15°</span></div></div><div class="wrow"><div class="wdate">25/09</div><img class="wicon" data-icon="sh" alt="לח עם ממטר חולף"><div class="wtemps"><span class="hi">23°</span><span class="lo">16°</span></div></div><div class="wrow"><div class="wdate">26/09</div><img class="wicon" data-icon="sh" alt="גשם בבוקר; מעונן ולח"><div class="wtemps"><span class="hi">22°</span><span class="lo">15°</span></div></div><div class="wrow"><div class="wdate">27/09</div><img class="wicon" data-icon="sh" alt="לח עם גשם לסירוגין"><div class="wtemps"><span class="hi">22°</span><span class="lo">16°</span></div></div><div class="wrow"><div class="wdate">28/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">21°</span><span class="lo">16°</span></div></div><div class="wrow"><div class="wdate">29/09</div><img class="wicon" data-icon="sh" alt="לח עם כמה ממטרים"><div class="wtemps"><span class="hi">22°</span><span class="lo">15°</span></div></div><div class="wrow"><div class="wdate">30/09</div><img class="wicon" data-icon="sh" alt="לח עם כמה ממטרים"><div class="wtemps"><span class="hi">22°</span><span class="lo">14°</span></div></div></div></div><div class="wcard"><div class="wcard-head">⋮⋮ מפרץ הא-לונג</div><div class="wcard-body"><div class="wrow"><div class="wdate">13/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים מקומית"><div class="wtemps"><span class="hi">32°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">14/09</div><img class="wicon" data-icon="sh" alt="ממטר בודד אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">15/09</div><img class="wicon" data-icon="sh" alt="מעט גשם בבוקר; מעונן"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">16/09</div><img class="wicon" data-icon="pa" alt="שמש חלקית"><div class="wtemps"><span class="hi">30°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">17/09</div><img class="wicon" data-icon="sh" alt="ממטרים באזור בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">18/09</div><img class="wicon" data-icon="sh" alt="ממטר בודד אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">19/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">20/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">21/09</div><img class="wicon" data-icon="pa" alt="מעונן חלקית"><div class="wtemps"><span class="hi">31°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">22/09</div><img class="wicon" data-icon="cl" alt="התגברות עננות ולחות"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">23/09</div><img class="wicon" data-icon="sh" alt="לח; ממטר אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">24/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">25/09</div><img class="wicon" data-icon="pa" alt="לח עם עננים ושמש"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">26/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">27/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים בבוקר; מעונן חלקית"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">28/09</div><img class="wicon" data-icon="pa" alt="מעונן חלקית"><div class="wtemps"><span class="hi">29°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">29/09</div><img class="wicon" data-icon="sh" alt="ממטר חולף בבוקר"><div class="wtemps"><span class="hi">30°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">30/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">26°</span></div></div></div></div><div class="wcard"><div class="wcard-head">⋮⋮ הוי-אן</div><div class="wcard-body"><div class="wrow"><div class="wdate">13/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">14/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">15/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">32°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">16/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">17/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">18/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">32°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">19/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">32°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">20/09</div><img class="wicon" data-icon="sh" alt="ממטר בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">21/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">22/09</div><img class="wicon" data-icon="sh" alt="ממטר חולף בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">23/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">24/09</div><img class="wicon" data-icon="ts" alt="עננים ושמש עם סופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">25/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">26/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">27/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים בבוקר"><div class="wtemps"><span class="hi">30°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">28/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">29/09</div><img class="wicon" data-icon="sh" alt="ממטר בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">30/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים בבוקר; קצת שמש"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div></div></div><div class="wcard"><div class="wcard-head">⋮⋮ פו-קוק</div><div class="wcard-body"><div class="wrow"><div class="wdate">13/09</div><img class="wicon" data-icon="su" alt="פרקי שמש"><div class="wtemps"><span class="hi">30°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">14/09</div><img class="wicon" data-icon="cl" alt="מעונן"><div class="wtemps"><span class="hi">31°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">15/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים מקומית"><div class="wtemps"><span class="hi">31°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">16/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">17/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">18/09</div><img class="wicon" data-icon="ts" alt="מעונן עם סופות רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">26°</span></div></div><div class="wrow"><div class="wdate">19/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">20/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">21/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">22/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">23/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">24/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">25/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">26/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">30°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">27/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">28/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">29/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">27°</span></div></div><div class="wrow"><div class="wdate">30/09</div><img class="wicon" data-icon="ts" alt="מעונן, ממטר וסופת רעמים"><div class="wtemps"><span class="hi">29°</span><span class="lo">26°</span></div></div></div></div><div class="wcard"><div class="wcard-head">⋮⋮ נה-טראנג</div><div class="wcard-body"><div class="wrow"><div class="wdate">13/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">33°</span><span class="lo">25°</span></div></div><div class="wrow"><div class="wdate">14/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">32°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">15/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">32°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">16/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">17/09</div><img class="wicon" data-icon="sh" alt="גשם בבוקר; מעונן בשאר היום"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">18/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים קצרה אחר הצהריים"><div class="wtemps"><span class="hi">32°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">19/09</div><img class="wicon" data-icon="sh" alt="ממטרים באזור בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">20/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">32°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">21/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">32°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">22/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">23/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">24/09</div><img class="wicon" data-icon="sh" alt="כמה ממטרים בבוקר"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">25/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">26/09</div><img class="wicon" data-icon="ts" alt="סופת רעמים אחר הצהריים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">27/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div><div class="wrow"><div class="wdate">28/09</div><img class="wicon" data-icon="sh" alt="ממטרים באזור בבוקר"><div class="wtemps"><span class="hi">30°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">29/09</div><img class="wicon" data-icon="ts" alt="מעונן עם סופת רעמים או שתיים"><div class="wtemps"><span class="hi">31°</span><span class="lo">23°</span></div></div><div class="wrow"><div class="wdate">30/09</div><img class="wicon" data-icon="ts" alt="ממטר וסופת רעמים"><div class="wtemps"><span class="hi">31°</span><span class="lo">24°</span></div></div></div></div>
-
 </div>
 
 <div class="footer">כל הטמפרטורות בצלזיוס · מבוסס על AccuWeather</div>
@@ -1268,6 +1300,132 @@ new Sortable(listContainer, { animation:200, handle:'.dh', onEnd: function(){
 
 render();
 });
+</script>
+<script>
+(function(){
+function dateOfDay2(dayStr){ var m = dayStr.match(/\((.*?)\)/); return m ? m[1] : null; }
+
+function getCardData2(){
+  var out = {};
+  document.querySelectorAll('#cards-container .wcard').forEach(function(card){
+    var head = card.querySelector('.wcard-head');
+    var name = head ? head.textContent.replace('⋮⋮','').trim() : '';
+    out[name] = {};
+    card.querySelectorAll('.wrow').forEach(function(row){
+      var dEl = row.querySelector('.wdate');
+      var d = dEl ? dEl.textContent.trim() : '';
+      var icon = row.querySelector('.wicon');
+      var hiEl = row.querySelector('.hi');
+      var loEl = row.querySelector('.lo');
+      out[name][d] = {
+        hi: hiEl ? parseInt(hiEl.textContent, 10) : null,
+        lo: loEl ? parseInt(loEl.textContent, 10) : null,
+        code: icon ? icon.dataset.icon : null,
+        cond: icon ? icon.alt : ''
+      };
+    });
+  });
+  return out;
+}
+
+function activeItinList2(){
+  return (typeof itineraryData !== 'undefined' && itineraryData && itineraryData.length) ? itineraryData : defaultItinerary;
+}
+
+function currentDayIdx2(){
+  var TRIP_START = new Date(2026, 8, 15);
+  var today = new Date();
+  today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  var diff = Math.round((today - TRIP_START) / 86400000);
+  var list = activeItinList2();
+  if (diff < 0) return 0;
+  return Math.min(diff, list.length - 1);
+}
+
+function renderPacking(){
+  var card = document.getElementById('packing-card');
+  if (!card) return;
+  var cardData = getCardData2();
+  var list = activeItinList2();
+  var idx = currentDayIdx2();
+  var days = list.slice(idx, idx + 3);
+  if (!days.length){ card.style.display = 'none'; return; }
+  var maxHi = null, minLo = null, anyRain = false, anyStorm = false, found = false;
+  var locsSeen = [];
+  days.forEach(function(item){
+    var d = dateOfDay2(item.day);
+    var wd = d && cardData[item.loc] ? cardData[item.loc][d] : null;
+    if (!wd) return;
+    found = true;
+    if (wd.hi !== null) maxHi = (maxHi === null) ? wd.hi : Math.max(maxHi, wd.hi);
+    if (wd.lo !== null) minLo = (minLo === null) ? wd.lo : Math.min(minLo, wd.lo);
+    if (wd.code === 'sh') anyRain = true;
+    if (wd.code === 'ts'){ anyRain = true; anyStorm = true; }
+    if (locsSeen.indexOf(item.loc) === -1) locsSeen.push(item.loc);
+  });
+  if (!found){ card.style.display = 'none'; return; }
+  var tags = [];
+  if (anyStorm) tags.push('⚡ סופות רעמים צפויות — הימנעו משטח פתוח, קחו מעיל גשם');
+  else if (anyRain) tags.push('☔ מטריה או מעיל גשם קל');
+  if (maxHi !== null && maxHi >= 33) tags.push('🧴 קרם הגנה וכובע');
+  if (maxHi !== null && maxHi >= 30) tags.push('💧 הרבה שתיית מים');
+  if (minLo !== null && minLo <= 20) tags.push('🧥 שכבה קלה לבוקר/ערב');
+  if (!anyRain && (maxHi === null || maxHi < 33)) tags.push('😎 מזג אוויר נעים');
+  tags.push('👕 בגדים קלים ונושמים');
+  var range = days.length > 1 ? (dateOfDay2(days[0].day) + '–' + dateOfDay2(days[days.length - 1].day)) : dateOfDay2(days[0].day);
+  document.getElementById('packing-sub').textContent = 'ל-' + days.length + ' הימים הקרובים במסלול (' + range + ', ' + locsSeen.join(', ') + ')';
+  var tagsEl = document.getElementById('packing-tags');
+  tagsEl.innerHTML = '';
+  tags.forEach(function(t){ var s = document.createElement('span'); s.className = 'packing-tag'; s.textContent = t; tagsEl.appendChild(s); });
+  card.style.display = 'block';
+}
+
+function renderTrend(){
+  var canvas = document.getElementById('trend-chart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  var cardData = getCardData2();
+  var list = activeItinList2();
+  var labels = [], his = [], los = [], hiColors = [], hiRadius = [];
+  list.forEach(function(item){
+    var d = dateOfDay2(item.day);
+    var wd = d && cardData[item.loc] ? cardData[item.loc][d] : null;
+    labels.push((d || '') + ' ' + item.loc);
+    his.push(wd ? wd.hi : null);
+    los.push(wd ? wd.lo : null);
+    var bad = wd && (wd.code === 'ts' || wd.code === 'sh');
+    hiColors.push(wd && wd.code === 'ts' ? '#ff453a' : '#ff9f0a');
+    hiRadius.push(bad ? 5 : 3);
+  });
+  if (window._trendChartInstance){ window._trendChartInstance.destroy(); }
+  window._trendChartInstance = new Chart(canvas.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'מקסימום (°C)', data: his, borderColor: '#ff9f0a', backgroundColor: 'rgba(255,159,10,0.10)', pointBackgroundColor: hiColors, pointRadius: hiRadius, tension: 0.3, fill: false, spanGaps: true },
+        { label: 'מינימום (°C)', data: los, borderColor: '#64d2ff', backgroundColor: 'rgba(100,210,255,0.10)', pointBackgroundColor: '#64d2ff', pointRadius: 3, tension: 0.3, fill: false, spanGaps: true }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#98989f', font: { size: 10 }, maxRotation: 60, minRotation: 60 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+        y: { ticks: { color: '#98989f', font: { size: 10 }, callback: function(v){ return v + '°'; } }, grid: { color: 'rgba(255,255,255,0.06)' } }
+      }
+    }
+  });
+}
+
+function refreshPackingAndTrend(){ renderPacking(); renderTrend(); }
+
+document.addEventListener('DOMContentLoaded', function(){
+  refreshPackingAndTrend();
+  window.itineraryChangeListeners = window.itineraryChangeListeners || [];
+  window.itineraryChangeListeners.push(refreshPackingAndTrend);
+});
+})();
 </script>
 <script>
 (function(){
