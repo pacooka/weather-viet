@@ -559,6 +559,7 @@ hnRender();
 <span><span class="trend-dot" style="background:var(--hi);"></span>מקסימום יומי</span>
 <span><span class="trend-dot" style="background:var(--lo);"></span>מינימום יומי</span>
 <span><span class="trend-dot" style="background:#ff453a;"></span>נקודה מסביב לגשם/סופה</span>
+<span><span class="trend-dot" style="background:#38bdf8;border-radius:3px;"></span>סיכוי גשם (%) — רק לימים שכבר יש עליהם תחזית מדויקת של עד 10 ימים</span>
 </div>
 </div>
 
@@ -1309,11 +1310,14 @@ function getCardData2(){
       var icon = row.querySelector('.wicon');
       var hiEl = row.querySelector('.hi');
       var loEl = row.querySelector('.lo');
+      var rainEl = row.querySelector('.wrain');
       out[name][d] = {
         hi: hiEl ? parseInt(hiEl.textContent, 10) : null,
         lo: loEl ? parseInt(loEl.textContent, 10) : null,
         code: icon ? icon.dataset.icon : null,
-        cond: icon ? icon.alt : ''
+        cond: icon ? icon.alt : '',
+        rain: rainEl ? parseInt(rainEl.textContent, 10) : null,
+        rainHours: (rainEl && rainEl.dataset.hours) ? parseFloat(rainEl.dataset.hours) : null
       };
     });
   });
@@ -1377,34 +1381,52 @@ function renderTrend(){
   if (!canvas || typeof Chart === 'undefined') return;
   var cardData = getCardData2();
   var list = activeItinList2();
-  var labels = [], his = [], los = [], hiColors = [], hiRadius = [];
+  var labels = [], his = [], los = [], rains = [], rainHoursArr = [], hiColors = [], hiRadius = [];
   list.forEach(function(item){
     var d = dateOfDay2(item.day);
     var wd = d && cardData[item.loc] ? cardData[item.loc][d] : null;
     labels.push((d || '') + ' ' + item.loc);
     his.push(wd ? wd.hi : null);
     los.push(wd ? wd.lo : null);
+    rains.push(wd && wd.rain !== null ? wd.rain : null);
+    rainHoursArr.push(wd ? wd.rainHours : null);
     var bad = wd && (wd.code === 'ts' || wd.code === 'sh');
     hiColors.push(wd && wd.code === 'ts' ? '#ff453a' : '#ff9f0a');
     hiRadius.push(bad ? 5 : 3);
   });
   if (window._trendChartInstance){ window._trendChartInstance.destroy(); }
   window._trendChartInstance = new Chart(canvas.getContext('2d'), {
-    type: 'line',
     data: {
       labels: labels,
       datasets: [
-        { label: 'מקסימום (°C)', data: his, borderColor: '#ff9f0a', backgroundColor: 'rgba(255,159,10,0.10)', pointBackgroundColor: hiColors, pointRadius: hiRadius, tension: 0.3, fill: false, spanGaps: true },
-        { label: 'מינימום (°C)', data: los, borderColor: '#64d2ff', backgroundColor: 'rgba(100,210,255,0.10)', pointBackgroundColor: '#64d2ff', pointRadius: 3, tension: 0.3, fill: false, spanGaps: true }
+        { type: 'line', label: 'מקסימום (°C)', data: his, borderColor: '#ff9f0a', backgroundColor: 'rgba(255,159,10,0.10)', pointBackgroundColor: hiColors, pointRadius: hiRadius, tension: 0.3, fill: false, spanGaps: true, yAxisID: 'y', order: 1 },
+        { type: 'line', label: 'מינימום (°C)', data: los, borderColor: '#64d2ff', backgroundColor: 'rgba(100,210,255,0.10)', pointBackgroundColor: '#64d2ff', pointRadius: 3, tension: 0.3, fill: false, spanGaps: true, yAxisID: 'y', order: 1 },
+        { type: 'bar', label: 'סיכוי גשם (%)', data: rains, backgroundColor: 'rgba(56,189,248,0.35)', borderColor: 'rgba(56,189,248,0.6)', borderWidth: 1, borderRadius: 3, yAxisID: 'y1', order: 2, maxBarThickness: 22 }
       ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){
+              if (ctx.dataset.yAxisID === 'y1'){
+                var i = ctx.dataIndex;
+                var h = rainHoursArr[i];
+                var base = ctx.dataset.label + ': ' + ctx.formattedValue + '%';
+                return h !== null && h !== undefined ? base + ' · כ-' + h + ' שעות גשם' : base;
+              }
+              return ctx.dataset.label + ': ' + ctx.formattedValue + '°';
+            }
+          }
+        }
+      },
       scales: {
         x: { ticks: { color: '#98989f', font: { size: 10 }, maxRotation: 60, minRotation: 60 }, grid: { color: 'rgba(255,255,255,0.06)' } },
-        y: { ticks: { color: '#98989f', font: { size: 10 }, callback: function(v){ return v + '°'; } }, grid: { color: 'rgba(255,255,255,0.06)' } }
+        y: { position: 'left', ticks: { color: '#98989f', font: { size: 10 }, callback: function(v){ return v + '°'; } }, grid: { color: 'rgba(255,255,255,0.06)' } },
+        y1: { position: 'right', min: 0, max: 100, ticks: { color: '#38bdf8', font: { size: 10 }, callback: function(v){ return v + '%'; } }, grid: { display: false } }
       }
     }
   });
