@@ -312,8 +312,16 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .shop-body{padding:2px 16px 16px;}
 .shop-card.collapsed .shop-body{display:none;}
 .shop-list{display:flex;flex-direction:column;gap:8px;}
-.shop-item{background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 14px;font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:8px;}
+.shop-item{background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 14px;font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:10px;}
 .shop-item-bullet{font-size:13px;flex-shrink:0;}
+.shop-check{position:relative;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;cursor:pointer;}
+.shop-check input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.shop-checkmark{position:absolute;top:0;left:0;width:22px;height:22px;border-radius:7px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.03);transition:background 0.2s,border-color 0.2s;}
+.shop-checkmark::after{content:"";position:absolute;left:7px;top:2px;width:6px;height:11px;border:solid #06210f;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) scale(0);transition:transform 0.15s ease;}
+.shop-check input:checked + .shop-checkmark{background:var(--green);border-color:var(--green);}
+.shop-check input:checked + .shop-checkmark::after{transform:rotate(45deg) scale(1);}
+.shop-item-label{flex:1;min-width:0;transition:color 0.2s,opacity 0.2s;}
+.shop-item.done .shop-item-label{color:var(--green);text-decoration:line-through;text-decoration-color:rgba(48,209,88,0.6);opacity:0.7;}
 .shop-empty{text-align:center;font-size:13px;color:var(--sub);padding:16px 0;}
 .shop-updated{font-size:11px;color:#636366;margin-top:10px;text-align:center;}
 .mymaps-card{max-width:1100px;margin:0 auto;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
@@ -834,6 +842,11 @@ var updatedEl = document.getElementById('shop-updated');
 var card = document.getElementById('shop-card');
 var toggle = document.getElementById('shop-toggle');
 
+var purchasedKey = 'purish_shop_purchased_v1';
+var purchased = {};
+try { purchased = JSON.parse(localStorage.getItem(purchasedKey)) || {}; } catch(e){ purchased = {}; }
+function savePurchased(){ localStorage.setItem(purchasedKey, JSON.stringify(purchased)); }
+
 function render(){
   listEl.innerHTML = '';
   if (!SHOP_ITEMS || !SHOP_ITEMS.length){
@@ -841,12 +854,29 @@ function render(){
     countEl.textContent = '';
   } else {
     emptyEl.style.display = 'none';
-    countEl.textContent = SHOP_ITEMS.length + (SHOP_ITEMS.length === 1 ? ' פריט' : ' פריטים');
+    var boughtCount = 0;
+    SHOP_ITEMS.forEach(function(item){ if (purchased[item]) boughtCount++; });
+    countEl.textContent = boughtCount + '/' + SHOP_ITEMS.length + ' נרכשו';
     SHOP_ITEMS.forEach(function(item){
+      var isDone = !!purchased[item];
       var div = document.createElement('div');
-      div.className = 'shop-item';
-      div.innerHTML = '<span class="shop-item-bullet">🛍️</span><span></span>';
-      div.querySelector('span:last-child').textContent = item;
+      div.className = 'shop-item' + (isDone ? ' done' : '');
+      div.innerHTML =
+        '<label class="shop-check">' +
+          '<input type="checkbox" ' + (isDone ? 'checked' : '') + '>' +
+          '<span class="shop-checkmark"></span>' +
+        '</label>' +
+        '<span class="shop-item-label"></span>';
+      div.querySelector('.shop-item-label').textContent = item;
+      var checkbox = div.querySelector('input[type="checkbox"]');
+      checkbox.addEventListener('change', function(){
+        if (checkbox.checked){ purchased[item] = true; } else { delete purchased[item]; }
+        div.classList.toggle('done', checkbox.checked);
+        savePurchased();
+        var bc = 0;
+        SHOP_ITEMS.forEach(function(it){ if (purchased[it]) bc++; });
+        countEl.textContent = bc + '/' + SHOP_ITEMS.length + ' נרכשו';
+      });
       listEl.appendChild(div);
     });
   }
