@@ -22,6 +22,59 @@
   } catch(e){}
 })();
 </script>
+<script>
+(function(){
+  // Convert every "(שעון ויאטנם)" timestamp anywhere on the page to the
+  // visitor's own local time, computed from the fixed Vietnam UTC+7 offset
+  // (Vietnam has no DST) plus the calendar date this page was generated.
+  // Added 2026-08-28 per Nir: a fixed "Vietnam time" label was confusing to
+  // read from other timezones (e.g. Israel). This runs generically on text
+  // nodes, so it catches every occurrence — header, currency, accommodations,
+  // zoom-earth caption, and any storm/change/cancel banners — without each
+  // of those spots needing its own conversion logic.
+  var BUILD_DATE_ISO = "__BUILD_DATE_ISO__";
+  var VN_OFFSET_MIN = 7 * 60;
+  var RE = /(?:(\d{2})\/(\d{2})\/(\d{4}),\s*)?(\d{2}):(\d{2})\s*\(שעון ויאטנם\)/g;
+
+  function toUtcFromVnTime(dateStr, hh, mm){
+    var p = dateStr.split('-').map(Number);
+    var utcMs = Date.UTC(p[0], p[1] - 1, p[2], hh, mm) - VN_OFFSET_MIN * 60000;
+    return new Date(utcMs);
+  }
+
+  function formatLocal(d){
+    if (isNaN(d.getTime())) return null;
+    var datePart = d.toLocaleDateString('he-IL', {day:'2-digit', month:'2-digit', year:'numeric'});
+    var timePart = d.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
+    return timePart + ', ' + datePart + ' (השעה אצלך)';
+  }
+
+  function convertNode(node){
+    if (node.nodeType === 3){
+      var text = node.nodeValue;
+      if (text.indexOf('שעון ויאטנם') === -1) return;
+      var changed = false;
+      var newText = text.replace(RE, function(m, dd, mo, yyyy, hh, mm){
+        var dateStr = yyyy ? (yyyy + '-' + mo + '-' + dd) : BUILD_DATE_ISO;
+        var local = formatLocal(toUtcFromVnTime(dateStr, parseInt(hh, 10), parseInt(mm, 10)));
+        if (!local) return m;
+        changed = true;
+        return local;
+      });
+      if (changed) node.nodeValue = newText;
+    } else if (node.nodeType === 1 && node.childNodes) {
+      for (var i = 0; i < node.childNodes.length; i++) convertNode(node.childNodes[i]);
+    }
+  }
+
+  function convertAll(){
+    if (document.body) convertNode(document.body);
+  }
+
+  document.addEventListener('DOMContentLoaded', convertAll);
+  setInterval(convertAll, 4000);
+})();
+</script>
 <title>הטיול לויאטנם - וייטנאם</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
