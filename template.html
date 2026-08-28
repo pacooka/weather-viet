@@ -302,6 +302,20 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .accom-cancel-none{background:rgba(255,255,255,0.08);color:var(--sub);}
 .accom-updated{font-size:11px;color:#636366;margin-top:10px;text-align:center;}
 .accom-empty{text-align:center;font-size:13px;color:var(--sub);padding:16px 0;}
+.shop-card{max-width:900px;margin:0 auto 12px;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
+.shop-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;user-select:none;gap:10px;}
+.shop-head-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.shop-head-left h2{font-size:15px;font-weight:700;margin:0;}
+.shop-chevron{display:inline-block;color:var(--blue);font-size:12px;transition:transform 0.25s ease;flex-shrink:0;}
+.shop-card.collapsed .shop-chevron{transform:rotate(-90deg);}
+.shop-count{font-size:12px;color:var(--sub);white-space:nowrap;flex-shrink:0;}
+.shop-body{padding:2px 16px 16px;}
+.shop-card.collapsed .shop-body{display:none;}
+.shop-list{display:flex;flex-direction:column;gap:8px;}
+.shop-item{background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 14px;font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:8px;}
+.shop-item-bullet{font-size:13px;flex-shrink:0;}
+.shop-empty{text-align:center;font-size:13px;color:var(--sub);padding:16px 0;}
+.shop-updated{font-size:11px;color:#636366;margin-top:10px;text-align:center;}
 .mymaps-card{max-width:1100px;margin:0 auto;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
 .mymaps-card iframe{width:100%;height:480px;border:none;display:block;}
 .streetfood-card{max-width:1100px;margin:0 auto;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
@@ -793,6 +807,63 @@ APPS.forEach(function(app){
     '<div class="app-name">' + app.name + (app.badge ? '<span class="app-badge">' + app.badge + '</span>' : '') + '</div>';
   grid.appendChild(a);
 });
+})();
+</script>
+
+<div class="section-title">קניות לרום</div>
+<div class="section-hint">רשימה שרום מעדכן מרחוק במייל (subject "תקנו לי" / "אל תקנו לי") · נבדקת אוטומטית בכל עדכון של הדף</div>
+<div class="shop-card collapsed" id="shop-card">
+<div class="shop-head" id="shop-toggle">
+<div class="shop-head-left"><span class="shop-chevron">▾</span><h2>🛍️ קניות לרום</h2></div>
+<span class="shop-count" id="shop-count"></span>
+</div>
+<div class="shop-body" id="shop-body">
+<div class="shop-list" id="shop-list"></div>
+<div class="shop-empty" id="shop-empty" style="display:none;">אין פריטים ברשימה כרגע</div>
+<div class="shop-updated" id="shop-updated"></div>
+</div>
+</div>
+<script>
+(function(){
+var SHOP_ITEMS = __SHOP_ITEMS__;
+var SHOP_UPDATED = __SHOP_UPDATED__;
+var listEl = document.getElementById('shop-list');
+var countEl = document.getElementById('shop-count');
+var emptyEl = document.getElementById('shop-empty');
+var updatedEl = document.getElementById('shop-updated');
+var card = document.getElementById('shop-card');
+var toggle = document.getElementById('shop-toggle');
+
+function render(){
+  listEl.innerHTML = '';
+  if (!SHOP_ITEMS || !SHOP_ITEMS.length){
+    emptyEl.style.display = 'block';
+    countEl.textContent = '';
+  } else {
+    emptyEl.style.display = 'none';
+    countEl.textContent = SHOP_ITEMS.length + (SHOP_ITEMS.length === 1 ? ' פריט' : ' פריטים');
+    SHOP_ITEMS.forEach(function(item){
+      var div = document.createElement('div');
+      div.className = 'shop-item';
+      div.innerHTML = '<span class="shop-item-bullet">🛍️</span><span></span>';
+      div.querySelector('span:last-child').textContent = item;
+      listEl.appendChild(div);
+    });
+  }
+  updatedEl.textContent = SHOP_UPDATED ? ('עודכן לאחרונה: ' + SHOP_UPDATED) : '';
+}
+
+var storageKey = 'purish_shop_collapsed_v1';
+var savedCollapsed = localStorage.getItem(storageKey);
+if (savedCollapsed === 'false'){ card.classList.remove('collapsed'); }
+else { card.classList.add('collapsed'); }
+
+toggle.addEventListener('click', function(){
+  card.classList.toggle('collapsed');
+  localStorage.setItem(storageKey, card.classList.contains('collapsed') ? 'true' : 'false');
+});
+
+render();
 })();
 </script>
 
