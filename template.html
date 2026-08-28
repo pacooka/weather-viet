@@ -393,7 +393,7 @@ function render(){
         '<div class="accom-item-body">' +
           '<div class="accom-name">' + item.name + '</div>' +
           '<div class="accom-loc">📍 ' + item.location + '</div>' +
-          '<div class="accom-dates">' + fmtDMY(item.checkin) + ' – ' + fmtDMY(item.checkout) + '</div>' +
+          '<div class="accom-dates" dir="ltr">' + fmtDMY(item.checkin) + ' – ' + fmtDMY(item.checkout) + '</div>' +
           '<span class="accom-cancel ' + ci.cls + '">' + ci.text + '</span>' +
         '</div>';
       listEl.appendChild(div);
