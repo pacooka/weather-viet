@@ -48,6 +48,9 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .storm-alert-title .badge-change-worse{font-size:10px;font-weight:700;background:rgba(255,159,10,0.22);color:var(--hi);padding:2px 7px;border-radius:8px;margin-right:6px;vertical-align:middle;}
 .storm-alert-title .badge-change-better{font-size:10px;font-weight:700;background:rgba(48,209,88,0.22);color:var(--green);padding:2px 7px;border-radius:8px;margin-right:6px;vertical-align:middle;}
 .storm-alert-change-worse .storm-alert-desc,.storm-alert-change-better .storm-alert-desc{color:var(--ink);}
+.storm-alert-cancel-urgent{background:rgba(255,69,58,0.14);color:var(--red);border:0.5px solid rgba(255,69,58,0.35);}
+.storm-alert-title .badge-cancel-urgent{font-size:10px;font-weight:700;background:rgba(255,69,58,0.22);color:var(--red);padding:2px 7px;border-radius:8px;margin-right:6px;vertical-align:middle;}
+.storm-alert-cancel-urgent .storm-alert-desc{color:var(--ink);}
 .section-title{max-width:900px;margin:30px auto 12px;padding:0 4px;font-size:17px;font-weight:700;}
 .section-hint{max-width:900px;margin:-8px auto 12px;padding:0 4px;font-size:12.5px;color:var(--sub);}
 .wgrid{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;}
@@ -222,6 +225,30 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .trainstreet-note{font-size:11.5px;color:#636366;line-height:1.5;}
 .trainstreet-auto{font-size:10.5px;background:rgba(10,132,255,0.15);color:var(--blue);padding:3px 8px;border-radius:8px;white-space:nowrap;}
 .trainstreet-col.relevant{border:1px solid var(--blue);}
+.accom-card{max-width:900px;margin:0 auto 12px;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
+.accom-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;user-select:none;gap:10px;}
+.accom-head-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.accom-head-left h2{font-size:15px;font-weight:700;margin:0;}
+.accom-chevron{display:inline-block;color:var(--blue);font-size:12px;transition:transform 0.25s ease;flex-shrink:0;}
+.accom-card.collapsed .accom-chevron{transform:rotate(-90deg);}
+.accom-count{font-size:12px;color:var(--sub);white-space:nowrap;flex-shrink:0;}
+.accom-body{padding:2px 16px 16px;}
+.accom-card.collapsed .accom-body{display:none;}
+.accom-list{display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:10px;}
+.accom-item{background:rgba(255,255,255,0.04);border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+.accom-thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#2c2c2e;}
+.accom-item-body{flex:1;min-width:0;}
+.accom-name{font-size:14px;font-weight:700;color:var(--ink);line-height:1.4;}
+.accom-loc{font-size:12px;color:var(--sub);margin-top:2px;}
+.accom-dates{font-size:12.5px;color:var(--sub);margin-top:6px;}
+.accom-cancel{display:inline-block;margin-top:8px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:8px;line-height:1.5;}
+.accom-cancel-ok{background:rgba(48,209,88,0.15);color:var(--green);}
+.accom-cancel-soon{background:rgba(255,159,10,0.18);color:var(--hi);}
+.accom-cancel-urgent{background:rgba(255,69,58,0.18);color:var(--red);}
+.accom-cancel-closed{background:rgba(255,255,255,0.08);color:var(--sub);}
+.accom-cancel-none{background:rgba(255,255,255,0.08);color:var(--sub);}
+.accom-updated{font-size:11px;color:#636366;margin-top:10px;text-align:center;}
+.accom-empty{text-align:center;font-size:13px;color:var(--sub);padding:16px 0;}
 .mymaps-card{max-width:1100px;margin:0 auto;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
 .mymaps-card iframe{width:100%;height:480px;border:none;display:block;}
 .streetfood-card{max-width:1100px;margin:0 auto;background:var(--card);border-radius:16px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.08);}
@@ -294,6 +321,101 @@ __STORM_BANNERS__
 <div class="packing-sub" id="packing-sub"></div>
 <div class="packing-tags" id="packing-tags"></div>
 </div>
+
+<div class="section-title">מקומות לינה בטיול</div>
+<div class="section-hint">מתוך Bookings &amp; Trips בחשבון ה-Booking.com שלכם · לחצו לפתיחה</div>
+<div class="accom-card collapsed" id="accom-card">
+<div class="accom-head" id="accom-toggle">
+<div class="accom-head-left"><span class="accom-chevron">▾</span><h2>מקומות לינה בטיול</h2></div>
+<span class="accom-count" id="accom-count"></span>
+</div>
+<div class="accom-body" id="accom-body">
+<div class="accom-list" id="accom-list"></div>
+<div class="accom-empty" id="accom-empty" style="display:none;">לא נמצא מידע על הזמנות לינה</div>
+<div class="accom-updated" id="accom-updated"></div>
+</div>
+</div>
+<script>
+(function(){
+var ACCOM_DATA = __ACCOMMODATIONS_DATA__;
+var ACCOM_UPDATED = __ACCOMMODATIONS_UPDATED__;
+var listEl = document.getElementById('accom-list');
+var countEl = document.getElementById('accom-count');
+var emptyEl = document.getElementById('accom-empty');
+var updatedEl = document.getElementById('accom-updated');
+var card = document.getElementById('accom-card');
+var toggle = document.getElementById('accom-toggle');
+var PLACEHOLDER_THUMB = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTAiIGZpbGw9IiMyYzJjMmUiLz48cGF0aCBkPSJNMTQgNDRsMTAtMTIgOCA5IDYtNyAxMiAxMHYzSDE0eiIgZmlsbD0iIzYzNjM2NiIvPjxjaXJjbGUgY3g9IjIyIiBjeT0iMjIiIHI9IjUiIGZpbGw9IiM2MzYzNjYiLz48L3N2Zz4=";
+
+function fmtDMY(iso){
+  if (!iso) return '';
+  var p = iso.split('-');
+  return p[2] + '/' + p[1];
+}
+
+function cancelInfo(item){
+  if (!item.freeCancelUntil){
+    return {cls:'accom-cancel-none', text:'לא ניתן לביטול ללא עלות'};
+  }
+  var deadline = new Date(item.freeCancelUntil);
+  var now = new Date();
+  var diffMs = deadline.getTime() - now.getTime();
+  var diffHrs = diffMs / 3600000;
+  var dateStr = deadline.toLocaleDateString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' בשעה ' + deadline.toLocaleTimeString('he-IL', {hour:'2-digit',minute:'2-digit'});
+  if (diffMs <= 0){
+    return {cls:'accom-cancel-closed', text:'חלון הביטול החינמי הסתיים'};
+  }
+  if (diffHrs <= 48){
+    var hrsLeft = Math.max(1, Math.round(diffHrs));
+    return {cls:'accom-cancel-urgent', text:'⚠️ נותרו כ-' + hrsLeft + ' שעות לביטול חינם (עד ' + dateStr + ')'};
+  }
+  if (diffHrs <= 24*7){
+    return {cls:'accom-cancel-soon', text:'ניתן לבטל בחינם עד ' + dateStr};
+  }
+  return {cls:'accom-cancel-ok', text:'ניתן לבטל בחינם עד ' + dateStr};
+}
+
+function render(){
+  listEl.innerHTML = '';
+  if (!ACCOM_DATA || !ACCOM_DATA.length){
+    emptyEl.style.display = 'block';
+    countEl.textContent = '';
+  } else {
+    emptyEl.style.display = 'none';
+    countEl.textContent = ACCOM_DATA.length + (ACCOM_DATA.length === 1 ? ' הזמנה' : ' הזמנות');
+    ACCOM_DATA.forEach(function(item){
+      var ci = cancelInfo(item);
+      var div = document.createElement('div');
+      div.className = 'accom-item';
+      var thumb = item.thumb || PLACEHOLDER_THUMB;
+      div.innerHTML =
+        '<img class="accom-thumb" src="' + thumb + '" alt="' + item.name + '" onerror="this.onerror=null;this.src=\'' + PLACEHOLDER_THUMB + '\';">' +
+        '<div class="accom-item-body">' +
+          '<div class="accom-name">' + item.name + '</div>' +
+          '<div class="accom-loc">📍 ' + item.location + '</div>' +
+          '<div class="accom-dates">' + fmtDMY(item.checkin) + ' – ' + fmtDMY(item.checkout) + '</div>' +
+          '<span class="accom-cancel ' + ci.cls + '">' + ci.text + '</span>' +
+        '</div>';
+      listEl.appendChild(div);
+    });
+  }
+  updatedEl.textContent = ACCOM_UPDATED ? ('עודכן לאחרונה: ' + ACCOM_UPDATED) : '';
+}
+
+var storageKey = 'purish_accom_collapsed_v1';
+var savedCollapsed = localStorage.getItem(storageKey);
+if (savedCollapsed === 'false'){ card.classList.remove('collapsed'); }
+else { card.classList.add('collapsed'); }
+
+toggle.addEventListener('click', function(){
+  card.classList.toggle('collapsed');
+  localStorage.setItem(storageKey, card.classList.contains('collapsed') ? 'true' : 'false');
+});
+
+render();
+setInterval(render, 60000);
+})();
+</script>
 
 <div class="currency-card">
 <div class="currency-rates">
