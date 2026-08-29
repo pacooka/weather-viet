@@ -313,6 +313,8 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .shop-card.collapsed .shop-body{display:none;}
 .shop-list{display:flex;flex-direction:column;gap:8px;}
 .shop-item{background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 14px;font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:10px;}
+.shop-item-thumb{width:36px;height:36px;border-radius:9px;object-fit:cover;flex-shrink:0;cursor:zoom-in;transition:transform 0.2s ease,box-shadow 0.2s ease;transform-origin:center;position:relative;z-index:1;}
+.shop-item-thumb.zoomed{transform:scale(3.2);box-shadow:0 8px 24px rgba(0,0,0,0.5);z-index:5;cursor:zoom-out;}
 .shop-item-bullet{font-size:13px;flex-shrink:0;}
 .shop-check{position:relative;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;cursor:pointer;}
 .shop-check input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
@@ -847,6 +849,9 @@ var purchased = {};
 try { purchased = JSON.parse(localStorage.getItem(purchasedKey)) || {}; } catch(e){ purchased = {}; }
 function savePurchased(){ localStorage.setItem(purchasedKey, JSON.stringify(purchased)); }
 
+function shopItemText(item){ return (typeof item === 'string') ? item : ((item && item.text) || ''); }
+function shopItemImage(item){ return (item && typeof item === 'object' && item.image) ? item.image : null; }
+
 function render(){
   listEl.innerHTML = '';
   if (!SHOP_ITEMS || !SHOP_ITEMS.length){
@@ -855,10 +860,12 @@ function render(){
   } else {
     emptyEl.style.display = 'none';
     var boughtCount = 0;
-    SHOP_ITEMS.forEach(function(item){ if (purchased[item]) boughtCount++; });
+    SHOP_ITEMS.forEach(function(item){ if (purchased[shopItemText(item)]) boughtCount++; });
     countEl.textContent = boughtCount + '/' + SHOP_ITEMS.length + ' נרכשו';
     SHOP_ITEMS.forEach(function(item){
-      var isDone = !!purchased[item];
+      var text = shopItemText(item);
+      var img = shopItemImage(item);
+      var isDone = !!purchased[text];
       var div = document.createElement('div');
       div.className = 'shop-item' + (isDone ? ' done' : '');
       div.innerHTML =
@@ -866,15 +873,23 @@ function render(){
           '<input type="checkbox" ' + (isDone ? 'checked' : '') + '>' +
           '<span class="shop-checkmark"></span>' +
         '</label>' +
+        (img ? '<img class="shop-item-thumb" src="' + img + '" alt="">' : '') +
         '<span class="shop-item-label"></span>';
-      div.querySelector('.shop-item-label').textContent = item;
+      div.querySelector('.shop-item-label').textContent = text;
+      if (img){
+        var thumbEl = div.querySelector('.shop-item-thumb');
+        thumbEl.addEventListener('click', function(e){
+          e.stopPropagation();
+          thumbEl.classList.toggle('zoomed');
+        });
+      }
       var checkbox = div.querySelector('input[type="checkbox"]');
       checkbox.addEventListener('change', function(){
-        if (checkbox.checked){ purchased[item] = true; } else { delete purchased[item]; }
+        if (checkbox.checked){ purchased[text] = true; } else { delete purchased[text]; }
         div.classList.toggle('done', checkbox.checked);
         savePurchased();
         var bc = 0;
-        SHOP_ITEMS.forEach(function(it){ if (purchased[it]) bc++; });
+        SHOP_ITEMS.forEach(function(it){ if (purchased[shopItemText(it)]) bc++; });
         countEl.textContent = bc + '/' + SHOP_ITEMS.length + ' נרכשו';
       });
       listEl.appendChild(div);
