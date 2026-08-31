@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T23:19:29+07:00",
+ "generatedAt": "2026-08-31T11:19:52+07:00",
  "data": {
   "האנוי|13/09": {
    "hi": 30,
@@ -428,7 +428,7 @@
   "נין-בין|30/09": {
    "hi": 29,
    "lo": 23,
-   "code": "su",
+   "code": "pa",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -732,7 +732,7 @@
   "הוי-אן|14/09": {
    "hi": 33,
    "lo": 24,
-   "code": "su",
+   "code": "pa",
    "rain": null,
    "typhoon": false,
    "tier": "far"
