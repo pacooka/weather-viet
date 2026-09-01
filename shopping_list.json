@@ -1,12 +1,14 @@
 {
  "items": [
-  "סווטשירט קארהראט",
-  "חולצות קארהראט",
-  "מלא בילה בונג",
-  "פטגוניה"
+  {
+   "text": "quarter zipper Patagonia/ Carhartt/ כל דבר שנראה טוב, לצלם לי!",
+   "image": null
+  }
  ],
- "lastCheckedUtc": "2026-09-01T04:26:23Z",
+ "lastCheckedUtc": "2026-09-01T10:57:05Z",
  "processedMessageIds": [
-  "AAMkADEzMjlhZjgxLWY5MDQtNGYwMS1iMjFhLTJiMzQzOTU3YzJkMgBGAAAAAACH6F12L3DYEZ-cAJAnLj1-BwBRvwCJUWvYEZ-bAJAnLj1-AAAADcD7AAAtO33Jyt9uTqrLuBBEOqRnAAwvWEL4AAA="
+  "AAMkADEzMjlhZjgxLWY5MDQtNGYwMS1iMjFhLTJiMzQzOTU3YzJkMgBGAAAAAACH6F12L3DYEZ-cAJAnLj1-BwBRvwCJUWvYEZ-bAJAnLj1-AAAADcD7AAAtO33Jyt9uTqrLuBBEOqRnAAwvWEL4AAA=",
+  "AAMkADEzMjlhZjgxLWY5MDQtNGYwMS1iMjFhLTJiMzQzOTU3YzJkMgBGAAAAAACH6F12L3DYEZ-cAJAnLj1-BwBRvwCJUWvYEZ-bAJAnLj1-AAAADcD7AAAtO33Jyt9uTqrLuBBEOqRnAAwxlRHDAAA=",
+  "AAMkADEzMjlhZjgxLWY5MDQtNGYwMS1iMjFhLTJiMzQzOTU3YzJkMgBGAAAAAACH6F12L3DYEZ-cAJAnLj1-BwBRvwCJUWvYEZ-bAJAnLj1-AAAADcD7AAAtO33Jyt9uTqrLuBBEOqRnAAwxlRHEAAA="
  ]
 }
