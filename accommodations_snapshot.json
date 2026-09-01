@@ -3,7 +3,7 @@
  "bookings": [
   {
    "name": "Pu Luong Natura",
-   "thumb": "https://r-xx.bstatic.com/xdata/images/hotel/max300/499607758.jpg",
+   "thumb": null,
    "location": "Pu Luong, Thanh Hóa",
    "checkin": "2026-09-17",
    "checkout": "2026-09-19",
@@ -11,7 +11,7 @@
   },
   {
    "name": "Tam Coc Nature",
-   "thumb": "https://r-xx.bstatic.com/xdata/images/hotel/max300/352640237.jpg",
+   "thumb": null,
    "location": "Ninh Binh",
    "checkin": "2026-09-19",
    "checkout": "2026-09-22",
@@ -19,7 +19,7 @@
   },
   {
    "name": "Pao's Sapa Leisure Hotel",
-   "thumb": "https://r-xx.bstatic.com/xdata/images/hotel/max300/324251873.jpg",
+   "thumb": null,
    "location": "Sapa",
    "checkin": "2026-09-22",
    "checkout": "2026-09-24",
