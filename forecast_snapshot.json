@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-31T11:19:52+07:00",
+ "generatedAt": "2026-09-01T11:26:23+07:00",
  "data": {
   "האנוי|13/09": {
    "hi": 30,
@@ -52,7 +52,7 @@
   "האנוי|19/09": {
    "hi": 31,
    "lo": 25,
-   "code": "ts",
+   "code": "sh",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -68,7 +68,7 @@
   "האנוי|21/09": {
    "hi": 31,
    "lo": 24,
-   "code": "su",
+   "code": "pa",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -156,7 +156,7 @@
   "פו-לונג|14/09": {
    "hi": 31,
    "lo": 25,
-   "code": "ts",
+   "code": "sh",
    "rain": null,
    "typhoon": false,
    "tier": "far"
