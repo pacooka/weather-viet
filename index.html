@@ -797,7 +797,7 @@ hnRender();
 <div class="typhoon-card">
 <div class="typhoon-card-title">מעקב סופות וטייפונים · Zoom Earth</div>
 <a class="typhoon-img-link" href="https://zoom.earth/storms/" target="_blank" rel="noopener">
-<img class="typhoon-preview-img" src="https://www.data.jma.go.jp/mscweb/data/himawari/img/se1/se1_b13_1320.jpg" alt="מפת לוויין - מעקב סופות וטייפונים מעל אזור ויאטנם">
+<img class="typhoon-preview-img" src="https://www.data.jma.go.jp/mscweb/data/himawari/img/se1/se1_b13_1330.jpg" alt="מפת לוויין - מעקב סופות וטייפונים מעל אזור ויאטנם">
 <span class="typhoon-img-overlay">🌀 פתח מפה חיה ↗</span>
 </a>
 <div class="typhoon-img-caption">תמונת לוויין Himawari (JMA) · מתעדכנת כל 10 דקות · למפה אינטראקטיבית לחצו למעלה</div>
@@ -1771,20 +1771,21 @@ document.addEventListener('DOMContentLoaded', function(){
 // להאנוי ביניהם. לכל יעד מינימום 2 לילות כדי לא "לשרוף" יום שלם על נסיעה עבור לילה בודד. ליל ה-28/09
 // (יום לפני הטיסה בצהריים) קבוע בהאנוי - FINAL_HANOI_NIGHTS.
 var BADNESS = { ts:3.0, sh:2.0, cl:1.0, pa:0.4, su:0.0 };
-// סאפא והוי-אן הם ברירה הדדית (EXCLUSIVE_PAIR) ומקבלים משקל זהה כדי שהבחירה בין השניים תוכרע רק לפי מזג האוויר.
+// סאפא ונה-טראנג הם ברירה הדדית (EXCLUSIVE_PAIR) ומקבלים משקל זהה כדי שהבחירה בין השניים תוכרע רק לפי מזג האוויר.
+// (עודכן 2026-09-02 לפי נתי: סאפא ונה-טראנג לא יכולים להיות באותו טיול, בעוד שנה-טראנג כן יכול להצטרף להוי-אן.)
 // פו-קוק ממשיך לקבל משקל גבוה יותר מכל יעד אחר (עדיפות נמוכה יותר לביקור, מצטרף רק אם התחזית שם ממש טובה).
 var WEIGHT = { "האנוי":1.0, "נין-בין":1.2, "סאפא":1.7, "פו-לונג":1.0, "מפרץ הא-לונג":1.6, "הוי-אן":1.7, "פו-קוק":3.0, "נה-טראנג":1.7 };
 // מפרץ הא-לונג אינו יעד חובה בטיול - הוא אופציונלי לחלוטין (ייתכן מסלול בלעדיו), ואם נבחר הוא מוגבל
 // ללילה אחד בדיוק (שייט יום-לילה סטנדרטי, אין עוד מה לעשות שם), לעולם לא יותר. ראו HALONG_LOC למטה.
-// פו-לונג/נין-בין: ללא הגבלת מקסימום, רק מינימום 2 לילות (תמיד נכללים). סאפא/הוי-אן/פו-קוק/מפרץ הא-לונג אופציונליים.
+// פו-לונג/נין-בין: ללא הגבלת מקסימום, רק מינימום 2 לילות (תמיד נכללים). סאפא/הוי-אן/פו-קוק/נה-טראנג/מפרץ הא-לונג אופציונליים.
 var MIN_NIGHTS = { "פו-לונג":2, "נין-בין":2 };
-// סאפא והוי-אן הם ברירה הדדית: לכל היותר אחד מהשניים נכנס למסלול, לעולם לא שניהם יחד.
-// פו-קוק ומפרץ הא-לונג עצמאיים ויכולים להצטרף לכל אחד מהשניים, לשניהם גם יחד, או לבוא בלעדיהם.
-var EXCLUSIVE_PAIR = ["סאפא", "הוי-אן"];
+// סאפא ונה-טראנג הם ברירה הדדית: לכל היותר אחד מהשניים נכנס למסלול, לעולם לא שניהם יחד.
+// הוי-אן, פו-קוק ומפרץ הא-לונג עצמאיים ויכולים להצטרף לכל אחד מהשניים, לכולם גם יחד, או לבוא בלעדיהם.
+var EXCLUSIVE_PAIR = ["סאפא", "נה-טראנג"];
 var PHUQUOC_LOC = "פו-קוק";
 var HALONG_LOC = "מפרץ הא-לונג";
 var HALONG_NIGHTS = 1; // אם מפרץ הא-לונג נכלל במסלול, זה תמיד לילה אחד בדיוק
-var NHATRANG_LOC = "נה-טראנג"; // יעד גמיש עצמאי כמו פו-קוק - לא חלק מה-EXCLUSIVE_PAIR, יכול להצטרף לכל שילוב
+var HOIAN_INDEP_LOC = "הוי-אן"; // יעד גמיש עצמאי כמו פו-קוק - לא חלק מה-EXCLUSIVE_PAIR, יכול להצטרף לכל שילוב (כולל נה-טראנג)
 // יעדי "דרום" דורשים טיסה מהאנוי (הוי-אן, פו-קוק, נה-טראנג) - כשכמה מהם נבחרים הם נשארים תמיד רצף אחד
 // יחד בסוף המסלול, אחרי כל יעדי ה"צפון" (פו-לונג/נין-בין/סאפא/מפרץ הא-לונג, נגישים בדרך יבשה/שייט מהאנוי
 // בלי טיסה) - לעולם לא מתפצלים סביב יעד צפוני, כדי לא "לבזבז" טיסות הלוך-חזור ללא צורך.
@@ -1923,9 +1924,10 @@ function computeRecommendedPlan(){
   if (flexBudget < 0) flexBudget = 0;
   var hanoiReturnStart = addDays(tripEnd, -FINAL_HANOI_NIGHTS);
 
-  // כל אפשרויות הבלוק האופציונלי: כל שילוב של לכל היותר אחד מ-EXCLUSIVE_PAIR (סאפא/הוי-אן, 2+ לילות),
-  // פו-קוק (2+ לילות), ומפרץ הא-לונג (אם נבחר - בדיוק לילה 1, לעולם לא חובה) - בכל סדר אפשרי, תלוי בתקציב
-  // הגמיש. EXCLUSIVE_PAIR לעולם לא מופיעים שניהם יחד; פו-קוק ומפרץ הא-לונג עצמאיים ויכולים להצטרף לכל שילוב.
+  // כל אפשרויות הבלוק האופציונלי: כל שילוב של לכל היותר אחד מ-EXCLUSIVE_PAIR (סאפא/נה-טראנג, 2+ לילות),
+  // הוי-אן (2+ לילות), פו-קוק (2+ לילות), ומפרץ הא-לונג (אם נבחר - בדיוק לילה 1, לעולם לא חובה) - בכל סדר
+  // אפשרי, תלוי בתקציב הגמיש. EXCLUSIVE_PAIR לעולם לא מופיעים שניהם יחד; הוי-אן/פו-קוק/מפרץ הא-לונג עצמאיים
+  // ויכולים להצטרף לכל שילוב (למשל נה-טראנג + הוי-אן יחד, אבל לעולם לא סאפא + נה-טראנג יחד).
   var maxEach = Math.min(flexBudget, 6);
   var exclusiveChoices = [ null ];
   [EXCLUSIVE_PAIR[0], EXCLUSIVE_PAIR[1]].forEach(function(loc){
@@ -1933,22 +1935,22 @@ function computeRecommendedPlan(){
   });
   var phuquocChoices = [ null ];
   for (var pqn = 2; pqn <= maxEach; pqn++) phuquocChoices.push({ loc: PHUQUOC_LOC, nights: pqn });
-  var nhatrangChoices = [ null ];
-  for (var ntn = 2; ntn <= maxEach; ntn++) nhatrangChoices.push({ loc: NHATRANG_LOC, nights: ntn });
+  var hoianChoices = [ null ];
+  for (var han = 2; han <= maxEach; han++) hoianChoices.push({ loc: HOIAN_INDEP_LOC, nights: han });
   var halongChoices = [ null, { loc: HALONG_LOC, nights: HALONG_NIGHTS } ];
 
   var extraPlans = [];
   exclusiveChoices.forEach(function(exc){
     phuquocChoices.forEach(function(pq){
-      nhatrangChoices.forEach(function(nt){
+      hoianChoices.forEach(function(ha){
         halongChoices.forEach(function(hl){
-          var used = (exc ? exc.nights : 0) + (pq ? pq.nights : 0) + (nt ? nt.nights : 0) + (hl ? hl.nights : 0);
+          var used = (exc ? exc.nights : 0) + (pq ? pq.nights : 0) + (ha ? ha.nights : 0) + (hl ? hl.nights : 0);
           var leftover = flexBudget - used;
           if (leftover < 0) return;
           var seq = [];
           if (exc) seq.push(exc);
           if (pq) seq.push(pq);
-          if (nt) seq.push(nt);
+          if (ha) seq.push(ha);
           if (hl) seq.push(hl);
           extraPlans.push({ seq: seq, leftover: leftover });
         });
@@ -2070,7 +2072,7 @@ function computeHoiAnForcedPlan(){
   var phuquocChoicesHA = [ null ];
   for (var pqn2 = 2; pqn2 <= maxEach; pqn2++) phuquocChoicesHA.push({ loc: PHUQUOC_LOC, nights: pqn2 });
   var nhatrangChoicesHA = [ null ];
-  for (var ntn2 = 2; ntn2 <= maxEach; ntn2++) nhatrangChoicesHA.push({ loc: NHATRANG_LOC, nights: ntn2 });
+  for (var ntn2 = 2; ntn2 <= maxEach; ntn2++) nhatrangChoicesHA.push({ loc: "נה-טראנג", nights: ntn2 });
   var halongChoicesHA = [ null, { loc: HALONG_LOC, nights: HALONG_NIGHTS } ];
 
   var extraPlans = [];
