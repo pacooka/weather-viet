@@ -461,7 +461,7 @@ function cancelInfo(item){
   var now = new Date();
   var diffMs = deadline.getTime() - now.getTime();
   var diffHrs = diffMs / 3600000;
-  var dateStr = deadline.toLocaleDateString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' בשעה ' + deadline.toLocaleTimeString('he-IL', {hour:'2-digit',minute:'2-digit'});
+  var dateStr = deadline.toLocaleDateString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' בשעה ' + deadline.toLocaleTimeString('he-IL', {hour:'2-digit',minute:'2-digit'}) + ' (השעה המקומית שלך)';
   if (diffMs <= 0){
     return {cls:'accom-cancel-closed', text:'חלון הביטול החינמי הסתיים'};
   }
@@ -797,7 +797,7 @@ hnRender();
 <div class="typhoon-card">
 <div class="typhoon-card-title">מעקב סופות וטייפונים · Zoom Earth</div>
 <a class="typhoon-img-link" href="https://zoom.earth/storms/" target="_blank" rel="noopener">
-<img class="typhoon-preview-img" src="https://www.data.jma.go.jp/mscweb/data/himawari/img/se1/se1_b13_1310.jpg" alt="מפת לוויין - מעקב סופות וטייפונים מעל אזור ויאטנם">
+<img class="typhoon-preview-img" src="https://www.data.jma.go.jp/mscweb/data/himawari/img/se1/se1_b13_1320.jpg" alt="מפת לוויין - מעקב סופות וטייפונים מעל אזור ויאטנם">
 <span class="typhoon-img-overlay">🌀 פתח מפה חיה ↗</span>
 </a>
 <div class="typhoon-img-caption">תמונת לוויין Himawari (JMA) · מתעדכנת כל 10 דקות · למפה אינטראקטיבית לחצו למעלה</div>

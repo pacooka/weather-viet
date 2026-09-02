@@ -438,7 +438,7 @@ function cancelInfo(item){
   var now = new Date();
   var diffMs = deadline.getTime() - now.getTime();
   var diffHrs = diffMs / 3600000;
-  var dateStr = deadline.toLocaleDateString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' בשעה ' + deadline.toLocaleTimeString('he-IL', {hour:'2-digit',minute:'2-digit'});
+  var dateStr = deadline.toLocaleDateString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' בשעה ' + deadline.toLocaleTimeString('he-IL', {hour:'2-digit',minute:'2-digit'}) + ' (השעה המקומית שלך)';
   if (diffMs <= 0){
     return {cls:'accom-cancel-closed', text:'חלון הביטול החינמי הסתיים'};
   }
