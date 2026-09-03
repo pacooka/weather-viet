@@ -1,1157 +1,885 @@
 {
- "generatedAt": "2026-09-02T20:48:19+07:00",
+ "generatedAt": "2026-09-03T04:13:10Z",
  "data": {
-  "האנוי|13/09": {
-   "hi": 30,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|14/09": {
-   "hi": 32,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|15/09": {
-   "hi": 32,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|16/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|17/09": {
-   "hi": 29,
-   "lo": 25,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|18/09": {
-   "hi": 30,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|19/09": {
-   "hi": 31,
-   "lo": 25,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|20/09": {
-   "hi": 32,
-   "lo": 24,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|21/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|22/09": {
-   "hi": 31,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|23/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|24/09": {
-   "hi": 29,
-   "lo": 25,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|25/09": {
-   "hi": 30,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|26/09": {
-   "hi": 30,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|27/09": {
-   "hi": 31,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|28/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|29/09": {
-   "hi": 29,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "האנוי|30/09": {
-   "hi": 30,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|13/09": {
-   "hi": 31,
-   "lo": 25,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|14/09": {
-   "hi": 31,
-   "lo": 25,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|15/09": {
-   "hi": 32,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|16/09": {
-   "hi": 29,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|17/09": {
-   "hi": 29,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|18/09": {
-   "hi": 29,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|19/09": {
-   "hi": 29,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|20/09": {
-   "hi": 30,
-   "lo": 23,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|21/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|22/09": {
-   "hi": 30,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|23/09": {
-   "hi": 29,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|24/09": {
-   "hi": 29,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|25/09": {
-   "hi": 29,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|26/09": {
-   "hi": 29,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|27/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|28/09": {
-   "hi": 30,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|29/09": {
-   "hi": 28,
-   "lo": 22,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-לונג|30/09": {
-   "hi": 29,
-   "lo": 22,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|13/09": {
-   "hi": 33,
-   "lo": 24,
-   "code": "su",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|14/09": {
-   "hi": 33,
-   "lo": 24,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|15/09": {
-   "hi": 32,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|16/09": {
-   "hi": 31,
-   "lo": 26,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|17/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|18/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|19/09": {
-   "hi": 31,
-   "lo": 25,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|20/09": {
-   "hi": 31,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|21/09": {
-   "hi": 31,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|22/09": {
-   "hi": 31,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|23/09": {
-   "hi": 30,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|24/09": {
-   "hi": 29,
-   "lo": 26,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|25/09": {
-   "hi": 31,
-   "lo": 25,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|26/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|27/09": {
-   "hi": 30,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|28/09": {
-   "hi": 30,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|29/09": {
-   "hi": 29,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נין-בין|30/09": {
-   "hi": 30,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|13/09": {
-   "hi": 22,
-   "lo": 16,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|14/09": {
-   "hi": 22,
-   "lo": 16,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|15/09": {
-   "hi": 22,
-   "lo": 16,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|16/09": {
-   "hi": 22,
-   "lo": 16,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|17/09": {
-   "hi": 21,
-   "lo": 16,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|18/09": {
-   "hi": 22,
-   "lo": 15,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|19/09": {
-   "hi": 21,
-   "lo": 14,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|20/09": {
-   "hi": 22,
-   "lo": 15,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|21/09": {
-   "hi": 22,
-   "lo": 15,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|22/09": {
-   "hi": 22,
-   "lo": 14,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|23/09": {
-   "hi": 22,
-   "lo": 15,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|24/09": {
-   "hi": 22,
-   "lo": 16,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|25/09": {
-   "hi": 21,
-   "lo": 15,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|26/09": {
-   "hi": 22,
-   "lo": 16,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|27/09": {
-   "hi": 22,
-   "lo": 16,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|28/09": {
-   "hi": 22,
-   "lo": 14,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|29/09": {
-   "hi": 20,
-   "lo": 13,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "סאפא|30/09": {
-   "hi": 21,
-   "lo": 13,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|13/09": {
-   "hi": 29,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|14/09": {
-   "hi": 31,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|15/09": {
-   "hi": 31,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|16/09": {
-   "hi": 29,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|17/09": {
-   "hi": 29,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|18/09": {
-   "hi": 29,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|19/09": {
-   "hi": 30,
-   "lo": 26,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|20/09": {
-   "hi": 30,
-   "lo": 24,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|21/09": {
-   "hi": 29,
-   "lo": 25,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|22/09": {
-   "hi": 31,
-   "lo": 26,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|23/09": {
-   "hi": 28,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|24/09": {
-   "hi": 28,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|25/09": {
-   "hi": 29,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|26/09": {
-   "hi": 29,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|27/09": {
-   "hi": 30,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|28/09": {
-   "hi": 31,
-   "lo": 25,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|29/09": {
-   "hi": 28,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "מפרץ הא-לונג|30/09": {
-   "hi": 29,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|13/09": {
-   "hi": 32,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|14/09": {
-   "hi": 33,
-   "lo": 25,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|15/09": {
-   "hi": 33,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|16/09": {
-   "hi": 32,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|17/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|18/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|19/09": {
-   "hi": 32,
-   "lo": 24,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|20/09": {
-   "hi": 32,
-   "lo": 22,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|21/09": {
-   "hi": 32,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|22/09": {
-   "hi": 32,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|23/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|24/09": {
-   "hi": 30,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|25/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|26/09": {
-   "hi": 30,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|27/09": {
-   "hi": 30,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|28/09": {
-   "hi": 29,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|29/09": {
-   "hi": 30,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "הוי-אן|30/09": {
-   "hi": 30,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|13/09": {
-   "hi": 31,
-   "lo": 27,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|14/09": {
-   "hi": 31,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|15/09": {
-   "hi": 30,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|16/09": {
-   "hi": 29,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|17/09": {
-   "hi": 29,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|18/09": {
-   "hi": 29,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|19/09": {
-   "hi": 29,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|20/09": {
-   "hi": 29,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|21/09": {
-   "hi": 29,
-   "lo": 26,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|22/09": {
-   "hi": 29,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|23/09": {
-   "hi": 29,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|24/09": {
-   "hi": 29,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|25/09": {
-   "hi": 30,
-   "lo": 27,
-   "code": "cl",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|26/09": {
-   "hi": 30,
-   "lo": 27,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|27/09": {
-   "hi": 29,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|28/09": {
-   "hi": 30,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|29/09": {
-   "hi": 31,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "פו-קוק|30/09": {
-   "hi": 30,
-   "lo": 27,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|13/09": {
-   "hi": 34,
-   "lo": 24,
-   "code": "cl",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|14/09": {
-   "hi": 33,
-   "lo": 26,
-   "code": "cl",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|15/09": {
-   "hi": 33,
-   "lo": 26,
-   "code": "cl",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|16/09": {
-   "hi": 32,
-   "lo": 24,
-   "code": "cl",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|17/09": {
-   "hi": 32,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|18/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|19/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|20/09": {
-   "hi": 32,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|21/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|22/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|23/09": {
-   "hi": 30,
-   "lo": 24,
-   "code": "ts",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|24/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|25/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|26/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|27/09": {
-   "hi": 32,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|28/09": {
-   "hi": 32,
-   "lo": 23,
-   "code": "pa",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|29/09": {
-   "hi": 31,
-   "lo": 24,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  },
-  "נה-טראנג|30/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "sh",
-   "rain": null,
-   "typhoon": false,
-   "tier": "far"
-  }
+  "האנוי": [
+   [
+    13,
+    86,
+    78,
+    "Cloudy with a t-storm or two"
+   ],
+   [
+    14,
+    89,
+    78,
+    "A shower and thunderstorm"
+   ],
+   [
+    15,
+    89,
+    77,
+    "A thunderstorm in the morning"
+   ],
+   [
+    16,
+    87,
+    76,
+    "A shower and thunderstorm"
+   ],
+   [
+    17,
+    85,
+    77,
+    "Occasional afternoon rain"
+   ],
+   [
+    18,
+    86,
+    76,
+    "A shower and thunderstorm"
+   ],
+   [
+    19,
+    87,
+    77,
+    "A stray morning thundershower"
+   ],
+   [
+    20,
+    89,
+    76,
+    "Mostly sunny"
+   ],
+   [
+    21,
+    88,
+    76,
+    "Sunshine and a few clouds"
+   ],
+   [
+    22,
+    87,
+    78,
+    "A shower and thunderstorm"
+   ],
+   [
+    23,
+    87,
+    76,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    24,
+    85,
+    77,
+    "Rather cloudy with a t-shower"
+   ],
+   [
+    25,
+    86,
+    76,
+    "A shower and thunderstorm"
+   ],
+   [
+    26,
+    86,
+    77,
+    "A morning t-storm; some sun"
+   ],
+   [
+    27,
+    88,
+    78,
+    "A shower and thunderstorm"
+   ],
+   [
+    28,
+    87,
+    76,
+    "Occasional afternoon rain"
+   ],
+   [
+    29,
+    85,
+    73,
+    "Less humid with plenty of sun"
+   ],
+   [
+    30,
+    86,
+    73,
+    "Partly sunny"
+   ]
+  ],
+  "נין-בין": [
+   [
+    13,
+    92,
+    76,
+    "Sunny spells"
+   ],
+   [
+    14,
+    91,
+    75,
+    "Mostly sunny"
+   ],
+   [
+    15,
+    89,
+    79,
+    "A thunderstorm in the morning"
+   ],
+   [
+    16,
+    88,
+    78,
+    "Mostly sunny"
+   ],
+   [
+    17,
+    87,
+    76,
+    "Mostly sunny"
+   ],
+   [
+    18,
+    88,
+    75,
+    "Mostly sunny"
+   ],
+   [
+    19,
+    88,
+    77,
+    "A passing afternoon shower"
+   ],
+   [
+    20,
+    87,
+    77,
+    "An afternoon thunderstorm"
+   ],
+   [
+    21,
+    87,
+    78,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    22,
+    88,
+    77,
+    "A shower and thunderstorm"
+   ],
+   [
+    23,
+    86,
+    77,
+    "A couple of thunderstorms"
+   ],
+   [
+    24,
+    85,
+    78,
+    "A morning thundershower"
+   ],
+   [
+    25,
+    87,
+    77,
+    "Times of sun and clouds"
+   ],
+   [
+    26,
+    87,
+    76,
+    "An afternoon thundershower"
+   ],
+   [
+    27,
+    86,
+    76,
+    "A shower and thunderstorm"
+   ],
+   [
+    28,
+    86,
+    78,
+    "A shower and thunderstorm"
+   ],
+   [
+    29,
+    85,
+    78,
+    "A shower and thunderstorm"
+   ],
+   [
+    30,
+    86,
+    77,
+    "A shower and thunderstorm"
+   ]
+  ],
+  "סאפא": [
+   [
+    13,
+    72,
+    58,
+    "Sunny spells"
+   ],
+   [
+    14,
+    74,
+    57,
+    "Mostly sunny"
+   ],
+   [
+    15,
+    72,
+    60,
+    "Cloudy, a little rain; humid"
+   ],
+   [
+    16,
+    73,
+    60,
+    "Rain tapering off"
+   ],
+   [
+    17,
+    71,
+    58,
+    "A.M. showers, then a shower"
+   ],
+   [
+    18,
+    71,
+    56,
+    "Mostly cloudy"
+   ],
+   [
+    19,
+    73,
+    56,
+    "Partial sunshine"
+   ],
+   [
+    20,
+    73,
+    57,
+    "A bit of morning rain"
+   ],
+   [
+    21,
+    72,
+    59,
+    "Humid with periods of rain"
+   ],
+   [
+    22,
+    73,
+    58,
+    "Cloudy with showers"
+   ],
+   [
+    23,
+    72,
+    57,
+    "Occasional afternoon rain"
+   ],
+   [
+    24,
+    71,
+    59,
+    "A little afternoon rain"
+   ],
+   [
+    25,
+    70,
+    58,
+    "Cloudy, a couple of showers"
+   ],
+   [
+    26,
+    70,
+    57,
+    "Mostly cloudy"
+   ],
+   [
+    27,
+    71,
+    57,
+    "Cloudy"
+   ],
+   [
+    28,
+    72,
+    59,
+    "A couple of morning showers"
+   ],
+   [
+    29,
+    72,
+    61,
+    "Cloudy, a little rain; humid"
+   ],
+   [
+    30,
+    70,
+    60,
+    "Cloudy, a little rain; humid"
+   ]
+  ],
+  "פו-לונג": [
+   [
+    13,
+    87,
+    77,
+    "A couple of morning showers"
+   ],
+   [
+    14,
+    88,
+    77,
+    "A thundershower in spots"
+   ],
+   [
+    15,
+    89,
+    76,
+    "A shower and thunderstorm"
+   ],
+   [
+    16,
+    85,
+    74,
+    "Cloudy with thunderstorms"
+   ],
+   [
+    17,
+    84,
+    75,
+    "A morning shower, then rain"
+   ],
+   [
+    18,
+    84,
+    75,
+    "Cloudy with thunderstorms"
+   ],
+   [
+    19,
+    85,
+    76,
+    "Thunderstorms, mainly early"
+   ],
+   [
+    20,
+    86,
+    74,
+    "A shower in the afternoon"
+   ],
+   [
+    21,
+    87,
+    73,
+    "Times of clouds and sun"
+   ],
+   [
+    22,
+    86,
+    76,
+    "T-storms in the afternoon"
+   ],
+   [
+    23,
+    84,
+    76,
+    "A shower and thunderstorm"
+   ],
+   [
+    24,
+    84,
+    74,
+    "A shower and thunderstorm"
+   ],
+   [
+    25,
+    85,
+    74,
+    "A shower and thunderstorm"
+   ],
+   [
+    26,
+    84,
+    75,
+    "A.M. showers; mostly cloudy"
+   ],
+   [
+    27,
+    87,
+    76,
+    "A few showers in the morning"
+   ],
+   [
+    28,
+    86,
+    74,
+    "A shower and thunderstorm"
+   ],
+   [
+    29,
+    83,
+    71,
+    "Less humid with plenty of sun"
+   ],
+   [
+    30,
+    84,
+    71,
+    "Sun and some clouds"
+   ]
+  ],
+  "מפרץ הא-לונג": [
+   [
+    13,
+    84,
+    79,
+    "A shower and thunderstorm"
+   ],
+   [
+    14,
+    87,
+    80,
+    "An a.m. t-storm; partly sunny"
+   ],
+   [
+    15,
+    87,
+    79,
+    "A couple of thunderstorms"
+   ],
+   [
+    16,
+    85,
+    76,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    17,
+    84,
+    77,
+    "A shower and thunderstorm"
+   ],
+   [
+    18,
+    84,
+    77,
+    "A shower and thunderstorm"
+   ],
+   [
+    19,
+    86,
+    78,
+    "Partly sunny"
+   ],
+   [
+    20,
+    86,
+    76,
+    "Mostly sunny"
+   ],
+   [
+    21,
+    85,
+    77,
+    "Partly sunny"
+   ],
+   [
+    22,
+    87,
+    79,
+    "Showers around in the morning"
+   ],
+   [
+    23,
+    83,
+    78,
+    "A shower and thunderstorm"
+   ],
+   [
+    24,
+    83,
+    78,
+    "A shower and thunderstorm"
+   ],
+   [
+    25,
+    85,
+    77,
+    "A shower and thunderstorm"
+   ],
+   [
+    26,
+    84,
+    77,
+    "A shower and thunderstorm"
+   ],
+   [
+    27,
+    86,
+    78,
+    "An a.m. t-storm; partly sunny"
+   ],
+   [
+    28,
+    87,
+    77,
+    "A morning t-storm; some sun"
+   ],
+   [
+    29,
+    83,
+    74,
+    "Less humid with plenty of sun"
+   ],
+   [
+    30,
+    84,
+    73,
+    "Partly sunny"
+   ]
+  ],
+  "פו-קוק": [
+   [
+    13,
+    87,
+    80,
+    "A couple of afternoon showers"
+   ],
+   [
+    14,
+    87,
+    81,
+    "Cloudy with a thunderstorm"
+   ],
+   [
+    15,
+    86,
+    80,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    16,
+    84,
+    81,
+    "Cloudy with thunderstorms"
+   ],
+   [
+    17,
+    85,
+    80,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    18,
+    84,
+    79,
+    "Cloudy with thunderstorms"
+   ],
+   [
+    19,
+    84,
+    80,
+    "Clouds, a shower and t-storm"
+   ],
+   [
+    20,
+    85,
+    80,
+    "Cloudy, showers and t-storms"
+   ],
+   [
+    21,
+    84,
+    79,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    22,
+    84,
+    80,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    23,
+    85,
+    81,
+    "A shower and thunderstorm"
+   ],
+   [
+    24,
+    85,
+    81,
+    "A shower and thunderstorm"
+   ],
+   [
+    25,
+    86,
+    80,
+    "Mostly cloudy"
+   ],
+   [
+    26,
+    86,
+    80,
+    "A couple of afternoon showers"
+   ],
+   [
+    27,
+    85,
+    81,
+    "A shower and thunderstorm"
+   ],
+   [
+    28,
+    86,
+    81,
+    "A morning thunderstorm"
+   ],
+   [
+    29,
+    87,
+    80,
+    "Cloudy with a thunderstorm"
+   ],
+   [
+    30,
+    86,
+    81,
+    "Cloudy, a shower and t-storm"
+   ]
+  ],
+  "הוי-אן": [
+   [
+    13,
+    90,
+    76,
+    "Mostly cloudy, a little rain"
+   ],
+   [
+    14,
+    91,
+    77,
+    "A bit of morning rain"
+   ],
+   [
+    15,
+    91,
+    76,
+    "Mostly cloudy with a t-storm"
+   ],
+   [
+    16,
+    89,
+    75,
+    "An afternoon thundershower"
+   ],
+   [
+    17,
+    88,
+    74,
+    "An afternoon thundershower"
+   ],
+   [
+    18,
+    88,
+    74,
+    "Some sun"
+   ],
+   [
+    19,
+    89,
+    75,
+    "More sunshine than clouds"
+   ],
+   [
+    20,
+    89,
+    72,
+    "Sunshine and some clouds"
+   ],
+   [
+    21,
+    90,
+    73,
+    "Partly sunny"
+   ],
+   [
+    22,
+    89,
+    74,
+    "A t-storm around in the p.m."
+   ],
+   [
+    23,
+    88,
+    75,
+    "Rather cloudy with a t-storm"
+   ],
+   [
+    24,
+    86,
+    75,
+    "An afternoon thunderstorm"
+   ],
+   [
+    25,
+    87,
+    74,
+    "A couple of morning t-showers"
+   ],
+   [
+    26,
+    86,
+    74,
+    "An afternoon thunderstorm"
+   ],
+   [
+    27,
+    86,
+    75,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    28,
+    85,
+    75,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    29,
+    86,
+    74,
+    "A shower and thunderstorm"
+   ],
+   [
+    30,
+    86,
+    74,
+    "Cloudy with a t-storm or two"
+   ]
+  ],
+  "נה-טראנג": [
+   [
+    13,
+    88,
+    78,
+    "Periods of rain"
+   ],
+   [
+    14,
+    89,
+    77,
+    "Rain"
+   ],
+   [
+    15,
+    91,
+    78,
+    "Mostly cloudy"
+   ],
+   [
+    16,
+    88,
+    74,
+    "A shower and thunderstorm"
+   ],
+   [
+    17,
+    89,
+    75,
+    "A little morning rain"
+   ],
+   [
+    18,
+    88,
+    74,
+    "A shower and thunderstorm"
+   ],
+   [
+    19,
+    88,
+    74,
+    "A shower and thunderstorm"
+   ],
+   [
+    20,
+    89,
+    75,
+    "A couple of morning showers"
+   ],
+   [
+    21,
+    86,
+    74,
+    "A shower and thunderstorm"
+   ],
+   [
+    22,
+    87,
+    74,
+    "A couple of morning showers"
+   ],
+   [
+    23,
+    86,
+    75,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    24,
+    87,
+    74,
+    "A couple of morning showers"
+   ],
+   [
+    25,
+    87,
+    74,
+    "An afternoon thunderstorm"
+   ],
+   [
+    26,
+    85,
+    75,
+    "Cloudy, a shower and t-storm"
+   ],
+   [
+    27,
+    86,
+    74,
+    "Cloudy with thunderstorms"
+   ],
+   [
+    28,
+    85,
+    74,
+    "An afternoon thunderstorm"
+   ],
+   [
+    29,
+    86,
+    75,
+    "A shower and thunderstorm"
+   ],
+   [
+    30,
+    88,
+    75,
+    "A couple of morning showers"
+   ]
+  ]
  }
 }
