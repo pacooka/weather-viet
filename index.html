@@ -104,6 +104,9 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .storm-alert-cancel-urgent{background:rgba(255,69,58,0.14);color:var(--red);border:0.5px solid rgba(255,69,58,0.35);}
 .storm-alert-title .badge-cancel-urgent{font-size:10px;font-weight:700;background:rgba(255,69,58,0.22);color:var(--red);padding:2px 7px;border-radius:8px;margin-right:6px;vertical-align:middle;}
 .storm-alert-cancel-urgent .storm-alert-desc{color:var(--ink);}
+.storm-alert-shop-update{background:rgba(10,132,255,0.14);color:var(--blue);border:0.5px solid rgba(10,132,255,0.35);}
+.storm-alert-title .badge-shop-update{font-size:10px;font-weight:700;background:rgba(10,132,255,0.22);color:var(--blue);padding:2px 7px;border-radius:8px;margin-right:6px;vertical-align:middle;}
+.storm-alert-shop-update .storm-alert-desc{color:var(--ink);}
 .section-title{max-width:900px;margin:30px auto 12px;padding:0 4px;font-size:17px;font-weight:700;}
 .section-hint{max-width:900px;margin:-8px auto 12px;padding:0 4px;font-size:12.5px;color:var(--sub);}
 .wgrid{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;}
@@ -373,6 +376,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 <p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 04/09/2026, 19:13 (שעון ויאטנם)</p>
 </div>
 <div class="storm-alert storm-alert-change-worse"><span class="storm-alert-icon">📈</span><div class="storm-alert-body"><div class="storm-alert-title"><span class="badge-change-worse">שינוי בתחזית</span>האנוי · 29/09</div><div class="storm-alert-desc">התחזית עברה מ"בהיר ברובו" ל"ממטר וסופת רעמים", עם עלייה קלה בטמפרטורות</div><div class="storm-alert-meta">בהשוואה לעדכון הקודם (לפני כ-3 שעות)</div></div></div><div class="storm-alert storm-alert-change-better"><span class="storm-alert-icon">📉</span><div class="storm-alert-body"><div class="storm-alert-title"><span class="badge-change-better">שיפור בתחזית</span>האנוי · 25/09</div><div class="storm-alert-desc">התחזית עברה מסופת רעמים ל"מעונן חלקית" — צפי משופר ליום זה</div><div class="storm-alert-meta">בהשוואה לעדכון הקודם (לפני כ-3 שעות)</div></div></div><div class="storm-alert storm-alert-change-worse"><span class="storm-alert-icon">📈</span><div class="storm-alert-body"><div class="storm-alert-title"><span class="badge-change-worse">שינוי בתחזית</span>האנוי · 20/09</div><div class="storm-alert-desc">התחזית עברה מבהיר לסופת רעמים בבוקר</div><div class="storm-alert-meta">בהשוואה לעדכון הקודם (לפני כ-3 שעות)</div></div></div>
+<div class="storm-alert storm-alert-shop-update" onclick="document.getElementById(&#39;shop-card&#39;).scrollIntoView({behavior:&#39;smooth&#39;,block:&#39;center&#39;}); document.getElementById(&#39;shop-card&#39;).classList.remove(&#39;collapsed&#39;);" style="cursor:pointer;"><span class="storm-alert-icon">🛍️</span><div class="storm-alert-body"><div class="storm-alert-title"><span class="badge-shop-update">עדכון מרום</span>רום עדכן את רשימת הקניות — 5 פריטים חדשים</div><div class="storm-alert-desc">נוספו: פליזים פטגוניה או כל דבר יפה, מכנסי טיולים קארהראט, נעלי לואה, מכופתרות קארהארט, מעיל קארהראט. לחצו כאן כדי לראות את הרשימה המלאה עם התמונות ולא לפספס.</div><div class="storm-alert-meta">עודכן 04/09/2026, 19:19 (שעון ויאטנם) · יוצג עד 05/09/2026, 19:19</div></div></div>
 <script>
 (function(){
 var TRIP_START = new Date(2026,8,15);
@@ -851,7 +855,45 @@ try { purchased = JSON.parse(localStorage.getItem(purchasedKey)) || {}; } catch(
 function savePurchased(){ localStorage.setItem(purchasedKey, JSON.stringify(purchased)); }
 
 function shopItemText(item){ return (typeof item === 'string') ? item : ((item && item.text) || ''); }
-function shopItemImage(item){ return (item && typeof item === 'object' && item.image) ? item.image : null; }
+function shopItemImages(item){
+  if (!item || typeof item !== 'object') return [];
+  if (Array.isArray(item.images)) return item.images.filter(Boolean);
+  if (item.image) return [item.image];
+  return [];
+}
+
+function openShopLightbox(images, startIdx){
+  var lb = document.getElementById('shop-lightbox');
+  if (!lb){
+    lb = document.createElement('div');
+    lb.id = 'shop-lightbox';
+    lb.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px;box-sizing:border-box;';
+    lb.innerHTML = '<img id="shop-lightbox-img" style="max-width:90vw;max-height:75vh;border-radius:12px;object-fit:contain;">' +
+      '<div id="shop-lightbox-nav" style="display:flex;gap:16px;align-items:center;color:#fff;font-size:14px;"></div>';
+    document.body.appendChild(lb);
+    lb.addEventListener('click', function(e){ if (e.target === lb) lb.style.display = 'none'; });
+  }
+  var imgEl = lb.querySelector('#shop-lightbox-img');
+  var navEl = lb.querySelector('#shop-lightbox-nav');
+  var idx = startIdx || 0;
+  function show(){
+    imgEl.src = images[idx];
+    navEl.innerHTML = '';
+    if (images.length > 1){
+      var prev = document.createElement('button');
+      prev.textContent = '›'; prev.style.cssText='background:none;border:none;color:#fff;font-size:22px;cursor:pointer;';
+      prev.onclick = function(e){ e.stopPropagation(); idx = (idx - 1 + images.length) % images.length; show(); };
+      var counter = document.createElement('span');
+      counter.textContent = (idx+1) + ' / ' + images.length;
+      var next = document.createElement('button');
+      next.textContent = '‹'; next.style.cssText='background:none;border:none;color:#fff;font-size:22px;cursor:pointer;';
+      next.onclick = function(e){ e.stopPropagation(); idx = (idx + 1) % images.length; show(); };
+      navEl.appendChild(prev); navEl.appendChild(counter); navEl.appendChild(next);
+    }
+  }
+  show();
+  lb.style.display = 'flex';
+}
 
 function render(){
   listEl.innerHTML = '';
@@ -865,23 +907,32 @@ function render(){
     countEl.textContent = boughtCount + '/' + SHOP_ITEMS.length + ' נרכשו';
     SHOP_ITEMS.forEach(function(item){
       var text = shopItemText(item);
-      var img = shopItemImage(item);
+      var imgs = shopItemImages(item);
       var isDone = !!purchased[text];
       var div = document.createElement('div');
       div.className = 'shop-item' + (isDone ? ' done' : '');
+      var thumbsHtml = '';
+      if (imgs.length){
+        thumbsHtml = '<div class="shop-item-thumbs" style="display:flex;gap:4px;flex-shrink:0;">' +
+          imgs.map(function(src, i){ return '<img class="shop-item-thumb" data-idx="'+i+'" src="' + src + '" alt="">'; }).join('') +
+          '</div>';
+      }
       div.innerHTML =
         '<label class="shop-check">' +
           '<input type="checkbox" ' + (isDone ? 'checked' : '') + '>' +
           '<span class="shop-checkmark"></span>' +
         '</label>' +
-        (img ? '<img class="shop-item-thumb" src="' + img + '" alt="">' : '') +
-        '<span class="shop-item-label"></span>';
+        thumbsHtml +
+        '<span class="shop-item-label"></span>' +
+        (imgs.length > 1 ? '<span class="shop-item-imgcount" style="font-size:11px;color:var(--sub);flex-shrink:0;">' + imgs.length + ' תמונות</span>' : '');
       div.querySelector('.shop-item-label').textContent = text;
-      if (img){
-        var thumbEl = div.querySelector('.shop-item-thumb');
-        thumbEl.addEventListener('click', function(e){
-          e.stopPropagation();
-          thumbEl.classList.toggle('zoomed');
+      if (imgs.length){
+        var thumbEls = div.querySelectorAll('.shop-item-thumb');
+        thumbEls.forEach(function(thumbEl, i){
+          thumbEl.addEventListener('click', function(e){
+            e.stopPropagation();
+            openShopLightbox(imgs, i);
+          });
         });
       }
       var checkbox = div.querySelector('input[type="checkbox"]');
