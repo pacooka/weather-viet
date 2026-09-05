@@ -1765,7 +1765,7 @@ function renderTrend(){
         }
       },
       scales: {
-        x: { ticks: { color: '#98989f', font: { size: 10 }, maxRotation: 60, minRotation: 60 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+        x: { reverse: true, ticks: { color: '#98989f', font: { size: 10 }, maxRotation: 60, minRotation: 60 }, grid: { color: 'rgba(255,255,255,0.06)' } },
         y: { position: 'left', ticks: { color: '#98989f', font: { size: 10 }, callback: function(v){ return v + '°'; } }, grid: { color: 'rgba(255,255,255,0.06)' } },
         y1: { position: 'right', min: 0, max: 100, ticks: { color: '#38bdf8', font: { size: 10 }, callback: function(v){ return v + '%'; } }, grid: { display: false } }
       }
