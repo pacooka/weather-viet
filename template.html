@@ -53,6 +53,12 @@
     if (node.nodeType === 3){
       var text = node.nodeValue;
       if (text.indexOf('שעון ויאטנם') === -1) return;
+      // Defensive normalization: collapse any accidental doubled/tripled
+      // "(שעון ויאטנם)" suffix runs (a recurring generation-time bug) into a
+      // single one BEFORE matching, so this can never leave a leftover
+      // literal "(שעון ויאטנם)" behind again, no matter what a future run's
+      // __TIME__ value contains.
+      text = text.replace(/(\(שעון ויאטנם\))(?:\s*\(שעון ויאטנם\))+/g, '$1');
       var changed = false;
       var newText = text.replace(RE, function(m, dd, mo, yyyy, hh, mm){
         var dateStr = yyyy ? (yyyy + '-' + mo + '-' + dd) : BUILD_DATE_ISO;

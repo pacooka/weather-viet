@@ -53,6 +53,12 @@
     if (node.nodeType === 3){
       var text = node.nodeValue;
       if (text.indexOf('שעון ויאטנם') === -1) return;
+      // Defensive normalization: collapse any accidental doubled/tripled
+      // "(שעון ויאטנם)" suffix runs (a recurring generation-time bug) into a
+      // single one BEFORE matching, so this can never leave a leftover
+      // literal "(שעון ויאטנם)" behind again, no matter what a future run's
+      // __TIME__ value contains.
+      text = text.replace(/(\(שעון ויאטנם\))(?:\s*\(שעון ויאטנם\))+/g, '$1');
       var changed = false;
       var newText = text.replace(RE, function(m, dd, mo, yyyy, hh, mm){
         var dateStr = yyyy ? (yyyy + '-' + mo + '-' + dd) : BUILD_DATE_ISO;
@@ -373,7 +379,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 <h1>הטיול לויאטנם</h1>
 <p>15–29 בספטמבר 2026 · וייטנאם</p>
 <p id="trip-day-indicator" style="font-size:13px;color:var(--blue);font-weight:700;margin:4px 0 2px;"></p>
-<p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 05/09/2026, 15:30 (שעון ויאטנם) (שעון ויאטנם)</p>
+<p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 05/09/2026, 15:30 (שעון ויאטנם)</p>
 </div>
 <script>
 (function(){
@@ -529,7 +535,7 @@ setInterval(render, 60000);
 <div class="curr-field"><label>דולר אמריקאי (USD)</label><input type="number" id="curr-usd" class="curr-input" placeholder="0" inputmode="decimal"></div>
 <div class="curr-field"><label>שקל חדש (ILS)</label><input type="number" id="curr-ils" class="curr-input" placeholder="0" inputmode="decimal"></div>
 </div>
-<div class="currency-updated">שער עודכן לאחרונה בשעה 05/09/2026, 15:30 (שעון ויאטנם) (שעון ויאטנם)</div>
+<div class="currency-updated">שער עודכן לאחרונה בשעה 05/09/2026, 15:30 (שעון ויאטנם)</div>
 </div>
 <script>
 (function(){
