@@ -1,10 +1,10 @@
 {
- "generatedAt": "2026-09-07T11:15:00+07:00",
+ "generatedAt": "2026-09-07T19:20:00+07:00",
  "data": {
   "Hanoi|13/09": {
    "hi": 33,
    "lo": 26,
-   "code": "su",
+   "code": "pa",
    "rain": 10,
    "typhoon": false,
    "tier": "near"
@@ -52,7 +52,7 @@
   "Hanoi|19/09": {
    "hi": 32,
    "lo": 24,
-   "code": "pa",
+   "code": "su",
    "rain": 20,
    "typhoon": false,
    "tier": "near"
@@ -124,7 +124,7 @@
   "Hanoi|28/09": {
    "hi": 29,
    "lo": 24,
-   "code": "pa",
+   "code": "su",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -132,7 +132,7 @@
   "Hanoi|29/09": {
    "hi": 31,
    "lo": 25,
-   "code": "ts",
+   "code": "sh",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -140,7 +140,7 @@
   "Hanoi|30/09": {
    "hi": 31,
    "lo": 25,
-   "code": "ts",
+   "code": "sh",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -252,7 +252,7 @@
   "Ninh Binh|26/09": {
    "hi": 29,
    "lo": 26,
-   "code": "ts",
+   "code": "sh",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -316,7 +316,7 @@
   "Sa Pa|16/09": {
    "hi": 25,
    "lo": 16,
-   "code": "su",
+   "code": "pa",
    "rain": 3,
    "typhoon": false,
    "tier": "near"
@@ -332,7 +332,7 @@
   "Sa Pa|18/09": {
    "hi": 25,
    "lo": 16,
-   "code": "ts",
+   "code": "sh",
    "rain": 58,
    "typhoon": false,
    "tier": "near"
@@ -340,7 +340,7 @@
   "Sa Pa|19/09": {
    "hi": 22,
    "lo": 17,
-   "code": "ts",
+   "code": "sh",
    "rain": 63,
    "typhoon": false,
    "tier": "near"
@@ -484,7 +484,7 @@
   "Quan Hoa|19/09": {
    "hi": 31,
    "lo": 23,
-   "code": "su",
+   "code": "pa",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -540,7 +540,7 @@
   "Quan Hoa|26/09": {
    "hi": 31,
    "lo": 23,
-   "code": "pa",
+   "code": "su",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -612,7 +612,7 @@
   "Ha Long|17/09": {
    "hi": 30,
    "lo": 24,
-   "code": "su",
+   "code": "pa",
    "rain": 20,
    "typhoon": false,
    "tier": "near"
@@ -764,7 +764,7 @@
   "Hoi An|18/09": {
    "hi": 31,
    "lo": 23,
-   "code": "pa",
+   "code": "su",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -772,7 +772,7 @@
   "Hoi An|19/09": {
    "hi": 32,
    "lo": 22,
-   "code": "pa",
+   "code": "su",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -788,7 +788,7 @@
   "Hoi An|21/09": {
    "hi": 33,
    "lo": 24,
-   "code": "pa",
+   "code": "su",
    "rain": null,
    "typhoon": false,
    "tier": "far"
@@ -828,7 +828,7 @@
   "Hoi An|26/09": {
    "hi": 30,
    "lo": 23,
-   "code": "ts",
+   "code": "sh",
    "rain": null,
    "typhoon": false,
    "tier": "far"
