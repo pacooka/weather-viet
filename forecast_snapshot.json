@@ -1,67 +1,67 @@
 {
- "generatedAt": "2026-09-08T07:30:00+07:00",
+ "generatedAt": "2026-09-08T15:15:00+07:00",
  "data": {
   "האנוי|13/09": {
-   "hi": 33,
-   "lo": 26,
+   "hi": 32,
+   "lo": 24,
    "code": "pa",
-   "rain": 10,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "האנוי|14/09": {
-   "hi": 34,
-   "lo": 26,
+   "hi": 32,
+   "lo": 24,
    "code": "sh",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "האנוי|15/09": {
-   "hi": 33,
-   "lo": 27,
+   "hi": 37,
+   "lo": 25,
    "code": "sh",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "האנוי|16/09": {
-   "hi": 32,
-   "lo": 25,
+   "hi": 34,
+   "lo": 24,
    "code": "sh",
-   "rain": 61,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "האנוי|17/09": {
-   "hi": 33,
+   "hi": 31,
    "lo": 24,
    "code": "sh",
-   "rain": 57,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "האנוי|18/09": {
-   "hi": 33,
+   "hi": 32,
    "lo": 25,
    "code": "sh",
-   "rain": 75,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "האנוי|19/09": {
    "hi": 32,
    "lo": 24,
-   "code": "pa",
-   "rain": 20,
+   "code": "sh",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "האנוי|20/09": {
    "hi": 32,
-   "lo": 26,
-   "code": "ts",
-   "rain": 65,
+   "lo": 25,
+   "code": "su",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -69,7 +69,7 @@
    "hi": 31,
    "lo": 26,
    "code": "ts",
-   "rain": 70,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -146,10 +146,10 @@
    "tier": "far"
   },
   "פו-לונג|13/09": {
-   "hi": 33,
+   "hi": 31,
    "lo": 24,
    "code": "cl",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -157,7 +157,7 @@
    "hi": 32,
    "lo": 24,
    "code": "su",
-   "rain": 7,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -165,7 +165,7 @@
    "hi": 31,
    "lo": 24,
    "code": "pa",
-   "rain": 3,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -173,7 +173,7 @@
    "hi": 33,
    "lo": 24,
    "code": "sh",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -181,7 +181,7 @@
    "hi": 31,
    "lo": 23,
    "code": "pa",
-   "rain": 20,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -189,7 +189,7 @@
    "hi": 31,
    "lo": 23,
    "code": "su",
-   "rain": 25,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -290,58 +290,58 @@
    "tier": "far"
   },
   "נין-בין|13/09": {
-   "hi": 33,
-   "lo": 26,
+   "hi": 32,
+   "lo": 24,
    "code": "pa",
-   "rain": 22,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נין-בין|14/09": {
-   "hi": 30,
+   "hi": 32,
    "lo": 26,
    "code": "sh",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נין-בין|15/09": {
-   "hi": 32,
-   "lo": 25,
+   "hi": 30,
+   "lo": 24,
    "code": "sh",
-   "rain": 62,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נין-בין|16/09": {
-   "hi": 32,
+   "hi": 31,
    "lo": 25,
    "code": "sh",
-   "rain": 58,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נין-בין|17/09": {
    "hi": 32,
-   "lo": 26,
-   "code": "pa",
-   "rain": 25,
+   "lo": 25,
+   "code": "sh",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נין-בין|18/09": {
-   "hi": 32,
-   "lo": 25,
+   "hi": 33,
+   "lo": 26,
    "code": "sh",
-   "rain": 76,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נין-בין|19/09": {
    "hi": 32,
-   "lo": 26,
-   "code": "sh",
-   "rain": 62,
+   "lo": 24,
+   "code": "pa",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -349,7 +349,7 @@
    "hi": 31,
    "lo": 26,
    "code": "sh",
-   "rain": 65,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -357,7 +357,7 @@
    "hi": 30,
    "lo": 26,
    "code": "ts",
-   "rain": 65,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -365,7 +365,7 @@
    "hi": 29,
    "lo": 26,
    "code": "ts",
-   "rain": 65,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -437,7 +437,7 @@
    "hi": 20,
    "lo": 14,
    "code": "su",
-   "rain": 4,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -445,7 +445,7 @@
    "hi": 24,
    "lo": 15,
    "code": "pa",
-   "rain": 8,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -453,15 +453,15 @@
    "hi": 23,
    "lo": 16,
    "code": "sh",
-   "rain": 57,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "סאפא|16/09": {
-   "hi": 25,
+   "hi": 23,
    "lo": 16,
-   "code": "su",
-   "rain": 3,
+   "code": "ts",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -469,7 +469,7 @@
    "hi": 26,
    "lo": 17,
    "code": "su",
-   "rain": 3,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -477,7 +477,7 @@
    "hi": 25,
    "lo": 16,
    "code": "sh",
-   "rain": 58,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -485,7 +485,7 @@
    "hi": 22,
    "lo": 17,
    "code": "sh",
-   "rain": 63,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -493,7 +493,7 @@
    "hi": 23,
    "lo": 15,
    "code": "sh",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -501,7 +501,7 @@
    "hi": 23,
    "lo": 16,
    "code": "sh",
-   "rain": 59,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -581,7 +581,7 @@
    "hi": 31,
    "lo": 26,
    "code": "pa",
-   "rain": 25,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -589,7 +589,7 @@
    "hi": 30,
    "lo": 24,
    "code": "su",
-   "rain": 4,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -597,7 +597,7 @@
    "hi": 30,
    "lo": 24,
    "code": "pa",
-   "rain": 3,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -605,7 +605,7 @@
    "hi": 31,
    "lo": 24,
    "code": "sh",
-   "rain": 49,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -613,7 +613,7 @@
    "hi": 30,
    "lo": 24,
    "code": "su",
-   "rain": 20,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -621,7 +621,7 @@
    "hi": 31,
    "lo": 25,
    "code": "pa",
-   "rain": 20,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -629,7 +629,7 @@
    "hi": 31,
    "lo": 26,
    "code": "ts",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -722,10 +722,10 @@
    "tier": "far"
   },
   "הוי-אן|13/09": {
-   "hi": 28,
-   "lo": 24,
+   "hi": 30,
+   "lo": 25,
    "code": "sh",
-   "rain": 76,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -733,55 +733,55 @@
    "hi": 32,
    "lo": 25,
    "code": "ts",
-   "rain": 70,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "הוי-אן|15/09": {
-   "hi": 31,
+   "hi": 32,
    "lo": 24,
    "code": "sh",
-   "rain": 65,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "הוי-אן|16/09": {
-   "hi": 33,
+   "hi": 32,
    "lo": 25,
-   "code": "sh",
-   "rain": 55,
+   "code": "pa",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "הוי-אן|17/09": {
-   "hi": 32,
+   "hi": 33,
    "lo": 25,
    "code": "sh",
-   "rain": 78,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "הוי-אן|18/09": {
-   "hi": 33,
+   "hi": 32,
    "lo": 26,
    "code": "sh",
-   "rain": 75,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "הוי-אן|19/09": {
-   "hi": 33,
+   "hi": 32,
    "lo": 26,
    "code": "sh",
-   "rain": 59,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "הוי-אן|20/09": {
-   "hi": 32,
-   "lo": 23,
-   "code": "su",
-   "rain": 25,
+   "hi": 33,
+   "lo": 26,
+   "code": "sh",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -789,7 +789,7 @@
    "hi": 33,
    "lo": 24,
    "code": "pa",
-   "rain": 25,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -797,7 +797,7 @@
    "hi": 32,
    "lo": 24,
    "code": "sh",
-   "rain": 56,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -866,18 +866,18 @@
    "tier": "far"
   },
   "פו-קוק|13/09": {
-   "hi": 29,
-   "lo": 27,
+   "hi": 28,
+   "lo": 26,
    "code": "ts",
-   "rain": 67,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "פו-קוק|14/09": {
    "hi": 29,
-   "lo": 26,
+   "lo": 27,
    "code": "sh",
-   "rain": 71,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -885,31 +885,31 @@
    "hi": 30,
    "lo": 26,
    "code": "sh",
-   "rain": 76,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "פו-קוק|16/09": {
    "hi": 29,
    "lo": 27,
-   "code": "ts",
-   "rain": 67,
+   "code": "sh",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "פו-קוק|17/09": {
    "hi": 29,
    "lo": 26,
-   "code": "sh",
-   "rain": 71,
+   "code": "ts",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "פו-קוק|18/09": {
-   "hi": 28,
-   "lo": 26,
-   "code": "sh",
-   "rain": 64,
+   "hi": 29,
+   "lo": 27,
+   "code": "ts",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -917,15 +917,15 @@
    "hi": 29,
    "lo": 27,
    "code": "ts",
-   "rain": 65,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "פו-קוק|20/09": {
-   "hi": 30,
+   "hi": 29,
    "lo": 26,
    "code": "ts",
-   "rain": 64,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -1010,58 +1010,58 @@
    "tier": "far"
   },
   "נה-טראנג|13/09": {
-   "hi": 33,
-   "lo": 26,
+   "hi": 31,
+   "lo": 24,
    "code": "sh",
-   "rain": 65,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נה-טראנג|14/09": {
-   "hi": 33,
-   "lo": 25,
+   "hi": 32,
+   "lo": 26,
    "code": "sh",
-   "rain": 59,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נה-טראנג|15/09": {
-   "hi": 34,
-   "lo": 25,
+   "hi": 31,
+   "lo": 26,
    "code": "sh",
-   "rain": 60,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נה-טראנג|16/09": {
    "hi": 34,
-   "lo": 24,
+   "lo": 25,
    "code": "sh",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נה-טראנג|17/09": {
-   "hi": 34,
-   "lo": 25,
+   "hi": 33,
+   "lo": 24,
    "code": "sh",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נה-טראנג|18/09": {
-   "hi": 34,
-   "lo": 24,
+   "hi": 33,
+   "lo": 26,
    "code": "sh",
-   "rain": 62,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
   "נה-טראנג|19/09": {
-   "hi": 31,
-   "lo": 23,
-   "code": "ts",
-   "rain": 65,
+   "hi": 34,
+   "lo": 24,
+   "code": "sh",
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -1069,7 +1069,7 @@
    "hi": 32,
    "lo": 24,
    "code": "ts",
-   "rain": 59,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
@@ -1077,7 +1077,7 @@
    "hi": 31,
    "lo": 24,
    "code": "ts",
-   "rain": 55,
+   "rain": null,
    "typhoon": false,
    "tier": "near"
   },
