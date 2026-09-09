@@ -151,6 +151,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 .reco-opt-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;position:relative;min-height:26px;}
 .reco-opt-label{font-size:12.5px;color:var(--ink);font-weight:600;white-space:nowrap;min-width:90px;text-align:center;}
 .reco-suboptimal-badge{display:none;position:absolute;left:0;top:50%;transform:translateY(-50%);text-align:center;font-size:11px;font-weight:700;color:var(--hi);background:rgba(255,159,10,0.15);padding:5px 10px;border-radius:20px;white-space:nowrap;margin:0;}
+.reco-custom-badge{display:none;position:absolute;left:0;top:50%;transform:translateY(-50%);text-align:center;font-size:11px;font-weight:700;color:var(--blue);background:rgba(10,132,255,0.15);padding:5px 10px;border-radius:20px;white-space:nowrap;margin:0;}
 .reco-note-wrap{margin-bottom:8px;}
 .reco-note{background:rgba(10,132,255,0.15);color:var(--blue);font-size:12.5px;padding:9px 12px;border-radius:10px 10px 0 0;line-height:1.6;margin-bottom:0;overflow:hidden;transition:max-height 0.25s ease;}
 .reco-note-toggle{display:none;font-size:11.5px;font-weight:700;color:var(--blue);background:rgba(10,132,255,0.15);padding:5px 12px;border-radius:0 0 10px 10px;cursor:pointer;text-align:center;user-select:none;}
@@ -666,6 +667,7 @@ head.addEventListener('click', function(){
 <div class="reco-stat" id="reco-stat"></div>
 <div class="reco-opt-nav" id="reco-opt-nav" style="display:none;">
 <span class="reco-suboptimal-badge" id="reco-suboptimal-badge">⚠️ מסלול לא אופטימלי</span>
+<span class="reco-custom-badge" id="reco-custom-badge">🎯 בהתאמה אישית</span>
 <button class="hourly-now-btn" id="reco-opt-prev" title="ההצעה הקודמת">‹</button>
 <span class="reco-opt-label" id="reco-opt-label">הצעה ראשונה</span>
 <button class="hourly-now-btn" id="reco-opt-next" title="ההצעה הבאה">›</button>
@@ -2174,6 +2176,64 @@ function computeHoiAnForcedPlan(){
   return { plan: fullPlan, score: best.score, southIncluded: [HOIAN_LOC], notOptimal: best.hadBlockedDay, forced: true };
 }
 
+// "הצעה רביעית" - "בהתאמה אישית": מסלול קבוע לפי בקשה ידנית של ניר, לא תוצאה של חיפוש אופטימיזציה חופשי.
+// 2 הלילות הראשונים (בהאנוי) כבר סגורים/מוזמנים בפועל ולכן קבועים לחלוטין ולא ניתנים לשינוי - אין תחרות
+// עליהם מול שום יעד אחר. מפרץ הא-לונג, הוי-אן, פו-קוק ונה-טראנג לא נכללים בטיול הזה בכלל (הוחרגו לגמרי).
+// סאפא מקבל לפחות 4 לילות, פו-לונג לפחות 2 לילות ומעלה, נין-בין לפחות 3 לילות ומעלה - הסדר בין השלושה
+// ולילות הבונוס הנוספים מעבר למינימום נבחרים לפי התחזית (בדיוק כמו בהצעות הרגילות), וליל האנוי האחרון
+// לפני הטיסה נשאר קבוע כמו בכל ההצעות האחרות.
+var CUSTOM_FIRST_HANOI_NIGHTS = 2;
+var CUSTOM_MIN_NIGHTS = { "סאפא": 4, "פו-לונג": 2, "נין-בין": 3 };
+
+function computeCustomPlan(){
+  if (typeof defaultItinerary === 'undefined' || !defaultItinerary.length) return null;
+  var firstDM = parseDDMM(defaultItinerary[0].day);
+  var lastDM = parseDDMM(defaultItinerary[defaultItinerary.length-1].day);
+  if (!firstDM || !lastDM) return null;
+  var tripStart = toDate(firstDM);
+  var tripEnd = toDate(lastDM);
+  var departureLoc = "האנוי";
+  var middleStart = addDays(tripStart, CUSTOM_FIRST_HANOI_NIGHTS);
+  var hanoiReturnStart = addDays(tripEnd, -FINAL_HANOI_NIGHTS);
+  var middleNights = Math.round((hanoiReturnStart - middleStart) / 86400000);
+  if (middleNights < 0) return null;
+
+  var custKeys = Object.keys(CUSTOM_MIN_NIGHTS); // סאפא / פו-לונג / נין-בין
+  var minTotal = 0;
+  custKeys.forEach(function(k){ minTotal += CUSTOM_MIN_NIGHTS[k]; });
+  var flexBudget = middleNights - minTotal;
+  if (flexBudget < 0) flexBudget = 0;
+
+  var orders = permute(custKeys);
+  var distributions = distribute(flexBudget, custKeys.length);
+  var best = null;
+  orders.forEach(function(order){
+    distributions.forEach(function(dist){
+      var nightsMap = {};
+      custKeys.forEach(function(k, idx){ nightsMap[k] = CUSTOM_MIN_NIGHTS[k] + dist[idx]; });
+      var cur = middleStart, total = 0, plan = [], valid = true;
+      order.forEach(function(loc){
+        var n = nightsMap[loc];
+        var s = scoreRange(loc, cur, n);
+        if (s === Infinity) valid = false;
+        total += s;
+        plan.push({ loc: loc, start: new Date(cur), nights: n });
+        cur = addDays(cur, n);
+      });
+      if (!valid) return;
+      if (cur.getTime() !== hanoiReturnStart.getTime()) return;
+      if (!best || total < best.score) best = { score: total, plan: plan };
+    });
+  });
+  if (!best) return null;
+
+  var fullPlan = [{ loc: "האנוי", start: tripStart, nights: CUSTOM_FIRST_HANOI_NIGHTS, isArrival: true, isCustomFixed: true }]
+    .concat(best.plan)
+    .concat([{ loc: "האנוי", start: hanoiReturnStart, nights: FINAL_HANOI_NIGHTS, isReturn: true }])
+    .concat([{ loc: departureLoc, start: tripEnd, nights: 0, isDeparture: true }]);
+  return { plan: fullPlan, score: best.score, southIncluded: [], custom: true };
+}
+
 var recoOptions = [];
 var recoOptionIndex = 0;
 
@@ -2216,6 +2276,7 @@ function renderRecoOption(idx){
   var prevBtn = document.getElementById('reco-opt-prev');
   var nextBtn = document.getElementById('reco-opt-next');
   var badgeEl = document.getElementById('reco-suboptimal-badge');
+  var customBadgeEl = document.getElementById('reco-custom-badge');
   if (!legsEl || !recoOptions.length) return;
   var result = recoOptions[idx];
   if (labelEl) labelEl.textContent = RECO_OPTION_NAMES[idx] || ('הצעה ' + (idx + 1));
@@ -2223,11 +2284,17 @@ function renderRecoOption(idx){
   if (prevBtn) prevBtn.disabled = (idx <= 0);
   if (nextBtn) nextBtn.disabled = (idx >= recoOptions.length - 1);
   if (badgeEl) badgeEl.style.display = result.notOptimal ? 'inline-block' : 'none';
+  if (customBadgeEl) customBadgeEl.style.display = result.custom ? 'inline-block' : 'none';
 
   var html = '';
   result.plan.forEach(function(leg){
     var days, dateRange, nightsLabel;
     if (leg.isDeparture){ days = [fmt(leg.start)]; dateRange = fmt(leg.start); nightsLabel = 'טיסת חזרה ארצה'; }
+    else if (leg.isCustomFixed){
+      days = []; for (var kf=0; kf<leg.nights; kf++) days.push(fmt(addDays(leg.start,kf)));
+      dateRange = fmt(leg.start) + ' - ' + fmt(addDays(leg.start, leg.nights-1));
+      nightsLabel = leg.nights + (leg.nights === 1 ? ' לילה' : ' לילות') + ' · קבוע (הזמנה סגורה)';
+    }
     else if (leg.isArrival){ days = [fmt(leg.start)]; dateRange = fmt(leg.start); nightsLabel = 'יום נחיתה'; }
     else if (leg.isReturn){ days = [fmt(leg.start)]; dateRange = fmt(leg.start); nightsLabel = 'לילה אחרון לפני הטיסה'; }
     else {
@@ -2247,6 +2314,18 @@ function renderRecoOption(idx){
   legsEl.innerHTML = html;
 
   var flexLegs = result.plan.filter(function(l){ return !l.isArrival && !l.isDeparture && !l.isReturn && l.loc !== "מפרץ הא-לונג"; });
+  if (result.custom){
+    if (noteEl){
+      var fixedLeg = result.plan[0];
+      var fixedRange = fmt(fixedLeg.start) + '-' + fmt(addDays(fixedLeg.start, fixedLeg.nights-1));
+      noteEl.textContent = 'הצעה זו היא מסלול בהתאמה אישית לבקשה ידנית, לא תוצאה של חיפוש אופטימיזציה חופשי: הלילות ' + fixedRange + ' בהאנוי כבר סגורים ומוזמנים בפועל ולכן קבועים לחלוטין ולא ניתנים לשינוי. מפרץ הא-לונג, הוי-אן, פו-קוק ונה-טראנג אינם כלולים בטיול הזה בכלל. סאפא מקבל לפחות 4 לילות, פו-לונג לפחות 2 לילות ומעלה, ונין-בין לפחות 3 לילות ומעלה - הסדר בין השלושה ולילות הבונוס הנוספים מעבר למינימום נבחרים לפי התחזית, וליל ' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי לקראת הטיסה.';
+    }
+    if (statEl){
+      statEl.textContent = 'ציון חשיפה משוקלל לגשם/סופות/טייפון למסלול הזה: ' + result.score.toFixed(1) + ' — מחושב רק על שלושת היעדים הגמישים (סאפא/פו-לונג/נין-בין), כי שאר המסלול קבוע מראש לפי הבקשה. הסידור למעלה ("תכנון מסלול הטיול לפי ימים") הוא זה שבאמת קובע את הטיול שלכם, זו רק המלצה לתצוגה.';
+    }
+    updateRecoNoteClamp();
+    return;
+  }
   if (result.forced){
     if (noteEl){
       var forcedNote = 'הצעה זו כוללת בכוונה את הוי-אן במקום סאפא (הוי-אן מקבל כאן יתרון קבוע על סאפא ולא מתחרה איתה), כדי לתת חלופה שתמיד משלבת את הוי-אן בטיול - גם אם יש בו ימים עם סופות רעמים. שאר הכללים זהים: פו-לונג/נין-בין מינימום 2 לילות, ליל ה-' + fmt(hanoiReturnDate()) + ' חזרה קבועה בהאנוי, ופו-קוק, נה-טראנג ומפרץ הא-לונג (אינו חובה, לכל היותר לילה אחד) יכולים להצטרף אם יש תקציב לילות גמיש ומזג האוויר תומך.';
@@ -2292,6 +2371,12 @@ function renderRecoPlan(){
   try { hoianForced = computeHoiAnForcedPlan(); } catch(e){ console.error('hoian forced plan error', e); }
   if (hoianForced && existingSigs.indexOf(planSignature(hoianForced.plan)) === -1){
     options.push(hoianForced);
+    existingSigs.push(planSignature(hoianForced.plan));
+  }
+  var customPlan = null;
+  try { customPlan = computeCustomPlan(); } catch(e){ console.error('custom plan error', e); }
+  if (customPlan && existingSigs.indexOf(planSignature(customPlan.plan)) === -1){
+    options.push(customPlan);
   }
   if (!options.length){
     legsEl.innerHTML = '';
