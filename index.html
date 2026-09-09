@@ -32,7 +32,7 @@
   // nodes, so it catches every occurrence — header, currency, accommodations,
   // zoom-earth caption, and any storm/change/cancel banners — without each
   // of those spots needing its own conversion logic.
-  var BUILD_DATE_ISO = "2026-09-09T18:05:00+07:00";
+  var BUILD_DATE_ISO = "2026-09-09T18:14:00+07:00";
   var VN_OFFSET_MIN = 7 * 60;
   var RE = /(?:(\d{2})\/(\d{2})\/(\d{4}),\s*)?(\d{2}):(\d{2})\s*\(שעון ויאטנם\)/g;
 
@@ -374,7 +374,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,san
 <h1>הטיול לויאטנם</h1>
 <p>15–29 בספטמבר 2026 · וייטנאם</p>
 <p id="trip-day-indicator" style="font-size:13px;color:var(--blue);font-weight:700;margin:4px 0 2px;"></p>
-<p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 09/09/2026, 18:05 (שעון ויאטנם)</p>
+<p style="font-size:12px;color:#636366;">עודכן לאחרונה בשעה 09/09/2026, 18:14 (שעון ויאטנם)</p>
 </div>
 <script>
 (function(){
@@ -509,7 +509,7 @@ setInterval(render, 60000);
 <div class="curr-field"><label>דולר אמריקאי (USD)</label><input type="number" id="curr-usd" class="curr-input" placeholder="0" inputmode="decimal"></div>
 <div class="curr-field"><label>שקל חדש (ILS)</label><input type="number" id="curr-ils" class="curr-input" placeholder="0" inputmode="decimal"></div>
 </div>
-<div class="currency-updated">שער עודכן לאחרונה בשעה 09/09/2026, 18:05 (שעון ויאטנם)</div>
+<div class="currency-updated">שער עודכן לאחרונה בשעה 09/09/2026, 18:14 (שעון ויאטנם)</div>
 </div>
 <script>
 (function(){
@@ -2194,11 +2194,22 @@ function computeHoiAnForcedPlan(){
 // "הצעה רביעית" - "בהתאמה אישית": מסלול קבוע לפי בקשה ידנית של ניר, לא תוצאה של חיפוש אופטימיזציה חופשי.
 // 2 הלילות הראשונים (בהאנוי) כבר סגורים/מוזמנים בפועל ולכן קבועים לחלוטין ולא ניתנים לשינוי - אין תחרות
 // עליהם מול שום יעד אחר. מפרץ הא-לונג, הוי-אן, פו-קוק ונה-טראנג לא נכללים בטיול הזה בכלל (הוחרגו לגמרי).
-// סאפא מקבל לפחות 4 לילות, פו-לונג לפחות 2 לילות ומעלה, נין-בין לפחות 3 לילות ומעלה - הסדר בין השלושה
-// ולילות הבונוס הנוספים מעבר למינימום נבחרים לפי התחזית (בדיוק כמו בהצעות הרגילות), וליל האנוי האחרון
-// לפני הטיסה נשאר קבוע כמו בכל ההצעות האחרות.
+// סאפא מקבל לפחות 4 לילות, פו-לונג לפחות 2 לילות ומעלה, נין-בין לפחות 3 לילות ומעלה - לילות הבונוס הנוספים
+// מעבר למינימום נבחרים לפי התחזית (בדיוק כמו בהצעות הרגילות), וליל האנוי האחרון לפני הטיסה נשאר קבוע כמו
+// בכל ההצעות האחרות. חוק נוסף: פו-לונג ונין-בין קרובים גיאוגרפית ולכן תמיד צמודים זה לזה ברצף (סאפא לעולם
+// לא מפריד ביניהם) - הסדר הפנימי בין שני אלה (מי קודם) ומיקום סאפא (לפניהם או אחריהם) נבחרים לפי התחזית.
 var CUSTOM_FIRST_HANOI_NIGHTS = 2;
 var CUSTOM_MIN_NIGHTS = { "סאפא": 4, "פו-לונג": 2, "נין-בין": 3 };
+var CUSTOM_PN_PAIR = ["פו-לונג", "נין-בין"]; // תמיד צמודים - ראו הערה למעלה
+function customAdjacentOrders(){
+  var pnOrders = [CUSTOM_PN_PAIR, CUSTOM_PN_PAIR.slice().reverse()];
+  var orders = [];
+  pnOrders.forEach(function(pn){
+    orders.push(["סאפא"].concat(pn));   // סאפא לפני הצמד
+    orders.push(pn.concat(["סאפא"]));   // סאפא אחרי הצמד
+  });
+  return orders;
+}
 
 function computeCustomPlan(){
   if (typeof defaultItinerary === 'undefined' || !defaultItinerary.length) return null;
@@ -2219,7 +2230,7 @@ function computeCustomPlan(){
   var flexBudget = middleNights - minTotal;
   if (flexBudget < 0) flexBudget = 0;
 
-  var orders = permute(custKeys);
+  var orders = customAdjacentOrders(); // סאפא לעולם לא מפריד בין פו-לונג ונין-בין - ראו הערה למעלה
   var distributions = distribute(flexBudget, custKeys.length);
   var best = null;
   orders.forEach(function(order){
