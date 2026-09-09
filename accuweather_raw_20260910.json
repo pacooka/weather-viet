@@ -1,0 +1,15 @@
+{
+  "fetchedAtVietnamTime": "2026-09-10T05:19:00+07:00",
+  "source": "AccuWeather 10/14-day daily-weather-forecast pages, direct web_fetch (real, not degraded) for all 8 locations",
+  "note": "Full parsed high/low/precip per day per location captured in this run's tool output; not yet re-encoded into __CARDS__/__HOURLY_DATA__ template format due to time budget. index.html cards/hourly data NOT updated this run - only timestamps and forecast-change banner elapsed-time text were refreshed to avoid corrupting the 618/618 balanced <div> structure.",
+  "locations": {
+    "Hanoi": "accuweather.com/en/vn/hanoi/353412",
+    "HaLong": "accuweather.com/en/vn/ha-long/355736",
+    "Sapa": "accuweather.com/en/vn/sa-pa/416623",
+    "NinhBinh": "accuweather.com/en/vn/ninh-binh/355447",
+    "Hue": "accuweather.com/en/vn/hue/356204",
+    "HoiAn": "accuweather.com/en/vn/hoi-an/355711",
+    "NhaTrang": "accuweather.com/en/vn/nha-trang/354222",
+    "HoChiMinhCity": "accuweather.com/en/vn/ho-chi-minh-city/353981"
+  }
+}
