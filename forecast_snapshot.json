@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-15T16:10:00+07:00",
+ "generatedAt": "2026-09-15T13:30:00+07:00",
  "data": {
   "האנוי|15/09": {
    "hi": 27,
@@ -954,6 +954,70 @@
    "tier": "near"
   },
   "נה-טראנג|29/09": {
+   "hi": 31,
+   "lo": 23,
+   "code": "ts",
+   "rain": 55,
+   "typhoon": false,
+   "tier": "near"
+  },
+  "האנוי|30/09": {
+   "hi": 31,
+   "lo": 26,
+   "code": "ts",
+   "rain": 55,
+   "typhoon": false,
+   "tier": "near"
+  },
+  "פו-לונג|30/09": {
+   "hi": 29,
+   "lo": 24,
+   "code": "sh",
+   "rain": 56,
+   "typhoon": false,
+   "tier": "near"
+  },
+  "נין-בין|30/09": {
+   "hi": 31,
+   "lo": 25,
+   "code": "ts",
+   "rain": 55,
+   "typhoon": false,
+   "tier": "near"
+  },
+  "סאפא|30/09": {
+   "hi": 22,
+   "lo": 16,
+   "code": "sh",
+   "rain": 58,
+   "typhoon": false,
+   "tier": "near"
+  },
+  "מפרץ הא-לונג|30/09": {
+   "hi": 30,
+   "lo": 26,
+   "code": "ts",
+   "rain": 55,
+   "typhoon": false,
+   "tier": "near"
+  },
+  "הוי-אן|30/09": {
+   "hi": 31,
+   "lo": 22,
+   "code": "cl",
+   "rain": 25,
+   "typhoon": false,
+   "tier": "near"
+  },
+  "פו-קוק|30/09": {
+   "hi": 29,
+   "lo": 28,
+   "code": "ts",
+   "rain": 57,
+   "typhoon": false,
+   "tier": "near"
+  },
+  "נה-טראנג|30/09": {
    "hi": 31,
    "lo": 23,
    "code": "ts",
