@@ -1,5 +1,5 @@
 {
- "updatedAt": "24/09/2026, 17:20 (שעון ויאטנם)",
+ "updatedAt": "25/09/2026, 05:21 (שעון ויאטנם)",
  "bookings": [
   {
    "name": "Cat Cat View Hotel",
@@ -24,6 +24,14 @@
    "checkin": "2026-09-25",
    "checkout": "2026-09-27",
    "freeCancelUntil": "2026-09-21T23:59:00+07:00"
+  },
+  {
+   "name": "The Silk Boutique Hotel & Spa - Old Quarter City Center",
+   "thumb": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTAiIGZpbGw9IiMyYzJjMmUiLz48cGF0aCBkPSJNMTQgNDRsMTAtMTIgOCA5IDYtNyAxMiAxMHYzSDE0eiIgZmlsbD0iIzYzNjM2NiIvPjxjaXJjbGUgY3g9IjIyIiBjeT0iMjIiIHI9IjUiIGZpbGw9IiM2MzYzNjYiLz48L3N2Zz4=",
+   "location": "Hanoi",
+   "checkin": "2026-09-27",
+   "checkout": "2026-09-29",
+   "freeCancelUntil": null
   }
  ]
 }
